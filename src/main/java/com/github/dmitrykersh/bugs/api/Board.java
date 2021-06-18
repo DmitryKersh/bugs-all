@@ -5,32 +5,42 @@ import java.util.*;
 public final class Board implements IBoard{
     private boolean ended;
     private final int turnsForPlayer;
-    private final Map<IPlayer, Integer> scoreboard;
+    private final Vector<IPlayer> players;
     private final Vector<Vector<Tile>> tiles;
+    private Integer currentPlaceForLostPlayer;
 
-    private Board(Vector<Vector<Tile>> tiles, Map<IPlayer, Integer> scoreboard, final int turns) {
+    private Board(Vector<Vector<Tile>> tiles, Vector<IPlayer> players, final int turns) {
         turnsForPlayer = turns;
-        this.scoreboard = scoreboard;
+        this.players = players;
         this.tiles = tiles;
         ended = false;
+        currentPlaceForLostPlayer = players.size();
     }
 
     public static Board createBoard(int rows, int columns, Vector<IPlayer> players, final int turns) {
-        Map<IPlayer, Integer> scoreboard = new HashMap<>();
-        for (IPlayer player : players) scoreboard.put(player, 0);
-
         Vector<Vector<Tile>> tiles = new Vector<>(rows);
         for (Vector<Tile> row : tiles) row = new Vector<>(columns);
 
-        return new Board(tiles, scoreboard, turns);
+        return new Board(tiles, players, turns);
     }
 
     @Override
-    public void validateAttack(final IPlayer attacker, final Tile tile) {
-        if (tile.getState() == TileState.WALL || attacker == tile.getOwner()) return;
+    public Vector<IPlayer> getPlayers() {
+        return players;
+    }
+
+    @Override
+    public void validateTurn(final IPlayer attacker, final Tile attackedTile) {
+        if (attackedTile.getState() == TileState.WALL || attacker == attackedTile.getOwner()) return;
         for (Tile t : getNearbyTilesForPlayer(attacker))
             if (t.isActive()) {
-                tile.changeState(attacker);
+                if (attackedTile.getState() == TileState.QUEEN) {
+                    attackedTile.getOwner().reduceQueenTile();
+                    if (!attackedTile.getOwner().hasQueenTiles())
+                        freezeLostPlayer(attackedTile.getOwner());
+                }
+                attackedTile.changeState(attacker);
+                attacker.spendTurn();
                 return;
             }
     }
@@ -58,7 +68,9 @@ public final class Board implements IBoard{
 
     @Override
     public void freezeLostPlayer(final IPlayer player) {
-
+        player.setPlace(currentPlaceForLostPlayer);
+        player.setActive(false);
+        currentPlaceForLostPlayer--;
     }
 
     @Override

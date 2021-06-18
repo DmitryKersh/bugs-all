@@ -1,7 +1,10 @@
 package com.github.dmitrykersh.bugs.api;
 
+import java.util.Vector;
+
 public interface IBoard {
-    void validateAttack(IPlayer attacker, Tile tile);
+    Vector<IPlayer> getPlayers();
+    void validateTurn(IPlayer attacker, Tile tile);
     void activateTiles();
     void freezeLostPlayer(IPlayer player);
     IPlayer whoseTurn();

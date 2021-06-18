@@ -3,28 +3,62 @@ package com.github.dmitrykersh.bugs.api;
 import javafx.scene.paint.Color;
 
 public class HumanPlayer implements IPlayer{
-    private int rating;
-    private boolean hasQueenTiles;
-    private int turnsLeft;
+    private PlayerState playerState;
 
     @Override
     public int getRating() {
-        return rating;
+        return playerState.rating;
     }
 
     @Override
     public void setRating(final int newRating) {
-        rating = newRating;
+        playerState.rating = newRating;
     }
 
     @Override
     public boolean hasQueenTiles() {
-        return hasQueenTiles;
+        return playerState.queenTiles != 0;
+    }
+
+    @Override
+    public void reduceQueenTile() {
+        playerState.queenTiles--;
     }
 
     @Override
     public int getTurnsLeft() {
-        return turnsLeft;
+        return playerState.turnsLeft;
+    }
+
+    @Override
+    public void spendTurn() {
+        if (playerState.turnsLeft > 0)
+            playerState.turnsLeft--;
+    }
+
+    @Override
+    public void restoreTurns(int numberOfTurns) {
+        playerState.turnsLeft = numberOfTurns;
+    }
+
+    @Override
+    public void setPlace(int place) {
+        playerState.place = place;
+    }
+
+    @Override
+    public int getPlace() {
+        return playerState.place;
+    }
+
+    @Override
+    public boolean getActive() {
+        return playerState.isActive;
+    }
+
+    @Override
+    public void setActive(boolean active) {
+        playerState.isActive = active;
     }
 
     @Override
