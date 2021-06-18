@@ -15,14 +15,13 @@
     <dependencies>
         <dependency>
             <groupId>org.openjfx</groupId>
-            <artifactId>javafx-controls</artifactId>
-            <version>11.0.2</version>
+            <artifactId>javafx-graphics</artifactId>
+            <version>15.0.1</version>
         </dependency>
         <dependency>
-            <groupId>org.jetbrains</groupId>
-            <artifactId>annotations</artifactId>
-            <version>RELEASE</version>
-            <scope>compile</scope>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-fxml</artifactId>
+            <version>15.0.1</version>
         </dependency>
     </dependencies>
 
@@ -33,7 +32,7 @@
                 <artifactId>javafx-maven-plugin</artifactId>
                 <version>0.0.3</version>
                 <configuration>
-                    <mainClass>com.github.dmitrykersh.bugs.gui.MainWindow</mainClass>
+                    <mainClass>com.github.dmitrykersh.bugs.gui.MainWindowLauncher</mainClass>
                 </configuration>
             </plugin>
         </plugins>
