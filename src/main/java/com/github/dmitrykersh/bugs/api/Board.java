@@ -2,7 +2,13 @@ package com.github.dmitrykersh.bugs.api;
 
 import java.util.*;
 
-public final class Board implements IBoard{
+/**
+ * this class represents game board
+ * it implements all game's rules, validates players' turns
+ * it also makes a scoreboard
+ */
+
+public final class Board implements IBoard {
     private boolean ended;
     private final int turnsForPlayer;
     private final Vector<IPlayer> players;
@@ -19,7 +25,13 @@ public final class Board implements IBoard{
 
     public static Board createBoard(int rows, int columns, Vector<IPlayer> players, final int turns) {
         Vector<Vector<Tile>> tiles = new Vector<>(rows);
-        for (Vector<Tile> row : tiles) row = new Vector<>(columns);
+        for (int row = 0; row < rows; row++) {
+            tiles.set(row, new Vector<Tile>(columns));
+            Vector<Tile> tileRow = tiles.get(row);
+            for (int col = 0; col < columns; col++) {
+                tileRow.set(col, new Tile(row * columns + col));
+            }
+        }
 
         return new Board(tiles, players, turns);
     }
@@ -32,7 +44,7 @@ public final class Board implements IBoard{
     @Override
     public void validateTurn(final IPlayer attacker, final Tile attackedTile) {
         if (attackedTile.getState() == TileState.WALL || attacker == attackedTile.getOwner()) return;
-        for (Tile t : getNearbyTilesForPlayer(attacker))
+        for (Tile t : getNearbyTilesForPlayer(attackedTile, attacker))
             if (t.isActive()) {
                 if (attackedTile.getState() == TileState.QUEEN) {
                     attackedTile.getOwner().reduceQueenTile();
@@ -62,7 +74,7 @@ public final class Board implements IBoard{
     private void activateTilesCluster(Tile origin, IPlayer owner /* to not call getOwner() every recursion step */) {
         if (origin.isActive()) return;
         origin.activate();
-        for (Tile t : getNearbyTilesForPlayer(owner))
+        for (Tile t : getNearbyTilesForPlayer(origin, owner))
             activateTilesCluster(t, owner);
     }
 
@@ -78,7 +90,18 @@ public final class Board implements IBoard{
         return null;
     }
 
-    private List<Tile> getNearbyTilesForPlayer(IPlayer player){
-        return new LinkedList<>();
+    private List<Tile> getNearbyTilesForPlayer(Tile origin, IPlayer player) {
+        int x = origin.getId() % tiles.size();
+        int y = origin.getId() / tiles.size();
+        List<Tile> result = new LinkedList<>();
+
+        result.add(tiles.get(y).get(x + 1));
+        result.add(tiles.get(y).get(x - 1));
+        result.add(tiles.get(y - 1).get(x));
+        result.add(tiles.get(y + 1).get(x));
+
+        result.removeIf(tile -> tile.getOwner() != player);
+
+        return result;
     }
 }
