@@ -85,11 +85,6 @@ public final class Board implements IBoard {
         currentPlaceForLostPlayer--;
     }
 
-    @Override
-    public IPlayer whoseTurn() {
-        return null;
-    }
-
     private List<Tile> getNearbyTilesForPlayer(Tile origin, IPlayer player) {
         int x = origin.getId() % tiles.size();
         int y = origin.getId() / tiles.size();

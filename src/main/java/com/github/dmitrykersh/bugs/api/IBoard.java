@@ -7,5 +7,4 @@ public interface IBoard {
     void validateTurn(IPlayer attacker, Tile tile);
     void activateTiles();
     void freezeLostPlayer(IPlayer player);
-    IPlayer whoseTurn();
 }

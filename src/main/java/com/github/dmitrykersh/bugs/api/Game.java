@@ -1,5 +1,6 @@
 package com.github.dmitrykersh.bugs.api;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
@@ -19,7 +20,9 @@ public class Game {
 
         // main loop
         while (playersQueue.size() > 1) { // while more than 1 active player
-            for (IPlayer currentPlayer : playersQueue) {
+            Iterator<IPlayer> iter = playersQueue.iterator();
+            while (iter.hasNext()){
+                IPlayer currentPlayer = iter.next();
                 if (!currentPlayer.getActive()) {
                     playersQueue.remove(currentPlayer);
                     continue;
