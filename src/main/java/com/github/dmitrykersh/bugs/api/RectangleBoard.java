@@ -1,0 +1,122 @@
+package com.github.dmitrykersh.bugs.api;
+
+import java.io.PrintStream;
+import java.util.*;
+
+/**
+ * this class represents game board
+ * it implements all game's rules, validates players' turns
+ * it also makes a scoreboard after game
+ */
+
+public final class RectangleBoard implements Board {
+    private boolean ended;
+    private final int turnsForPlayer;
+    private final Vector<Player> players;
+    private final Vector<Vector<Tile>> tiles;
+    private Integer currentPlaceForLostPlayer;
+
+    private int rowsAmount;
+    private int colsAmount;
+
+    private RectangleBoard(Vector<Vector<Tile>> tiles, Vector<Player> players, final int turns) {
+        turnsForPlayer = turns;
+        this.players = players;
+        this.tiles = tiles;
+        ended = false;
+        currentPlaceForLostPlayer = players.size();
+        rowsAmount = tiles.size();
+        colsAmount = tiles.get(0) == null ? 0 : tiles.get(0).size();
+    }
+
+    public static RectangleBoard createBoard(int rowsAmount, int columnsAmount, Vector<Player> players, final int turnsForPlayer) {
+        Vector<Vector<Tile>> tiles = new Vector<>(rowsAmount);
+        for (int row = 0; row < rowsAmount; row++) {
+            tiles.add(row, new Vector<Tile>(columnsAmount));
+            Vector<Tile> tileRow = tiles.get(row);
+            for (int col = 0; col < columnsAmount; col++) {
+                tileRow.add(col, new Tile(row * columnsAmount + col));
+            }
+        }
+/*
+        tiles.get(0).get(0).setOwner(players.get(0));
+        tiles.get(rowsAmount - 1).get(0).setOwner(players.get(1));
+*/
+        return new RectangleBoard(tiles, players, turnsForPlayer);
+    }
+
+    @Override
+    public Vector<Player> getPlayers() {
+        return players;
+    }
+
+    @Override
+    public void activateTiles() {
+        for (Vector<Tile> row : tiles)
+            for (Tile tile : row)
+                tile.deactivate();
+
+        for (Vector<Tile> row : tiles)
+            for (Tile tile : row) {
+                if (tile.isActive()) continue;
+                if (tile.getState() == TileState.BUG)
+                    activateTilesCluster(tile, tile.getOwner());
+            }
+    }
+
+    private void activateTilesCluster(Tile origin, Player owner /* to not call getOwner() every recursion step */) {
+        if (origin.isActive()) return;
+        origin.activate();
+        for (Tile t : getNearbyTilesForPlayer(origin, owner))
+            activateTilesCluster(t, owner);
+    }
+
+    @Override
+    public void freezeLostPlayer(final Player player) {
+        player.setPlace(currentPlaceForLostPlayer);
+        player.setActive(false);
+        currentPlaceForLostPlayer--;
+    }
+
+    @Override
+    public List<Tile> getNearbyTilesForPlayer(Tile origin, Player player) {
+        int row = origin.getId() / tiles.size();
+        int col = origin.getId() % tiles.size();
+        List<Tile> result = new LinkedList<>();
+
+        if (row < rowsAmount - 1)
+            result.add(tiles.get(col).get(row + 1));
+        if (row > 0)
+            result.add(tiles.get(col).get(row - 1));
+        if (col > 0)
+            result.add(tiles.get(col - 1).get(row));
+        if (col < colsAmount - 1)
+            result.add(tiles.get(col + 1).get(row));
+
+        result.removeIf(tile -> tile.getOwner() != player);
+
+        return result;
+    }
+
+    ////////////// TESTING IN CONSOLE STUFF ////////////////////
+    @Override
+    public void print(PrintStream ps) {
+        for (Vector<Tile> row : tiles) {
+            for (Tile t : row) {
+                ps.print(tileInfo(t));
+            }
+            ps.print("\n");
+        }
+    }
+
+    private String tileInfo(Tile tile) {
+        StringBuilder str = new StringBuilder("[ ");
+        str.append(tile.isActive() ? "A" : "D")
+                .append("; id=").append(tile.getId())
+                .append("; owner=").append(tile.getOwner() == null ? "null" : tile.getOwner().getNickname())
+                .append("; type=").append(tile.getState().toString())
+                .append(" ] ");
+        return str.toString();
+    }
+    ////////////////////////////////////////////////////////////
+}

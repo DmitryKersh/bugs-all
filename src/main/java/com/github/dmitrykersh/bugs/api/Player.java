@@ -2,9 +2,16 @@ package com.github.dmitrykersh.bugs.api;
 
 import javafx.scene.paint.Color;
 
-public interface IPlayer {
+public interface Player {
+    String getNickname();
     int getRating();
     void setRating(int newRating);
+
+    void setPlace(int place);
+    int getPlace();
+
+    boolean getActive();
+    void setActive(boolean active);
 
     boolean hasQueenTiles();
     void reduceQueenTile();
@@ -12,12 +19,6 @@ public interface IPlayer {
     int getTurnsLeft();
     void spendTurn();
     void restoreTurns(int numberOfTurns);
-
-    void setPlace(int place);
-    int getPlace();
-
-    boolean getActive();
-    void setActive(boolean active);
 
     Color getColor();
 }

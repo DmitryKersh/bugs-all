@@ -2,8 +2,19 @@ package com.github.dmitrykersh.bugs.api;
 
 import javafx.scene.paint.Color;
 
-public class HumanPlayer implements IPlayer{
+public class HumanPlayer implements Player {
     private PlayerState playerState;
+    private String nickname;
+
+    public HumanPlayer(PlayerState playerState, String nickname) {
+        this.playerState = playerState;
+        this.nickname = nickname;
+    }
+
+    @Override
+    public String getNickname() {
+        return nickname;
+    }
 
     @Override
     public int getRating() {

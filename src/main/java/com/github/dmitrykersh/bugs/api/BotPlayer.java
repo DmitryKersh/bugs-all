@@ -2,7 +2,12 @@ package com.github.dmitrykersh.bugs.api;
 
 import javafx.scene.paint.Color;
 
-public class BotPlayer implements IPlayer{
+public class BotPlayer implements Player {
+
+    @Override
+    public String getNickname() {
+        return "BOT";
+    }
 
     @Override
     public int getRating() {

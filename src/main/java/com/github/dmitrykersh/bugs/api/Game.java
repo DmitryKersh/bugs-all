@@ -1,8 +1,6 @@
 package com.github.dmitrykersh.bugs.api;
 
 import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 import java.util.Vector;
 
 /**
@@ -12,17 +10,17 @@ import java.util.Vector;
  */
 
 public class Game {
-    private IBoard board;
+    private Board board;
     private final int maxTurns = 5;
 
     public void startGame() {
-        Vector<IPlayer> playersQueue = (Vector<IPlayer>) board.getPlayers().clone();
+        Vector<Player> playersQueue = (Vector<Player>) board.getPlayers().clone();
 
         // main loop
         while (playersQueue.size() > 1) { // while more than 1 active player
-            Iterator<IPlayer> iter = playersQueue.iterator();
+            Iterator<Player> iter = playersQueue.iterator();
             while (iter.hasNext()){
-                IPlayer currentPlayer = iter.next();
+                Player currentPlayer = iter.next();
                 if (!currentPlayer.getActive()) {
                     playersQueue.remove(currentPlayer);
                     continue;
@@ -34,6 +32,6 @@ public class Game {
             }
         }
         // getting scoreboard
-        Vector<IPlayer> scoreboard = (Vector<IPlayer>) board.getPlayers().clone();
+        Vector<Player> scoreboard = (Vector<Player>) board.getPlayers().clone();
     }
 }
