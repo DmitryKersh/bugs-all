@@ -10,16 +10,6 @@ public class BotPlayer implements Player {
     }
 
     @Override
-    public int getRating() {
-        return 0;
-    }
-
-    @Override
-    public void setRating(int newRating) {
-
-    }
-
-    @Override
     public boolean hasQueenTiles() {
         return false;
     }
@@ -40,7 +30,7 @@ public class BotPlayer implements Player {
     }
 
     @Override
-    public void restoreTurns(int numberOfTurns) {
+    public void restoreTurns() {
 
     }
 

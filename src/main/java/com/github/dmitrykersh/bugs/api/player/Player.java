@@ -4,8 +4,6 @@ import javafx.scene.paint.Color;
 
 public interface Player {
     String getNickname();
-    int getRating();
-    void setRating(int newRating);
 
     void setPlace(int place);
     int getPlace();
@@ -18,7 +16,7 @@ public interface Player {
 
     int getTurnsLeft();
     void spendTurn();
-    void restoreTurns(int numberOfTurns);
+    void restoreTurns();
 
     Color getColor();
 }

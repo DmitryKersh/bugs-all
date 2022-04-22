@@ -5,5 +5,5 @@ public enum TileState {
     BUG,
     WALL,
     QUEEN,
-    UNAVAILABLE;
+    UNAVAILABLE,
 }

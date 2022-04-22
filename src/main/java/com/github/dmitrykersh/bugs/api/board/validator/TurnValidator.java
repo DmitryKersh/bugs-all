@@ -5,5 +5,5 @@ import com.github.dmitrykersh.bugs.api.board.tile.Tile;
 import com.github.dmitrykersh.bugs.api.board.Board;
 
 public interface TurnValidator {
-    void validateTurn(Board board, Player attacker, Tile tile);
+    boolean validateTurn(Board board, Player attacker, Tile tile);
 }

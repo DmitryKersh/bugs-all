@@ -3,12 +3,14 @@ package com.github.dmitrykersh.bugs.api.player;
 import javafx.scene.paint.Color;
 
 public class HumanPlayer implements Player {
-    private PlayerState playerState;
+    private PlayerState state;
     private String nickname;
+    private int maxTurns;
 
-    public HumanPlayer(PlayerState playerState, String nickname) {
-        this.playerState = playerState;
+    public HumanPlayer(String nickname, PlayerState state, int maxTurns) {
+        this.state = state;
         this.nickname = nickname;
+        this.maxTurns = maxTurns;
     }
 
     @Override
@@ -17,59 +19,49 @@ public class HumanPlayer implements Player {
     }
 
     @Override
-    public int getRating() {
-        return playerState.rating;
-    }
-
-    @Override
-    public void setRating(final int newRating) {
-        playerState.rating = newRating;
-    }
-
-    @Override
     public boolean hasQueenTiles() {
-        return playerState.queenTiles != 0;
+        return state.queenTiles != 0;
     }
 
     @Override
     public void reduceQueenTile() {
-        playerState.queenTiles--;
+        state.queenTiles--;
     }
 
     @Override
     public int getTurnsLeft() {
-        return playerState.turnsLeft;
+        return state.turnsLeft;
     }
 
     @Override
     public void spendTurn() {
-        if (playerState.turnsLeft > 0)
-            playerState.turnsLeft--;
+        if (state.turnsLeft > 0)
+            state.turnsLeft--;
     }
 
     @Override
-    public void restoreTurns(int numberOfTurns) {
-        playerState.turnsLeft = numberOfTurns;
+    public void restoreTurns() {
+        state.turnsLeft = maxTurns;
     }
 
     @Override
     public void setPlace(int place) {
-        playerState.place = place;
+        state.place = place;
     }
 
     @Override
     public int getPlace() {
-        return playerState.place;
+        return state.place;
     }
 
     @Override
     public boolean getActive() {
-        return playerState.isActive;
+        return state.isActive;
     }
 
     @Override
     public void setActive(boolean active) {
-        playerState.isActive = active;
+        state.isActive = active;
     }
 
     @Override

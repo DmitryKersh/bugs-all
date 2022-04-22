@@ -1,8 +1,10 @@
 package com.github.dmitrykersh.bugs.api.board;
 
+import com.github.dmitrykersh.bugs.api.player.HumanPlayer;
 import com.github.dmitrykersh.bugs.api.player.Player;
 import com.github.dmitrykersh.bugs.api.board.tile.Tile;
 import com.github.dmitrykersh.bugs.api.board.tile.TileState;
+import com.github.dmitrykersh.bugs.api.player.PlayerState;
 
 import java.io.PrintStream;
 import java.util.*;
@@ -33,15 +35,24 @@ public final class RectangleBoard implements Board {
         colsAmount = tiles.get(0) == null ? 0 : tiles.get(0).size();
     }
 
-    public static RectangleBoard createBoard(Layout layout, int rowsAmount, int columnsAmount, Vector<Player> players, final int turnsForPlayer) {
+    public static RectangleBoard createBoard(Layout layout, int rowsAmount, int columnsAmount, List<String> nicknames, final int turnsForPlayer) {
         Vector<Vector<Tile>> tiles = new Vector<>(rowsAmount);
         for (int row = 0; row < rowsAmount; row++) {
-            tiles.add(row, new Vector<Tile>(columnsAmount));
+            tiles.add(row, new Vector<>(columnsAmount));
             Vector<Tile> tileRow = tiles.get(row);
+
             for (int col = 0; col < columnsAmount; col++) {
                 tileRow.add(col, new Tile(row * columnsAmount + col));
             }
         }
+
+        // Creating players by nicknames
+        Vector<Player> players = new Vector<>(nicknames.size());
+        for (String nickname : nicknames) {
+            players.add(new HumanPlayer(nickname, new PlayerState(), 5 /* TODO: maxTurns should be passed by layout*/));
+        }
+
+        // TODO: Apply layout (tiles)
 
         tiles.get(0).get(0).setOwner(players.get(0));
         tiles.get(rowsAmount - 1).get(0).setOwner(players.get(1));
