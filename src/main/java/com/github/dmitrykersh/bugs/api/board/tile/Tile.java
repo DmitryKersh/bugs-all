@@ -1,6 +1,8 @@
-package com.github.dmitrykersh.bugs.api;
+package com.github.dmitrykersh.bugs.api.board.tile;
 
-import static com.github.dmitrykersh.bugs.api.TileState.*;
+import com.github.dmitrykersh.bugs.api.player.Player;
+
+import static com.github.dmitrykersh.bugs.api.board.tile.TileState.*;
 
 public class Tile {
     private int id;

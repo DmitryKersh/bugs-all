@@ -1,4 +1,9 @@
-package com.github.dmitrykersh.bugs.api;
+package com.github.dmitrykersh.bugs.api.board.validator;
+
+import com.github.dmitrykersh.bugs.api.board.tile.Tile;
+import com.github.dmitrykersh.bugs.api.board.tile.TileState;
+import com.github.dmitrykersh.bugs.api.board.Board;
+import com.github.dmitrykersh.bugs.api.player.Player;
 
 public class SimpleTurnValidator implements TurnValidator {
     @Override

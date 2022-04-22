@@ -1,4 +1,7 @@
-package com.github.dmitrykersh.bugs.api;
+package com.github.dmitrykersh.bugs.api.board;
+
+import com.github.dmitrykersh.bugs.api.player.Player;
+import com.github.dmitrykersh.bugs.api.board.tile.Tile;
 
 import java.io.PrintStream;
 import java.util.List;

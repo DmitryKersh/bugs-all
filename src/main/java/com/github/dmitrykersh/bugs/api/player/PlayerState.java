@@ -1,4 +1,4 @@
-package com.github.dmitrykersh.bugs.api;
+package com.github.dmitrykersh.bugs.api.player;
 
 public class PlayerState {
     public boolean isActive;

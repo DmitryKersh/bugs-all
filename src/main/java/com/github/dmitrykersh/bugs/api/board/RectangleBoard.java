@@ -1,4 +1,8 @@
-package com.github.dmitrykersh.bugs.api;
+package com.github.dmitrykersh.bugs.api.board;
+
+import com.github.dmitrykersh.bugs.api.player.Player;
+import com.github.dmitrykersh.bugs.api.board.tile.Tile;
+import com.github.dmitrykersh.bugs.api.board.tile.TileState;
 
 import java.io.PrintStream;
 import java.util.*;
@@ -29,7 +33,7 @@ public final class RectangleBoard implements Board {
         colsAmount = tiles.get(0) == null ? 0 : tiles.get(0).size();
     }
 
-    public static RectangleBoard createBoard(int rowsAmount, int columnsAmount, Vector<Player> players, final int turnsForPlayer) {
+    public static RectangleBoard createBoard(Layout layout, int rowsAmount, int columnsAmount, Vector<Player> players, final int turnsForPlayer) {
         Vector<Vector<Tile>> tiles = new Vector<>(rowsAmount);
         for (int row = 0; row < rowsAmount; row++) {
             tiles.add(row, new Vector<Tile>(columnsAmount));
@@ -38,10 +42,10 @@ public final class RectangleBoard implements Board {
                 tileRow.add(col, new Tile(row * columnsAmount + col));
             }
         }
-/*
+
         tiles.get(0).get(0).setOwner(players.get(0));
         tiles.get(rowsAmount - 1).get(0).setOwner(players.get(1));
-*/
+
         return new RectangleBoard(tiles, players, turnsForPlayer);
     }
 
@@ -114,7 +118,7 @@ public final class RectangleBoard implements Board {
         str.append(tile.isActive() ? "A" : "D")
                 .append("; id=").append(tile.getId())
                 .append("; owner=").append(tile.getOwner() == null ? "null" : tile.getOwner().getNickname())
-                .append("; type=").append(tile.getState().toString())
+                .append("; state=").append(tile.getState().toString())
                 .append(" ] ");
         return str.toString();
     }

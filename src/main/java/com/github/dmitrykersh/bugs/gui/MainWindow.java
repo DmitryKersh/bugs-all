@@ -1,14 +1,10 @@
 package com.github.dmitrykersh.bugs.gui;
 
-import com.github.dmitrykersh.bugs.api.*;
-import javafx.scene.Scene;
-import javafx.scene.control.Label;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.StackPane;
-import javafx.stage.Stage;
-import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
+import com.github.dmitrykersh.bugs.api.board.Board;
+import com.github.dmitrykersh.bugs.api.board.RectangleBoard;
+import com.github.dmitrykersh.bugs.api.player.HumanPlayer;
+import com.github.dmitrykersh.bugs.api.player.Player;
+import com.github.dmitrykersh.bugs.api.player.PlayerState;
 
 import java.util.Vector;
 
@@ -36,7 +32,7 @@ public class MainWindow /*extends Application*/ {
         players.add(p1);
         players.add(p2);
 
-        Board board = RectangleBoard.createBoard(8, 4, players, 5);
+        Board board = RectangleBoard.createBoard(null, 8, 4, players, 5);
 
         board.print(System.out);
     }

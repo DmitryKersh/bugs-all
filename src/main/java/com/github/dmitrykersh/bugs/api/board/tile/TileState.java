@@ -1,4 +1,4 @@
-package com.github.dmitrykersh.bugs.api;
+package com.github.dmitrykersh.bugs.api.board.tile;
 
 public enum TileState {
     FREE,
