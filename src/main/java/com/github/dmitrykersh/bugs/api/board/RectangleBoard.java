@@ -17,16 +17,14 @@ import java.util.*;
 
 public final class RectangleBoard implements Board {
     private boolean ended;
-    private final int turnsForPlayer;
-    private final Vector<Player> players;
-    private final Vector<Vector<Tile>> tiles;
+    private final List<Player> players;
+    private final List<List<Tile>> tiles;
     private Integer currentPlaceForLostPlayer;
 
     private int rowsAmount;
     private int colsAmount;
 
-    private RectangleBoard(Vector<Vector<Tile>> tiles, Vector<Player> players, final int turns) {
-        turnsForPlayer = turns;
+    private RectangleBoard(List<List<Tile>> tiles, List<Player> players) {
         this.players = players;
         this.tiles = tiles;
         ended = false;
@@ -35,11 +33,11 @@ public final class RectangleBoard implements Board {
         colsAmount = tiles.get(0) == null ? 0 : tiles.get(0).size();
     }
 
-    public static RectangleBoard createBoard(Layout layout, int rowsAmount, int columnsAmount, List<String> nicknames, final int turnsForPlayer) {
-        Vector<Vector<Tile>> tiles = new Vector<>(rowsAmount);
+    public static RectangleBoard createBoard(Layout layout, int rowsAmount, int columnsAmount, List<String> nicknames) {
+        List<List<Tile>> tiles = new ArrayList<>(rowsAmount);
         for (int row = 0; row < rowsAmount; row++) {
-            tiles.add(row, new Vector<>(columnsAmount));
-            Vector<Tile> tileRow = tiles.get(row);
+            tiles.add(row, new ArrayList<>(columnsAmount));
+            List<Tile> tileRow = tiles.get(row);
 
             for (int col = 0; col < columnsAmount; col++) {
                 tileRow.add(col, new Tile(row * columnsAmount + col));
@@ -47,7 +45,7 @@ public final class RectangleBoard implements Board {
         }
 
         // Creating players by nicknames
-        Vector<Player> players = new Vector<>(nicknames.size());
+        List<Player> players = new ArrayList<>(nicknames.size());
         for (String nickname : nicknames) {
             players.add(new HumanPlayer(nickname, new PlayerState(), 5 /* TODO: maxTurns should be passed by layout*/));
         }
@@ -57,21 +55,21 @@ public final class RectangleBoard implements Board {
         tiles.get(0).get(0).setOwner(players.get(0));
         tiles.get(rowsAmount - 1).get(0).setOwner(players.get(1));
 
-        return new RectangleBoard(tiles, players, turnsForPlayer);
+        return new RectangleBoard(tiles, players);
     }
 
     @Override
-    public Vector<Player> getPlayers() {
+    public List<Player> getPlayers() {
         return players;
     }
 
     @Override
     public void activateTiles() {
-        for (Vector<Tile> row : tiles)
+        for (List<Tile> row : tiles)
             for (Tile tile : row)
                 tile.deactivate();
 
-        for (Vector<Tile> row : tiles)
+        for (List<Tile> row : tiles)
             for (Tile tile : row) {
                 if (tile.isActive()) continue;
                 if (tile.getState() == TileState.BUG)
@@ -116,7 +114,7 @@ public final class RectangleBoard implements Board {
     ////////////// TESTING IN CONSOLE STUFF ////////////////////
     @Override
     public void print(PrintStream ps) {
-        for (Vector<Tile> row : tiles) {
+        for (List<Tile> row : tiles) {
             for (Tile t : row) {
                 ps.print(tileInfo(t));
             }

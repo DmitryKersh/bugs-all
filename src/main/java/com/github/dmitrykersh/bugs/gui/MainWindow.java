@@ -27,7 +27,7 @@ public class MainWindow /*extends Application*/ {
     public static void main(String[] args){
         //launch();
 
-        Board board = RectangleBoard.createBoard(null, 8, 4, Arrays.asList("p1", "p2"), 5);
+        Board board = RectangleBoard.createBoard(null, 8, 4, Arrays.asList("p1", "p2"));
 
         board.print(System.out);
     }
