@@ -1,11 +1,14 @@
 package com.github.dmitrykersh.bugs.api.board;
 
 import com.github.dmitrykersh.bugs.api.board.validator.SimpleTurnValidator;
+import com.github.dmitrykersh.bugs.api.board.validator.TurnValidator;
 import com.github.dmitrykersh.bugs.api.player.HumanPlayer;
 import com.github.dmitrykersh.bugs.api.player.Player;
 import com.github.dmitrykersh.bugs.api.board.tile.Tile;
 import com.github.dmitrykersh.bugs.api.board.tile.TileState;
 import com.github.dmitrykersh.bugs.api.player.PlayerState;
+
+import static com.github.dmitrykersh.bugs.api.board.tile.TileState.*;
 
 import java.io.PrintStream;
 import java.util.*;
@@ -21,20 +24,24 @@ public final class RectangleBoard implements Board {
     private final List<Player> players;
     private final List<List<Tile>> tiles;
     private Integer currentPlaceForLostPlayer;
+    private TurnValidator turnValidator;
 
     private int rowsAmount;
     private int colsAmount;
 
-    private RectangleBoard(List<List<Tile>> tiles, List<Player> players) {
+    private RectangleBoard(TurnValidator validator, List<List<Tile>> tiles, List<Player> players) {
         this.players = players;
+        for (Player p : players)
+            p.setBoard(this);
         this.tiles = tiles;
         ended = false;
         currentPlaceForLostPlayer = players.size();
         rowsAmount = tiles.size();
         colsAmount = tiles.get(0) == null ? 0 : tiles.get(0).size();
+        this.turnValidator = validator;
     }
 
-    public static RectangleBoard createBoard(Layout layout, int rowsAmount, int columnsAmount, List<String> nicknames) {
+    public static RectangleBoard createBoard(Layout layout, TurnValidator validator, int rowsAmount, int columnsAmount, List<String> nicknames) {
         List<List<Tile>> tiles = new ArrayList<>(rowsAmount);
         for (int row = 0; row < rowsAmount; row++) {
             tiles.add(row, new ArrayList<>(columnsAmount));
@@ -48,7 +55,7 @@ public final class RectangleBoard implements Board {
         // Creating players by nicknames
         List<Player> players = new ArrayList<>(nicknames.size());
         for (String nickname : nicknames) {
-            players.add(new HumanPlayer(nickname, new PlayerState(), 5 /* TODO: maxTurns should be passed by layout*/));
+            players.add(new HumanPlayer(null, nickname, new PlayerState(), 5 /* TODO: maxTurns should be passed by layout*/));
         }
 
         // TODO: Apply layout (tiles)
@@ -58,10 +65,8 @@ public final class RectangleBoard implements Board {
         Player p2 = players.get(1);
 
         tiles.get(0).get(0).changeState(p1);
-        tiles.get(0).get(1).changeState(p1);
-        tiles.get(0).get(2).changeState(p1);
-        tiles.get(0).get(3).changeState(p1);
-
+        tiles.get(7).get(3).changeState(p2);
+/*
         tiles.get(1).get(0).changeState(p1);
         tiles.get(1).get(1).changeState(p1);
         tiles.get(1).get(2).changeState(p1);
@@ -81,10 +86,10 @@ public final class RectangleBoard implements Board {
         tiles.get(6).get(3).changeState(p1);
         tiles.get(7).get(3).changeState(p1);
 
-        tiles.get(7).get(2).changeState(p1);
+        tiles.get(7).get(2).changeState(p1);*/
         ///////////////////////////////////////////////////////////////
 
-        return new RectangleBoard(tiles, players);
+        return new RectangleBoard(validator, tiles, players);
     }
 
     @Override
@@ -102,9 +107,9 @@ public final class RectangleBoard implements Board {
             for (Tile tile : row) {
                 if (tile.getOwner() != player) continue;
                 // bug or queen activates tiles around no matter what
-                if (tile.getState() == TileState.BUG
-                        || tile.getState() == TileState.QUEEN
-                        || (tile.getState() == TileState.WALL && tile.isActive()))
+                if (tile.getState() == BUG
+                        || tile.getState() == QUEEN
+                        || (tile.getState() == WALL && tile.isActive()))
                     activateTilesCluster(tile, player);
             }
     }
@@ -112,13 +117,28 @@ public final class RectangleBoard implements Board {
     private void activateTilesCluster(Tile origin, Player player) {
         origin.activate();
         for (Tile tile : getNearbyTilesForPlayer(origin, player)) {
-            if (tile.getOwner() == player && tile.getState() == TileState.WALL && !tile.isActive())
+            if (tile.getState() == UNAVAILABLE) return;
+            if (tile.getOwner() == player && tile.getState() == WALL && !tile.isActive())
                 activateTilesCluster(tile, player);
-            else if (tile.getState() == TileState.FREE)
+            else if (tile.getState() == FREE ||
+                    (tile.getOwner() != player && (tile.getState() == BUG
+                                                || tile.getState() == QUEEN)))
                 tile.activate();
         }
     }
+    @Override
+    public boolean tryMakeTurn(Player player, int tileId) {
+        int row = tileId / colsAmount;
+        int col = tileId % colsAmount;
+        if (row >= rowsAmount) return false;
 
+        Tile tile = tiles.get(row).get(col);
+        if (turnValidator.validateTurn(this, player, tile)) {
+            tile.changeState(player);
+            return true;
+        }
+        return false;
+    }
 
     @Override
     public void freezeLostPlayer(final Player player) {
@@ -159,10 +179,10 @@ public final class RectangleBoard implements Board {
     private String tileInfo(Tile tile, Player player) {
         SimpleTurnValidator validator = new SimpleTurnValidator();
         StringBuilder str = new StringBuilder("[ ");
-        str/*.append(tile.isActive() ? "A" : " ")*/
+        str.append(tile.getId())
                 .append(" ").append(validator.validateTurn(this, player, tile) ? "+" : " ")
                 .append(" ").append(tile.getOwner() == null ? "-" : tile.getOwner().getNickname())
-                .append(" ").append(tile.getState().toString())
+                .append(" ").append(tile.getState() == FREE ? " - " : tile.getState().toString())
                 .append(" ] ");
         return str.toString();
     }

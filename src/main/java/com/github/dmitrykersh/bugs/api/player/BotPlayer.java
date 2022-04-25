@@ -1,12 +1,24 @@
 package com.github.dmitrykersh.bugs.api.player;
 
+import com.github.dmitrykersh.bugs.api.board.Board;
 import javafx.scene.paint.Color;
 
 public class BotPlayer implements Player {
 
     @Override
+    public boolean tryMakeTurn(int tileId) {
+
+        return false;
+    }
+
+    @Override
     public String getNickname() {
         return "BOT";
+    }
+
+    @Override
+    public void setBoard(Board b) {
+
     }
 
     @Override

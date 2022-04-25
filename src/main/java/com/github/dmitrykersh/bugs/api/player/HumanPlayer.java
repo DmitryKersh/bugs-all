@@ -1,5 +1,6 @@
 package com.github.dmitrykersh.bugs.api.player;
 
+import com.github.dmitrykersh.bugs.api.board.Board;
 import javafx.scene.paint.Color;
 
 public class HumanPlayer implements Player {
@@ -7,15 +8,28 @@ public class HumanPlayer implements Player {
     private String nickname;
     private int maxTurns;
 
-    public HumanPlayer(String nickname, PlayerState state, int maxTurns) {
+    private Board board;
+
+    public HumanPlayer(Board board, String nickname, PlayerState state, int maxTurns) {
         this.state = state;
         this.nickname = nickname;
         this.maxTurns = maxTurns;
+        this.board = board;
+    }
+
+    @Override
+    public boolean tryMakeTurn(int tileId) {
+        return board.tryMakeTurn(this, tileId);
     }
 
     @Override
     public String getNickname() {
         return nickname;
+    }
+
+    @Override
+    public void setBoard(Board b) {
+        board = b;
     }
 
     @Override

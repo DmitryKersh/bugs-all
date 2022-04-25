@@ -10,6 +10,7 @@ import java.util.Vector;
 public interface Board {
     List<Player> getPlayers();
     void activateTiles(Player player);
+    boolean tryMakeTurn(Player player, int tileId);
     void freezeLostPlayer(Player player);
     List<Tile> getNearbyTilesForPlayer(Tile origin, Player player);
 
