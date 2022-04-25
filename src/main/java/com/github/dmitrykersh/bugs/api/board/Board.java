@@ -14,5 +14,5 @@ public interface Board {
     List<Tile> getNearbyTilesForPlayer(Tile origin, Player player);
 
     // for prototype testing
-    void print (PrintStream ps);
+    void print (PrintStream ps, Player player);
 }

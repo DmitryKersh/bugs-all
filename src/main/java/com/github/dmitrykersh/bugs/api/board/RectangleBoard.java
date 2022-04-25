@@ -1,5 +1,6 @@
 package com.github.dmitrykersh.bugs.api.board;
 
+import com.github.dmitrykersh.bugs.api.board.validator.SimpleTurnValidator;
 import com.github.dmitrykersh.bugs.api.player.HumanPlayer;
 import com.github.dmitrykersh.bugs.api.player.Player;
 import com.github.dmitrykersh.bugs.api.board.tile.Tile;
@@ -80,6 +81,7 @@ public final class RectangleBoard implements Board {
         tiles.get(6).get(3).changeState(p1);
         tiles.get(7).get(3).changeState(p1);
 
+        tiles.get(7).get(2).changeState(p1);
         ///////////////////////////////////////////////////////////////
 
         return new RectangleBoard(tiles, players);
@@ -145,19 +147,20 @@ public final class RectangleBoard implements Board {
 
     ////////////// TESTING IN CONSOLE STUFF ////////////////////
     @Override
-    public void print(PrintStream ps) {
+    public void print(PrintStream ps, Player player) {
         for (List<Tile> row : tiles) {
             for (Tile t : row) {
-                ps.print(tileInfo(t));
+                ps.print(tileInfo(t, player));
             }
             ps.print("\n");
         }
     }
 
-    private String tileInfo(Tile tile) {
+    private String tileInfo(Tile tile, Player player) {
+        SimpleTurnValidator validator = new SimpleTurnValidator();
         StringBuilder str = new StringBuilder("[ ");
-        str.append(tile.isActive() ? "A" : " ")
-                /*.append(" ").append(tile.getId())*/
+        str/*.append(tile.isActive() ? "A" : " ")*/
+                .append(" ").append(validator.validateTurn(this, player, tile) ? "+" : " ")
                 .append(" ").append(tile.getOwner() == null ? "-" : tile.getOwner().getNickname())
                 .append(" ").append(tile.getState().toString())
                 .append(" ] ");

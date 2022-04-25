@@ -6,24 +6,13 @@ import com.github.dmitrykersh.bugs.api.board.Board;
 import com.github.dmitrykersh.bugs.api.player.Player;
 
 public class SimpleTurnValidator implements TurnValidator {
+    public SimpleTurnValidator() {}
     @Override
     public boolean validateTurn(final Board board, final Player attacker, final Tile attackedTile) {
-        if (attackedTile.getState() == TileState.WALL || attacker == attackedTile.getOwner()) return false;
-        for (Tile t : board.getNearbyTilesForPlayer(attackedTile, attacker))
-            if (t.isActive()) {
-                /*
-                //////// This should be left to board /////////
-
-                if (attackedTile.getState() == TileState.QUEEN) {
-                    attackedTile.getOwner().reduceQueenTile();
-                    if (!attackedTile.getOwner().hasQueenTiles())
-                        board.freezeLostPlayer(attackedTile.getOwner());
-                }
-                */
-                attackedTile.changeState(attacker);
-                attacker.spendTurn();
-                return true;
-            }
-        return false;
+        board.activateTiles(attacker);
+        return (attackedTile.isActive()
+                && attackedTile.getState() != TileState.WALL
+                && attacker != attackedTile.getOwner()
+                );
     }
 }
