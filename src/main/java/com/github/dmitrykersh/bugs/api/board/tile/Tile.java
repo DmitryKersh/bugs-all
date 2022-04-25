@@ -26,7 +26,8 @@ public class Tile {
     public int getId() { return id; }
 
     public void changeState (Player attacker) {
+        if (owner == attacker || state == WALL || state == UNAVAILABLE) return;
+        state = owner == null ? BUG : WALL;
         owner = attacker;
-        state = WALL;
     }
 }

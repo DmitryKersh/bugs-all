@@ -9,7 +9,7 @@ import java.util.Vector;
 
 public interface Board {
     List<Player> getPlayers();
-    void activateTiles();
+    void activateTiles(Player player);
     void freezeLostPlayer(Player player);
     List<Tile> getNearbyTilesForPlayer(Tile origin, Player player);
 

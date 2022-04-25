@@ -30,5 +30,13 @@ public class MainWindow /*extends Application*/ {
         Board board = RectangleBoard.createBoard(null, 8, 4, Arrays.asList("p1", "p2"));
 
         board.print(System.out);
+
+        System.out.println();
+        board.activateTiles(board.getPlayers().get(0));
+        board.print(System.out);
+
+        System.out.println();
+        board.activateTiles(board.getPlayers().get(1));
+        board.print(System.out);
     }
 }

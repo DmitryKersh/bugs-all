@@ -52,8 +52,35 @@ public final class RectangleBoard implements Board {
 
         // TODO: Apply layout (tiles)
 
-        tiles.get(0).get(0).setOwner(players.get(0));
-        tiles.get(rowsAmount - 1).get(0).setOwner(players.get(1));
+        /////// INITIAL STATE (WILL BE CREATED BY LAYOUT LATER) ///////
+        Player p1 = players.get(0);
+        Player p2 = players.get(1);
+
+        tiles.get(0).get(0).changeState(p1);
+        tiles.get(0).get(1).changeState(p1);
+        tiles.get(0).get(2).changeState(p1);
+        tiles.get(0).get(3).changeState(p1);
+
+        tiles.get(1).get(0).changeState(p1);
+        tiles.get(1).get(1).changeState(p1);
+        tiles.get(1).get(2).changeState(p1);
+        tiles.get(1).get(3).changeState(p1);
+
+
+        tiles.get(1).get(0).changeState(p2);
+        tiles.get(1).get(1).changeState(p2);
+        tiles.get(1).get(2).changeState(p2);
+
+        tiles.get(5).get(0).changeState(p2);
+        tiles.get(2).get(0).changeState(p2);
+
+        tiles.get(6).get(3).changeState(p2);
+        tiles.get(7).get(3).changeState(p2);
+
+        tiles.get(6).get(3).changeState(p1);
+        tiles.get(7).get(3).changeState(p1);
+
+        ///////////////////////////////////////////////////////////////
 
         return new RectangleBoard(tiles, players);
     }
@@ -64,25 +91,32 @@ public final class RectangleBoard implements Board {
     }
 
     @Override
-    public void activateTiles() {
+    public void activateTiles(Player player) {
         for (List<Tile> row : tiles)
             for (Tile tile : row)
                 tile.deactivate();
 
         for (List<Tile> row : tiles)
             for (Tile tile : row) {
-                if (tile.isActive()) continue;
-                if (tile.getState() == TileState.BUG)
-                    activateTilesCluster(tile, tile.getOwner());
+                if (tile.getOwner() != player) continue;
+                // bug or queen activates tiles around no matter what
+                if (tile.getState() == TileState.BUG
+                        || tile.getState() == TileState.QUEEN
+                        || (tile.getState() == TileState.WALL && tile.isActive()))
+                    activateTilesCluster(tile, player);
             }
     }
 
-    private void activateTilesCluster(Tile origin, Player owner /* to not call getOwner() every recursion step */) {
-        if (origin.isActive()) return;
+    private void activateTilesCluster(Tile origin, Player player) {
         origin.activate();
-        for (Tile t : getNearbyTilesForPlayer(origin, owner))
-            activateTilesCluster(t, owner);
+        for (Tile tile : getNearbyTilesForPlayer(origin, player)) {
+            if (tile.getOwner() == player && tile.getState() == TileState.WALL && !tile.isActive())
+                activateTilesCluster(tile, player);
+            else if (tile.getState() == TileState.FREE)
+                tile.activate();
+        }
     }
+
 
     @Override
     public void freezeLostPlayer(final Player player) {
@@ -93,20 +127,18 @@ public final class RectangleBoard implements Board {
 
     @Override
     public List<Tile> getNearbyTilesForPlayer(Tile origin, Player player) {
-        int row = origin.getId() / tiles.size();
-        int col = origin.getId() % tiles.size();
+        int row = origin.getId() / colsAmount;
+        int col = origin.getId() % colsAmount;
         List<Tile> result = new LinkedList<>();
 
         if (row < rowsAmount - 1)
-            result.add(tiles.get(col).get(row + 1));
+            result.add(tiles.get(row + 1).get(col));
         if (row > 0)
-            result.add(tiles.get(col).get(row - 1));
+            result.add(tiles.get(row - 1).get(col));
         if (col > 0)
-            result.add(tiles.get(col - 1).get(row));
+            result.add(tiles.get(row).get(col - 1));
         if (col < colsAmount - 1)
-            result.add(tiles.get(col + 1).get(row));
-
-        result.removeIf(tile -> tile.getOwner() != player);
+            result.add(tiles.get(row).get(col + 1));
 
         return result;
     }
@@ -124,10 +156,10 @@ public final class RectangleBoard implements Board {
 
     private String tileInfo(Tile tile) {
         StringBuilder str = new StringBuilder("[ ");
-        str.append(tile.isActive() ? "A" : "D")
-                .append("; id=").append(tile.getId())
-                .append("; owner=").append(tile.getOwner() == null ? "null" : tile.getOwner().getNickname())
-                .append("; state=").append(tile.getState().toString())
+        str.append(tile.isActive() ? "A" : " ")
+                /*.append(" ").append(tile.getId())*/
+                .append(" ").append(tile.getOwner() == null ? "-" : tile.getOwner().getNickname())
+                .append(" ").append(tile.getState().toString())
                 .append(" ] ");
         return str.toString();
     }
