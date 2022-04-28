@@ -8,11 +8,16 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
 
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.validation.Schema;
+import javax.xml.validation.SchemaFactory;
+import javax.xml.validation.Validator;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -51,10 +56,13 @@ public class Layout {
 
         try {
             dbf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
-
             DocumentBuilder db = dbf.newDocumentBuilder();
+
             Document doc = db.parse(new File(filename));
             doc.getDocumentElement().normalize();
+
+            Schema schema = loadSchema("src\\main\\resources\\layout.xsd");
+            validateXml(schema, doc);
 
             // [0] - description
             // [1] - parameters
@@ -71,7 +79,7 @@ public class Layout {
                 processNodeAsTile(tileList.item(i));
 
             System.out.println();
-        } catch (IllegalArgumentException | ParserConfigurationException | SAXException |IOException e) {
+        } catch (IllegalArgumentException | ParserConfigurationException | SAXException | IOException e) {
             e.printStackTrace();
         }
     }
@@ -105,6 +113,16 @@ public class Layout {
                     Integer.parseInt(children.item(1).getTextContent()),
                     TileState.valueOf(children.item(2).getTextContent())));
         }
+    }
+
+    private static Schema loadSchema(String schemaFileName) throws SAXException {
+        SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+        return factory.newSchema(new File(schemaFileName));
+    }
+
+    public static void validateXml(Schema schema, Document document) throws IOException, SAXException {
+        Validator validator = schema.newValidator();
+        validator.validate(new DOMSource(document));
     }
 }
 
