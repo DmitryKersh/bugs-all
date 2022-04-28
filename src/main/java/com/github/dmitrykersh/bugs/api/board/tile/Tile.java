@@ -17,6 +17,13 @@ public class Tile {
         this.active = false;
     }
 
+    public Tile(int id, Player owner, TileState state) {
+        this.id = id;
+        this.owner = owner;
+        this.state = state;
+        this.active = false;
+    }
+
     public Player getOwner() { return owner; }
     public void setOwner(Player newOwner) { owner = newOwner; }
     public TileState getState() { return state; }

@@ -39,6 +39,14 @@ public class Layout {
         private int id;
         private int ownerNumber;
         private TileState state;
+
+        public int getOwnerNumber() {
+            return ownerNumber;
+        }
+
+        public TileState getState() {
+            return state;
+        }
     }
 
     public Layout() {
@@ -50,8 +58,11 @@ public class Layout {
     private Map<String, Integer> params;
     private Map<Integer, TileTemplate> tiles;
 
+    public TileTemplate getTileTemplate(int id) {
+        return tiles.get(id);
+    }
+
     public void LoadLayout(String filename) {
-        // TODO: XSD validation of input file
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 
         try {
@@ -120,7 +131,7 @@ public class Layout {
         return factory.newSchema(new File(schemaFileName));
     }
 
-    public static void validateXml(Schema schema, Document document) throws IOException, SAXException {
+    private static void validateXml(Schema schema, Document document) throws IOException, SAXException {
         Validator validator = schema.newValidator();
         validator.validate(new DOMSource(document));
     }

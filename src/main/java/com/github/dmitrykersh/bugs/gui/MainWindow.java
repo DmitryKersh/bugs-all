@@ -29,8 +29,10 @@ public class MainWindow /*extends Application*/ {
 
     public static void main(String[] args){
         //launch();
-/*
-        Board board = RectangleBoard.createBoard(null, new SimpleTurnValidator(), 8, 4, Arrays.asList("p1", "p2"));
+        Layout l = new Layout();
+        l.LoadLayout("src\\main\\resources\\layout_example.xml");
+
+        Board board = RectangleBoard.createBoard(l, new SimpleTurnValidator(), 8, 4, Arrays.asList("Sam", "Xi"));
 
         Player p1 = board.getPlayers().get(0);
         Player p2 = board.getPlayers().get(1);
@@ -48,8 +50,5 @@ public class MainWindow /*extends Application*/ {
             } while (!p2.tryMakeTurn(s.nextInt()));
 
         }
-        */
-        Layout l = new Layout();
-        l.LoadLayout("src\\main\\resources\\layout_example.xml");
     }
 }

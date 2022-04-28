@@ -11,22 +11,22 @@
 	<Tiles>
 		<Tile>
 			<Id>0</Id>
-			<OwnerNumber>0</OwnerNumber>
+			<OwnerNumber>1</OwnerNumber>
 			<State>BUG</State>
 		</Tile>
         <Tile>
             <Id>1</Id>
-            <OwnerNumber>0</OwnerNumber>
+            <OwnerNumber>1</OwnerNumber>
             <State>BUG</State>
         </Tile>
         <Tile>
             <Id>10</Id>
-            <OwnerNumber>1</OwnerNumber>
+            <OwnerNumber>2</OwnerNumber>
             <State>BUG</State>
         </Tile>
         <Tile>
             <Id>board_height $- 3</Id>
-            <OwnerNumber>1</OwnerNumber>
+            <OwnerNumber>2</OwnerNumber>
             <State>BUG</State>
         </Tile>
 	</Tiles>

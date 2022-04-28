@@ -17,6 +17,17 @@ import java.util.*;
  * this class represents game board
  * it implements all game's rules, validates players' turns
  * it also makes a scoreboard after game
+ *
+ * @TileID from zero, right-to-left, top-to-bottom.
+ * Thus, ID can be counted as (row * colsAmount + col)
+ *       Row can be counted as (ID / colsAmount)
+ *       Column can be counted as (ID % colsAmount)
+ *
+ *  +---+---+---+---+---+
+ *  | 0 | 1 | 2 | 3 | 4 |
+ *  +---+---+---+---+---+
+ *  | 5 | 6 | 7 | 8 | 9 |
+ *  +---+---+---+---+---+
  */
 
 public final class RectangleBoard implements Board {
@@ -29,31 +40,31 @@ public final class RectangleBoard implements Board {
     private int rowsAmount;
     private int colsAmount;
 
-    private RectangleBoard(TurnValidator validator, List<List<Tile>> tiles, List<Player> players) {
+    private RectangleBoard(Layout layout, TurnValidator validator, int rowsAmount, int colsAmount, List<Player> players) {
+        this.rowsAmount = rowsAmount;
+        this.colsAmount = colsAmount;
+        this.turnValidator = validator;
         this.players = players;
-        for (Player p : players)
-            p.setBoard(this);
-        this.tiles = tiles;
+
         ended = false;
         currentPlaceForLostPlayer = players.size();
-        rowsAmount = tiles.size();
-        colsAmount = tiles.get(0).size();
-        this.turnValidator = validator;
-    }
+        for (Player p : players)
+            p.setBoard(this);
 
-    public static RectangleBoard createBoard(Layout layout, TurnValidator validator, int rowsAmount, int columnsAmount, List<String> nicknames) {
-        if (rowsAmount <= 0 || columnsAmount <= 0){
-            throw new IllegalArgumentException("Incorrect RectangleBoard size");
-        }
-
-        List<List<Tile>> tiles = new ArrayList<>(rowsAmount);
+        tiles = new ArrayList<>(rowsAmount);
         for (int row = 0; row < rowsAmount; row++) {
-            tiles.add(row, new ArrayList<>(columnsAmount));
+            tiles.add(row, new ArrayList<>(this.colsAmount));
             List<Tile> tileRow = tiles.get(row);
 
-            for (int col = 0; col < columnsAmount; col++) {
-                tileRow.add(col, new Tile(row * columnsAmount + col));
+            for (int col = 0; col < this.colsAmount; col++) {
+                tileRow.add(col, getFromLayout(layout,row * this.colsAmount + col));
             }
+        }
+    }
+
+    public static RectangleBoard createBoard(Layout layout, TurnValidator validator, int rowsAmount, int colsAmount, List<String> nicknames) {
+        if (rowsAmount <= 0 || colsAmount <= 0){
+            throw new IllegalArgumentException("Incorrect RectangleBoard size");
         }
 
         // Creating players by nicknames
@@ -62,38 +73,7 @@ public final class RectangleBoard implements Board {
             players.add(new HumanPlayer(null, nickname, new PlayerState(), 5 /* TODO: maxTurns should be passed by layout*/));
         }
 
-        // TODO: Apply layout (tiles)
-
-        /////// INITIAL STATE (WILL BE CREATED BY LAYOUT LATER) ///////
-        Player p1 = players.get(0);
-        Player p2 = players.get(1);
-
-        tiles.get(0).get(0).changeState(p1);
-        tiles.get(7).get(3).changeState(p2);
-/*
-        tiles.get(1).get(0).changeState(p1);
-        tiles.get(1).get(1).changeState(p1);
-        tiles.get(1).get(2).changeState(p1);
-        tiles.get(1).get(3).changeState(p1);
-
-
-        tiles.get(1).get(0).changeState(p2);
-        tiles.get(1).get(1).changeState(p2);
-        tiles.get(1).get(2).changeState(p2);
-
-        tiles.get(5).get(0).changeState(p2);
-        tiles.get(2).get(0).changeState(p2);
-
-        tiles.get(6).get(3).changeState(p2);
-        tiles.get(7).get(3).changeState(p2);
-
-        tiles.get(6).get(3).changeState(p1);
-        tiles.get(7).get(3).changeState(p1);
-
-        tiles.get(7).get(2).changeState(p1);*/
-        ///////////////////////////////////////////////////////////////
-
-        return new RectangleBoard(validator, tiles, players);
+        return new RectangleBoard(layout, validator, rowsAmount, colsAmount, players);
     }
 
     @Override
@@ -118,18 +98,6 @@ public final class RectangleBoard implements Board {
             }
     }
 
-    private void activateTilesCluster(Tile origin, Player player) {
-        origin.activate();
-        for (Tile tile : getNearbyTilesForPlayer(origin, player)) {
-            if (tile.getState() == UNAVAILABLE) return;
-            if (tile.getOwner() == player && tile.getState() == WALL && !tile.isActive())
-                activateTilesCluster(tile, player);
-            else if (tile.getState() == FREE ||
-                    (tile.getOwner() != player && (tile.getState() == BUG
-                                                || tile.getState() == QUEEN)))
-                tile.activate();
-        }
-    }
     @Override
     public boolean tryMakeTurn(Player player, int tileId) {
         int row = tileId / colsAmount;
@@ -167,6 +135,33 @@ public final class RectangleBoard implements Board {
             result.add(tiles.get(row).get(col + 1));
 
         return result;
+    }
+
+    private void activateTilesCluster(Tile origin, Player player) {
+        origin.activate();
+        for (Tile tile : getNearbyTilesForPlayer(origin, player)) {
+            if (tile.getState() == UNAVAILABLE) return;
+            if (tile.getOwner() == player && tile.getState() == WALL && !tile.isActive())
+                activateTilesCluster(tile, player);
+            else if (tile.getState() == FREE ||
+                    (tile.getOwner() != player && (tile.getState() == BUG
+                            || tile.getState() == QUEEN)))
+                tile.activate();
+        }
+    }
+
+    private Tile getFromLayout(Layout layout, int id) {
+        // in layout file OwnerNumber-s start from 1. 0 represents null owner.
+        Layout.TileTemplate tt = layout.getTileTemplate(id);
+        if (tt == null) {
+            return new Tile(id);
+        }
+        int ownerNumber = tt.getOwnerNumber();
+        return new Tile(
+                id,
+                ownerNumber == 0 ? null : players.get(ownerNumber - 1),
+                tt.getState()
+        );
     }
 
     ////////////// TESTING IN CONSOLE STUFF ////////////////////
