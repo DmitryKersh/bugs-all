@@ -1,6 +1,7 @@
 package com.github.dmitrykersh.bugs.gui;
 
 import com.github.dmitrykersh.bugs.api.board.Board;
+import com.github.dmitrykersh.bugs.api.board.Layout;
 import com.github.dmitrykersh.bugs.api.board.RectangleBoard;
 import com.github.dmitrykersh.bugs.api.board.validator.SimpleTurnValidator;
 import com.github.dmitrykersh.bugs.api.player.HumanPlayer;
@@ -28,7 +29,7 @@ public class MainWindow /*extends Application*/ {
 
     public static void main(String[] args){
         //launch();
-
+/*
         Board board = RectangleBoard.createBoard(null, new SimpleTurnValidator(), 8, 4, Arrays.asList("p1", "p2"));
 
         Player p1 = board.getPlayers().get(0);
@@ -47,5 +48,8 @@ public class MainWindow /*extends Application*/ {
             } while (!p2.tryMakeTurn(s.nextInt()));
 
         }
+        */
+        Layout l = new Layout();
+        l.LoadLayout("src\\main\\resources\\layout_example.xml");
     }
 }

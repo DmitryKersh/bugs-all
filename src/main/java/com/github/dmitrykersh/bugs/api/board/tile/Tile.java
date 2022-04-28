@@ -12,6 +12,7 @@ public class Tile {
 
     public Tile(int id) {
         this.id = id;
+        this.owner = null;
         this.state = FREE;
         this.active = false;
     }
