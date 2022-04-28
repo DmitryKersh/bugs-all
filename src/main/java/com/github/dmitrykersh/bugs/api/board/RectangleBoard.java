@@ -37,11 +37,15 @@ public final class RectangleBoard implements Board {
         ended = false;
         currentPlaceForLostPlayer = players.size();
         rowsAmount = tiles.size();
-        colsAmount = tiles.get(0) == null ? 0 : tiles.get(0).size();
+        colsAmount = tiles.get(0).size();
         this.turnValidator = validator;
     }
 
     public static RectangleBoard createBoard(Layout layout, TurnValidator validator, int rowsAmount, int columnsAmount, List<String> nicknames) {
+        if (rowsAmount <= 0 || columnsAmount <= 0){
+            throw new IllegalArgumentException("Incorrect RectangleBoard size");
+        }
+
         List<List<Tile>> tiles = new ArrayList<>(rowsAmount);
         for (int row = 0; row < rowsAmount; row++) {
             tiles.add(row, new ArrayList<>(columnsAmount));
