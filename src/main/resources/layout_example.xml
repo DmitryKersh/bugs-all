@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Layout xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:noNamespaceSchemaLocation='layout.xsd'>
+	<Description>Layout Example</Description>
+	<Parameters>
+		<Param>
+			<Name>board_height</Name>
+			<DefaultValue>10</DefaultValue>
+			<Description>Board height</Description>
+		</Param>
+	</Parameters>
+	<Tiles>
+		<Tile>
+			<Id>0</Id>
+			<OwnerNumber>0</OwnerNumber>
+			<State>BUG</State>
+		</Tile>
+        <Tile>
+            <Id>1</Id>
+            <OwnerNumber>0</OwnerNumber>
+            <State>BUG</State>
+        </Tile>
+        <Tile>
+            <Id>10</Id>
+            <OwnerNumber>1</OwnerNumber>
+            <State>BUG</State>
+        </Tile>
+        <Tile>
+            <Id>board_height $- 3</Id>
+            <OwnerNumber>1</OwnerNumber>
+            <State>BUG</State>
+        </Tile>
+	</Tiles>
+</Layout>
