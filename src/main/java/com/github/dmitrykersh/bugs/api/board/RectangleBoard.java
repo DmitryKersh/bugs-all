@@ -201,7 +201,7 @@ public final class RectangleBoard implements Board {
     ////////////// TESTING IN CONSOLE STUFF ////////////////////
     @Override
     public void print(PrintStream ps, Player player) {
-        SimpleTurnValidator validator = new SimpleTurnValidator();
+        TurnValidator validator = SimpleTurnValidator.INSTANCE;
         for (List<Tile> row : tiles) {
             for (Tile t : row) {
                 ps.printf("[ %3s  %1s %5.5s %5.5s]",

@@ -6,7 +6,9 @@ import com.github.dmitrykersh.bugs.api.board.Board;
 import com.github.dmitrykersh.bugs.api.player.Player;
 
 public class SimpleTurnValidator implements TurnValidator {
-    public SimpleTurnValidator() {}
+    public static TurnValidator INSTANCE = new SimpleTurnValidator();
+    private SimpleTurnValidator() {}
+
     @Override
     public boolean validateTurn(final Board board, final Player attacker, final Tile attackedTile) {
         board.activateTiles(attacker);

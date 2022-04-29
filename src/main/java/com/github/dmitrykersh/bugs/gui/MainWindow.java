@@ -38,7 +38,7 @@ public class MainWindow /*extends Application*/ {
         Layout l = new Layout(layoutParams);
         l.LoadLayout("src\\main\\resources\\smallgame.xml");
 
-        Board board = RectangleBoard.createBoard(l, new SimpleTurnValidator(), rows, columns, Arrays.asList("Sam", "Nick"));
+        Board board = RectangleBoard.createBoard(l, SimpleTurnValidator.INSTANCE, rows, columns, Arrays.asList("Sam", "Nick"));
 
         Scanner s = new Scanner(System.in);
         Player p;
