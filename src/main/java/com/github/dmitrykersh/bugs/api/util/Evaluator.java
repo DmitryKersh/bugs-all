@@ -16,9 +16,12 @@ public class Evaluator {
     public static final String ARITH_SIGN_PREFIX = "\\$";
     public static final String DIGIT = "[\\d\\-]";
     public static final String DECIMAL = "-?\\d+(\\.\\d+)?";
+
     public static final Pattern ARITH_PRIOR_1 = Pattern.compile(DECIMAL + "\\s\\$\\^\\s" + DECIMAL);
     public static final Pattern ARITH_PRIOR_2 = Pattern.compile(DECIMAL + "\\s\\$[*/]\\s" + DECIMAL);
     public static final Pattern ARITH_PRIOR_3 = Pattern.compile(DECIMAL + "\\s\\$[+-]\\s" + DECIMAL);
+    public static final Pattern ARITH_BRACKETS_PATTERN = Pattern.compile(
+            "\\(" + DECIMAL + "(\\s\\$[+\\-/*\\^]\\s" + DECIMAL + ")+\\)");
 
     public static String evaluateSimpleEquation(final String str) {
         String s = str;
@@ -114,6 +117,28 @@ public class Evaluator {
 
     public static int evaluateSimpleEquationAsInt(String s) {
         Double value = Double.parseDouble(evaluateSimpleEquation(s));
+        return value.intValue();
+    }
+
+    public static String evaluateComplexEquation(String equation) {
+        Matcher arithBracketsMatcher = ARITH_BRACKETS_PATTERN.matcher(equation);
+        arithBracketsMatcher.reset(equation);
+        // evaluate all brackets
+        while (arithBracketsMatcher.find()){
+            int start = arithBracketsMatcher.start();
+            int end = arithBracketsMatcher.end();
+
+            String bracket_part = equation.substring(start + 1, end - 1);
+
+            equation = arithBracketsMatcher.replaceFirst(evaluateSimpleEquation(bracket_part));
+            arithBracketsMatcher.reset(equation);
+        }
+        // evaluate remaining equation
+        return evaluateSimpleEquation(equation);
+    }
+
+    public static int evaluateComplexEquationAsInt(String s) {
+        Double value = Double.parseDouble(evaluateComplexEquation(s));
         return value.intValue();
     }
 }

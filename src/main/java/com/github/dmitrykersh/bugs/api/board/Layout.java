@@ -37,8 +37,8 @@ public class Layout {
         }
 
         private int id;
-        private int ownerNumber;
-        private TileState state;
+        private final int ownerNumber;
+        private final TileState state;
 
         public int getOwnerNumber() {
             return ownerNumber;
@@ -51,6 +51,11 @@ public class Layout {
 
     public Layout() {
         params = new HashMap<>();
+        tiles = new HashMap<>();
+    }
+
+    public Layout(final Map<String, Integer> params) {
+        this.params = params;
         tiles = new HashMap<>();
     }
 
@@ -119,7 +124,7 @@ public class Layout {
             for (Map.Entry<String, Integer> param : params.entrySet()) {
                 idStr = idStr.replace(param.getKey(), param.getValue().toString());
             }
-            Integer id = Evaluator.evaluateSimpleEquationAsInt(idStr);
+            Integer id = Evaluator.evaluateComplexEquationAsInt(idStr);
             tiles.put(id, new TileTemplate(id,
                     Integer.parseInt(children.item(1).getTextContent()),
                     TileState.valueOf(children.item(2).getTextContent())));

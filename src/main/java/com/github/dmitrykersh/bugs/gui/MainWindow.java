@@ -8,9 +8,7 @@ import com.github.dmitrykersh.bugs.api.player.HumanPlayer;
 import com.github.dmitrykersh.bugs.api.player.Player;
 import com.github.dmitrykersh.bugs.api.player.PlayerState;
 
-import java.util.Arrays;
-import java.util.Scanner;
-import java.util.Vector;
+import java.util.*;
 
 public class MainWindow /*extends Application*/ {
     /*@Override
@@ -29,13 +27,21 @@ public class MainWindow /*extends Application*/ {
 
     public static void main(String[] args){
         //launch();
-        Layout l = new Layout();
+        final int rows = 12;
+        final int columns = 6;
+
+        Map<String, Integer> layoutParams = Map.of(
+                "rows", rows,
+                "columns", columns
+        );
+
+        Layout l = new Layout(layoutParams);
         l.LoadLayout("src\\main\\resources\\layout_example.xml");
 
-        Board board = RectangleBoard.createBoard(l, new SimpleTurnValidator(), 8, 4, Arrays.asList("Sam", "Xi"));
+        Board board = RectangleBoard.createBoard(l, new SimpleTurnValidator(), rows, columns, Arrays.asList("Sam"));
 
         Player p1 = board.getPlayers().get(0);
-        Player p2 = board.getPlayers().get(1);
+        //Player p2 = board.getPlayers().get(1);
 
         Scanner s = new Scanner(System.in);
         while (true) {
@@ -46,8 +52,8 @@ public class MainWindow /*extends Application*/ {
 
             do {
                 System.out.println("[ player 2 ]");
-                board.print(System.out, p2);
-            } while (!p2.tryMakeTurn(s.nextInt()));
+                board.print(System.out, p1);
+            } while (!p1.tryMakeTurn(s.nextInt()));
 
         }
     }

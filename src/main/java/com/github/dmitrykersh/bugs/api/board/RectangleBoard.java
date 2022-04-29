@@ -153,10 +153,12 @@ public final class RectangleBoard implements Board {
     private Tile getFromLayout(Layout layout, int id) {
         // in layout file OwnerNumber-s start from 1. 0 represents null owner.
         Layout.TileTemplate tt = layout.getTileTemplate(id);
-        if (tt == null) {
+        int ownerNumber;
+
+        if (tt == null || players.size() <= (ownerNumber = tt.getOwnerNumber()) - 1) {
             return new Tile(id);
         }
-        int ownerNumber = tt.getOwnerNumber();
+
         return new Tile(
                 id,
                 ownerNumber == 0 ? null : players.get(ownerNumber - 1),
@@ -167,23 +169,18 @@ public final class RectangleBoard implements Board {
     ////////////// TESTING IN CONSOLE STUFF ////////////////////
     @Override
     public void print(PrintStream ps, Player player) {
+        SimpleTurnValidator validator = new SimpleTurnValidator();
         for (List<Tile> row : tiles) {
             for (Tile t : row) {
-                ps.print(tileInfo(t, player));
+                ps.printf("[ %3s  %1s %10.10s %5.5s]",
+                        t.getId(),
+                        validator.validateTurn(this, player, t) ? "+" : " ",
+                        t.getOwner() == null ? "-" : t.getOwner().getNickname(),
+                        t.getState() == FREE ? "-" : t.getState().toString());
             }
             ps.print("\n");
         }
     }
 
-    private String tileInfo(Tile tile, Player player) {
-        SimpleTurnValidator validator = new SimpleTurnValidator();
-        StringBuilder str = new StringBuilder("[ ");
-        str.append(tile.getId())
-                .append(" ").append(validator.validateTurn(this, player, tile) ? "+" : " ")
-                .append(" ").append(tile.getOwner() == null ? "-" : tile.getOwner().getNickname())
-                .append(" ").append(tile.getState() == FREE ? " - " : tile.getState().toString())
-                .append(" ] ");
-        return str.toString();
-    }
     ////////////////////////////////////////////////////////////
 }

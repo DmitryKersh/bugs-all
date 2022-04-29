@@ -1,12 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Layout>
-	<Description>Layout Example</Description>
+	<Description>Classical game layout. Make sure that there are at least 10 rows and 5 columns</Description>
 	<Parameters>
 		<Param>
-			<Name>board_height</Name>
+			<Name>rows</Name>
 			<DefaultValue>10</DefaultValue>
 			<Description>Board height</Description>
 		</Param>
+        <Param>
+            <Name>columns</Name>
+            <DefaultValue>10</DefaultValue>
+            <Description>Board width</Description>
+        </Param>
 	</Parameters>
 	<Tiles>
 		<Tile>
@@ -20,12 +25,160 @@
             <State>BUG</State>
         </Tile>
         <Tile>
-            <Id>10</Id>
+            <Id>2</Id>
+            <OwnerNumber>1</OwnerNumber>
+            <State>BUG</State>
+        </Tile>
+        <Tile>
+            <Id>3</Id>
+            <OwnerNumber>1</OwnerNumber>
+            <State>BUG</State>
+        </Tile>
+
+        <Tile>
+            <Id>columns</Id>
+            <OwnerNumber>1</OwnerNumber>
+            <State>BUG</State>
+        </Tile>
+        <Tile>
+            <Id>columns $+ 1</Id>
+            <OwnerNumber>1</OwnerNumber>
+            <State>QUEEN</State>
+        </Tile>
+        <Tile>
+            <Id>columns $+ 2</Id>
+            <OwnerNumber>1</OwnerNumber>
+            <State>QUEEN</State>
+        </Tile>
+        <Tile>
+            <Id>columns $+ 3</Id>
+            <OwnerNumber>1</OwnerNumber>
+            <State>BUG</State>
+        </Tile>
+
+        <Tile>
+            <Id>2 $* columns</Id>
+            <OwnerNumber>1</OwnerNumber>
+            <State>BUG</State>
+        </Tile>
+        <Tile>
+            <Id>2 $* columns $+ 1</Id>
+            <OwnerNumber>1</OwnerNumber>
+            <State>QUEEN</State>
+        </Tile>
+        <Tile>
+            <Id>2 $* columns $+ 2</Id>
+            <OwnerNumber>1</OwnerNumber>
+            <State>QUEEN</State>
+        </Tile>
+        <Tile>
+            <Id>2 $* columns $+ 3</Id>
+            <OwnerNumber>1</OwnerNumber>
+            <State>BUG</State>
+        </Tile>
+
+        <Tile>
+            <Id>3 $* columns</Id>
+            <OwnerNumber>1</OwnerNumber>
+            <State>BUG</State>
+        </Tile>
+        <Tile>
+            <Id>3 $* columns $+ 1</Id>
+            <OwnerNumber>1</OwnerNumber>
+            <State>BUG</State>
+        </Tile>
+        <Tile>
+            <Id>3 $* columns $+ 2</Id>
+            <OwnerNumber>1</OwnerNumber>
+            <State>BUG</State>
+        </Tile>
+        <Tile>
+            <Id>3 $* columns $+ 3</Id>
+            <OwnerNumber>1</OwnerNumber>
+            <State>BUG</State>
+        </Tile>
+
+        <!-- player 2 -->
+        <Tile>
+            <Id>(rows $- 1) $* columns</Id>
             <OwnerNumber>2</OwnerNumber>
             <State>BUG</State>
         </Tile>
         <Tile>
-            <Id>board_height $- 3</Id>
+            <Id>(rows $- 1) $* columns $+ 1</Id>
+            <OwnerNumber>2</OwnerNumber>
+            <State>BUG</State>
+        </Tile>
+        <Tile>
+            <Id>(rows $- 1) $* columns $+ 2</Id>
+            <OwnerNumber>2</OwnerNumber>
+            <State>BUG</State>
+        </Tile>
+        <Tile>
+            <Id>(rows $- 1) $* columns $+ 3</Id>
+            <OwnerNumber>2</OwnerNumber>
+            <State>BUG</State>
+        </Tile>
+
+        <Tile>
+            <Id>(rows $- 2) $* columns</Id>
+            <OwnerNumber>2</OwnerNumber>
+            <State>BUG</State>
+        </Tile>
+        <Tile>
+            <Id>(rows $- 2) $* columns $+ 1</Id>
+            <OwnerNumber>2</OwnerNumber>
+            <State>QUEEN</State>
+        </Tile>
+        <Tile>
+            <Id>(rows $- 2) $* columns $+ 2</Id>
+            <OwnerNumber>2</OwnerNumber>
+            <State>QUEEN</State>
+        </Tile>
+        <Tile>
+            <Id>(rows $- 2) $* columns $+ 3</Id>
+            <OwnerNumber>2</OwnerNumber>
+            <State>BUG</State>
+        </Tile>
+
+        <Tile>
+            <Id>(rows $- 3) $* columns</Id>
+            <OwnerNumber>2</OwnerNumber>
+            <State>BUG</State>
+        </Tile>
+        <Tile>
+            <Id>(rows $- 3) $* columns $+ 1</Id>
+            <OwnerNumber>2</OwnerNumber>
+            <State>QUEEN</State>
+        </Tile>
+        <Tile>
+            <Id>(rows $- 3) $* columns $+ 2</Id>
+            <OwnerNumber>2</OwnerNumber>
+            <State>QUEEN</State>
+        </Tile>
+        <Tile>
+            <Id>(rows $- 3) $* columns $+ 3</Id>
+            <OwnerNumber>2</OwnerNumber>
+            <State>BUG</State>
+        </Tile>
+
+        <Tile>
+            <Id>(rows $- 4) $* columns</Id>
+            <OwnerNumber>2</OwnerNumber>
+            <State>BUG</State>
+        </Tile>
+        <Tile>
+            <Id>(rows $- 4) $* columns $+ 1</Id>
+            <OwnerNumber>2</OwnerNumber>
+            <State>BUG</State>
+        </Tile>
+        <Tile>
+            <Id>(rows $- 4) $* columns $+ 2</Id>
+            <OwnerNumber>2</OwnerNumber>
+            <State>BUG</State>
+        </Tile>
+        <Tile>
+            <Id>(rows $- 4) $* columns $+ 3</Id>
             <OwnerNumber>2</OwnerNumber>
             <State>BUG</State>
         </Tile>
