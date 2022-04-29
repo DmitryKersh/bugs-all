@@ -33,11 +33,12 @@ import java.util.*;
 
 public final class RectangleBoard implements Board {
     private final List<Player> players;
+    private final List<Player> scoreboard;
     private final List<List<Tile>> tiles;
     private final TurnValidator turnValidator;
 
     // game-state variables
-    private Integer currentPlaceForLostPlayer;
+    private boolean ended;
     private int activePlayerNumber;
 
     // board size
@@ -50,9 +51,10 @@ public final class RectangleBoard implements Board {
         this.colsAmount = colsAmount;
         this.turnValidator = validator;
         this.players = players;
+        this.scoreboard = new LinkedList<>();
         activePlayerNumber = 0;
+        ended = false;
 
-        currentPlaceForLostPlayer = players.size();
         for (Player p : players)
             p.setBoard(this);
 
@@ -62,7 +64,7 @@ public final class RectangleBoard implements Board {
             List<Tile> tileRow = tiles.get(row);
 
             for (int col = 0; col < this.colsAmount; col++) {
-                tileRow.add(col, getFromLayout(layout, row * this.colsAmount + col));
+                tileRow.add(col, getTileFromLayout(layout, row * this.colsAmount + col));
             }
         }
     }
@@ -83,8 +85,18 @@ public final class RectangleBoard implements Board {
     }
 
     @Override
+    public boolean ended() {
+        return ended;
+    }
+
+    @Override
     public List<Player> getPlayers() {
-        return players;
+        return Collections.unmodifiableList(players);
+    }
+
+    @Override
+    public List<Player> getScoreboard() {
+        return Collections.unmodifiableList(scoreboard);
     }
 
     @Override
@@ -106,6 +118,8 @@ public final class RectangleBoard implements Board {
 
     @Override
     public boolean tryMakeTurn(@NotNull Player player, int tileId) {
+        if (ended || players.get(activePlayerNumber) != player) return false;
+
         int row = tileId / colsAmount;
         int col = tileId % colsAmount;
         if (row >= rowsAmount) return false;
@@ -116,8 +130,13 @@ public final class RectangleBoard implements Board {
 
             if (attackedPlayer != null && tile.getState() == QUEEN) {
                 attackedPlayer.reduceQueenTile();
-                if (!attackedPlayer.hasQueenTiles())
+                if (!attackedPlayer.hasQueenTiles()) {
                     freezeLostPlayer(attackedPlayer);
+                    if (players.size() == 1) {
+                        freezeLostPlayer(players.get(0));
+                        ended = true;
+                    }
+                }
             }
 
             tile.changeState(player);
@@ -129,14 +148,17 @@ public final class RectangleBoard implements Board {
     }
 
     @Override
-    public void freezeLostPlayer(final @NotNull Player player) {
-        player.setPlace(currentPlaceForLostPlayer);
-        players.remove(player);
-        currentPlaceForLostPlayer--;
+    public Player getActivePlayer() {
+        return players.get(activePlayerNumber);
     }
 
     @Override
-    public List<Tile> getNearbyTilesForPlayer(final @NotNull Tile origin, final @NotNull Player player) {
+    public void freezeLostPlayer(final @NotNull Player player) {
+        players.remove(player);
+        scoreboard.add(0, player);
+    }
+
+    private List<Tile> getNearbyTilesForPlayer(final @NotNull Tile origin, final @NotNull Player player) {
         int row = origin.getId() / colsAmount;
         int col = origin.getId() % colsAmount;
         List<Tile> result = new LinkedList<>();
@@ -151,11 +173,6 @@ public final class RectangleBoard implements Board {
             result.add(tiles.get(row).get(col + 1));
 
         return result;
-    }
-
-    @Override
-    public Player getActivePlayer() {
-        return players.get(activePlayerNumber);
     }
 
     private void activateTilesCluster(final @NotNull Tile origin, final @NotNull Player player) {
@@ -181,7 +198,7 @@ public final class RectangleBoard implements Board {
      * @return if not found in layout: default tile (id=id, owner=null, state=FREE, active=false)
      * if found: tile created from template
      */
-    private Tile getFromLayout(final @NotNull Layout layout, int id) {
+    private Tile getTileFromLayout(final @NotNull Layout layout, int id) {
         // in layout file OwnerNumber-s start from 1. 0 represents null owner.
         Layout.TileTemplate tt = layout.getTileTemplate(id);
         int ownerNumber;

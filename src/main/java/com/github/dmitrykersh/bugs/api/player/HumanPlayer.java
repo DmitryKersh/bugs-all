@@ -66,26 +66,6 @@ public class HumanPlayer implements Player {
     }
 
     @Override
-    public void setPlace(int place) {
-        state.place = place;
-    }
-
-    @Override
-    public int getPlace() {
-        return state.place;
-    }
-
-    @Override
-    public boolean getActive() {
-        return state.isActive;
-    }
-
-    @Override
-    public void setActive(boolean active) {
-        state.isActive = active;
-    }
-
-    @Override
     public Color getColor() {
         return null;
     }

@@ -10,12 +10,6 @@ public interface Player {
     String getNickname();
     void setBoard(final @NotNull Board b);
 
-    void setPlace(int place);
-    int getPlace();
-
-    boolean getActive();
-    void setActive(boolean active);
-
     boolean hasQueenTiles();
     void reduceQueenTile();
     void restoreQueenTile();

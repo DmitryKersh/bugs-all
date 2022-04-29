@@ -55,25 +55,6 @@ public class BotPlayer implements Player {
 
     }
 
-    @Override
-    public void setPlace(int place) {
-
-    }
-
-    @Override
-    public int getPlace() {
-        return 0;
-    }
-
-    @Override
-    public boolean getActive() {
-        return false;
-    }
-
-    @Override
-    public void setActive(boolean active) {
-
-    }
 
     public Color getColor() {
         return null;

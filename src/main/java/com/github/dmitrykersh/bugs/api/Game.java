@@ -31,10 +31,7 @@ public class Game {
             Iterator<Player> iter = playersQueue.iterator();
             while (iter.hasNext()){
                 Player currentPlayer = iter.next();
-                if (!currentPlayer.getActive()) {
-                    playersQueue.remove(currentPlayer);
-                    continue;
-                }
+
                 currentPlayer.restoreTurns();
                 while (currentPlayer.getTurnsLeft() > 0) {
                     // turn

@@ -9,12 +9,13 @@ import java.util.List;
 import java.util.Vector;
 
 public interface Board {
+    boolean ended();
     List<Player> getPlayers();
+    List<Player> getScoreboard();
+    Player getActivePlayer();
     void activateTiles(final @NotNull Player player);
     boolean tryMakeTurn(final @NotNull Player player, int tileId);
     void freezeLostPlayer(final @NotNull Player player);
-    List<Tile> getNearbyTilesForPlayer(final @NotNull Tile origin, final @NotNull Player player);
-    Player getActivePlayer();
 
     // for prototype testing
     void print (final @NotNull PrintStream ps, final @NotNull Player player);

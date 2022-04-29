@@ -25,10 +25,10 @@ public class MainWindow /*extends Application*/ {
         }
     }*/
 
-    public static void main(String[] args){
+    public static void main(String[] args) {
         //launch();
-        final int rows = 5;
-        final int columns = 4;
+        final int rows = 6;
+        final int columns = 6;
 
         Map<String, Integer> layoutParams = Map.of(
                 "rows", rows,
@@ -36,22 +36,22 @@ public class MainWindow /*extends Application*/ {
         );
 
         Layout l = new Layout(layoutParams);
-        l.LoadLayout("src\\main\\resources\\smallgame.xml");
+        l.LoadLayout("src\\main\\resources\\4player.xml");
 
-        Board board = RectangleBoard.createBoard(l, SimpleTurnValidator.INSTANCE, rows, columns, Arrays.asList("Sam", "Nick"));
+        Board board = RectangleBoard.createBoard(l, SimpleTurnValidator.INSTANCE, rows, columns, Arrays.asList("Alan", "Ben"));
 
         Scanner s = new Scanner(System.in);
-        Player p;
-        while (true) {
-            do {
-                p = board.getActivePlayer();
-                System.out.printf("[ %s's turn ]\n", p.getNickname());
-                board.print(System.out, p);
-            } while (!p.tryMakeTurn(s.nextInt()));
-            if (board.getPlayers().size() == 1) {
-                System.out.printf(" %s wins!", p.getNickname());
-                break;
-            }
+        Player currentPlayer;
+
+        while (!board.ended()) {
+            currentPlayer = board.getActivePlayer();
+            System.out.printf("[ %s's turn ]\n", currentPlayer.getNickname());
+            board.print(System.out, currentPlayer);
+            currentPlayer.tryMakeTurn(s.nextInt());
         }
+        for (Player player : board.getScoreboard()) {
+            System.out.println(player.getNickname());
+        }
+
     }
 }
