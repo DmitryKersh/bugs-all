@@ -13,6 +13,7 @@ public interface Board {
     boolean tryMakeTurn(Player player, int tileId);
     void freezeLostPlayer(Player player);
     List<Tile> getNearbyTilesForPlayer(Tile origin, Player player);
+    Player getActivePlayer();
 
     // for prototype testing
     void print (PrintStream ps, Player player);

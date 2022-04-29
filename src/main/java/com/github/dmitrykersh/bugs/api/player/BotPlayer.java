@@ -3,6 +3,9 @@ package com.github.dmitrykersh.bugs.api.player;
 import com.github.dmitrykersh.bugs.api.board.Board;
 import javafx.scene.paint.Color;
 
+/**
+ * Empty class for now. Don't use!
+ */
 public class BotPlayer implements Player {
 
     @Override
@@ -28,6 +31,11 @@ public class BotPlayer implements Player {
 
     @Override
     public void reduceQueenTile() {
+
+    }
+
+    @Override
+    public void restoreQueenTile() {
 
     }
 

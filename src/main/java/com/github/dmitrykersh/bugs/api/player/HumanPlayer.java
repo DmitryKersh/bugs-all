@@ -34,12 +34,17 @@ public class HumanPlayer implements Player {
 
     @Override
     public boolean hasQueenTiles() {
-        return state.queenTiles != 0;
+        return state.queenTiles > 0;
     }
 
     @Override
     public void reduceQueenTile() {
         state.queenTiles--;
+    }
+
+    @Override
+    public void restoreQueenTile() {
+        state.queenTiles++;
     }
 
     @Override

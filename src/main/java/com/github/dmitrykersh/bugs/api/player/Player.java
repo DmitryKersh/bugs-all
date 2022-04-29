@@ -16,6 +16,7 @@ public interface Player {
 
     boolean hasQueenTiles();
     void reduceQueenTile();
+    void restoreQueenTile();
 
     int getTurnsLeft();
     void spendTurn();

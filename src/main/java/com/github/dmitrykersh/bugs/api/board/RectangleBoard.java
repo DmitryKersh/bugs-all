@@ -35,6 +35,7 @@ public final class RectangleBoard implements Board {
     private final List<Player> players;
     private final List<List<Tile>> tiles;
     private Integer currentPlaceForLostPlayer;
+    private int activePlayerNumber;
     private TurnValidator turnValidator;
 
     private int rowsAmount;
@@ -45,6 +46,7 @@ public final class RectangleBoard implements Board {
         this.colsAmount = colsAmount;
         this.turnValidator = validator;
         this.players = players;
+        activePlayerNumber = 0;
 
         ended = false;
         currentPlaceForLostPlayer = players.size();
@@ -106,7 +108,17 @@ public final class RectangleBoard implements Board {
 
         Tile tile = tiles.get(row).get(col);
         if (turnValidator.validateTurn(this, player, tile)) {
+            Player attackedPlayer = tile.getOwner();
+
+            if (attackedPlayer != null && tile.getState() == QUEEN) {
+                attackedPlayer.reduceQueenTile();
+                if (!attackedPlayer.hasQueenTiles())
+                    freezeLostPlayer(attackedPlayer);
+            }
+
             tile.changeState(player);
+            activePlayerNumber++;
+            if (activePlayerNumber >= players.size()) activePlayerNumber = 0;
             return true;
         }
         return false;
@@ -115,7 +127,7 @@ public final class RectangleBoard implements Board {
     @Override
     public void freezeLostPlayer(final Player player) {
         player.setPlace(currentPlaceForLostPlayer);
-        player.setActive(false);
+        players.remove(player);
         currentPlaceForLostPlayer--;
     }
 
@@ -137,6 +149,11 @@ public final class RectangleBoard implements Board {
         return result;
     }
 
+    @Override
+    public Player getActivePlayer() {
+        return players.get(activePlayerNumber);
+    }
+
     private void activateTilesCluster(Tile origin, Player player) {
         origin.activate();
         for (Tile tile : getNearbyTilesForPlayer(origin, player)) {
@@ -150,6 +167,16 @@ public final class RectangleBoard implements Board {
         }
     }
 
+    /**
+     * This method gets TileTemplate from a given layout and returns a Tile created from it.
+     * In addition, it counts QUEEN-tiles: if there's a QUEEN tile,
+     * the method increments PlayerState.queenTiles for its owner
+     *
+     * @param layout given layout
+     * @param id     tile id to search for in layout
+     * @return       if not found in layout: default tile (id=id, owner=null, state=FREE, active=false)
+     *               if found: tile created from template
+     */
     private Tile getFromLayout(Layout layout, int id) {
         // in layout file OwnerNumber-s start from 1. 0 represents null owner.
         Layout.TileTemplate tt = layout.getTileTemplate(id);
@@ -157,6 +184,11 @@ public final class RectangleBoard implements Board {
 
         if (tt == null || players.size() <= (ownerNumber = tt.getOwnerNumber()) - 1) {
             return new Tile(id);
+        }
+
+        TileState state = tt.getState();
+        if (state == QUEEN && ownerNumber != 0) {
+            players.get(ownerNumber - 1).restoreQueenTile();
         }
 
         return new Tile(
@@ -172,7 +204,7 @@ public final class RectangleBoard implements Board {
         SimpleTurnValidator validator = new SimpleTurnValidator();
         for (List<Tile> row : tiles) {
             for (Tile t : row) {
-                ps.printf("[ %3s  %1s %10.10s %5.5s]",
+                ps.printf("[ %3s  %1s %5.5s %5.5s]",
                         t.getId(),
                         validator.validateTurn(this, player, t) ? "+" : " ",
                         t.getOwner() == null ? "-" : t.getOwner().getNickname(),
