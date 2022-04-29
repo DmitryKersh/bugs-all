@@ -1,6 +1,7 @@
 package com.github.dmitrykersh.bugs.api.board.tile;
 
 import com.github.dmitrykersh.bugs.api.player.Player;
+import org.jetbrains.annotations.NotNull;
 
 import static com.github.dmitrykersh.bugs.api.board.tile.TileState.*;
 
@@ -25,7 +26,7 @@ public class Tile {
     }
 
     public Player getOwner() { return owner; }
-    public void setOwner(Player newOwner) { owner = newOwner; }
+    public void setOwner(final @NotNull Player newOwner) { owner = newOwner; }
     public TileState getState() { return state; }
     public void activate() { active = true; }
     public void deactivate() { active = false; }
@@ -33,7 +34,7 @@ public class Tile {
 
     public int getId() { return id; }
 
-    public void changeState (Player attacker) {
+    public void changeState (final @NotNull Player attacker) {
         if (owner == attacker || state == WALL || state == UNAVAILABLE) return;
         state = owner == null ? BUG : WALL;
         owner = attacker;

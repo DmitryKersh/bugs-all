@@ -2,6 +2,8 @@ package com.github.dmitrykersh.bugs.api.player;
 
 import com.github.dmitrykersh.bugs.api.board.Board;
 import javafx.scene.paint.Color;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class HumanPlayer implements Player {
     private PlayerState state;
@@ -10,7 +12,7 @@ public class HumanPlayer implements Player {
 
     private Board board;
 
-    public HumanPlayer(Board board, String nickname, PlayerState state, int maxTurns) {
+    public HumanPlayer(final @Nullable Board board, final @NotNull String nickname, final @NotNull PlayerState state, int maxTurns) {
         this.state = state;
         this.nickname = nickname;
         this.maxTurns = maxTurns;
@@ -28,7 +30,7 @@ public class HumanPlayer implements Player {
     }
 
     @Override
-    public void setBoard(Board b) {
+    public void setBoard(final @NotNull Board b) {
         board = b;
     }
 

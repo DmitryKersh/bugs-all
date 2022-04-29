@@ -3,6 +3,7 @@ package com.github.dmitrykersh.bugs.api.board;
 import com.github.dmitrykersh.bugs.api.board.tile.TileState;
 import com.github.dmitrykersh.bugs.api.util.Evaluator;
 import com.github.dmitrykersh.bugs.api.util.NdList;
+import org.jetbrains.annotations.NotNull;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -29,16 +30,18 @@ import java.util.Map;
  * It maps tile IDs to states and players
  */
 public class Layout {
+    /**
+     * This class represents a tile template, from which a Tile will be created by Board. It stores initial owner's
+     * number in player list and initial TileState.
+     */
     class TileTemplate {
-        public TileTemplate(int id, int ownerNumber, TileState state) {
-            this.id = id;
+        private final int ownerNumber;
+        private final TileState state;
+
+        public TileTemplate(final int ownerNumber, final @NotNull TileState state) {
             this.ownerNumber = ownerNumber;
             this.state = state;
         }
-
-        private int id;
-        private final int ownerNumber;
-        private final TileState state;
 
         public int getOwnerNumber() {
             return ownerNumber;
@@ -54,7 +57,7 @@ public class Layout {
         tiles = new HashMap<>();
     }
 
-    public Layout(final Map<String, Integer> params) {
+    public Layout(final @NotNull Map<String, Integer> params) {
         this.params = params;
         tiles = new HashMap<>();
     }
@@ -67,7 +70,14 @@ public class Layout {
         return tiles.get(id);
     }
 
-    public void LoadLayout(String filename) {
+    /**
+     * This method loads data from XML document to Layout.
+     * Layout.tiles stores TileTemplate-s, loaded from XML, after counting their IDs using parameters' values
+     * specified in Layout.params (or default values specified in XML).
+     *
+     * @param filename path to file
+     */
+    public void LoadLayout(final @NotNull String filename) {
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 
         try {
@@ -95,12 +105,19 @@ public class Layout {
                 processNodeAsTile(tileList.item(i));
 
             System.out.println();
-        } catch (IllegalArgumentException | ParserConfigurationException | SAXException | IOException e) {
+        } catch (ParserConfigurationException | SAXException | IOException e) {
             e.printStackTrace();
         }
     }
 
-    private void processNodeAsParam(Node node) {
+    /**
+     * Called after document validation by schema
+     * Creates a layout parameter from Document Node assuming it's valid by schema.
+     * If parameter with the same name is already present in Layout.params,
+     * the value is NOT overwritten
+     * @param node input Document Node
+     */
+    private void processNodeAsParam(final @NotNull Node node) {
         if (node.getNodeName().equals("Param")) {
             // [0] - name
             // [1] - default value
@@ -113,7 +130,14 @@ public class Layout {
         }
     }
 
-    private void processNodeAsTile(Node node) {
+    /**
+     * Called after document validation by schema
+     * Creates a layout TileTemplate from Document Node assuming it's valid by schema.
+     * Evaluates tile ID with parameters' values. Takes owner number
+     * and initial state as is.
+     * @param node input Document Node
+     */
+    private void processNodeAsTile(final @NotNull Node node) {
         if (node.getNodeName().equals("Tile")) {
             // [0] - id
             // [1] - owner number
@@ -125,18 +149,17 @@ public class Layout {
                 idStr = idStr.replace(param.getKey(), param.getValue().toString());
             }
             Integer id = Evaluator.evaluateComplexEquationAsInt(idStr);
-            tiles.put(id, new TileTemplate(id,
-                    Integer.parseInt(children.item(1).getTextContent()),
+            tiles.put(id, new TileTemplate(Integer.parseInt(children.item(1).getTextContent()),
                     TileState.valueOf(children.item(2).getTextContent())));
         }
     }
 
-    private static Schema loadSchema(String schemaFileName) throws SAXException {
+    private static Schema loadSchema(final @NotNull String schemaFileName) throws SAXException {
         SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
         return factory.newSchema(new File(schemaFileName));
     }
 
-    private static void validateXml(Schema schema, Document document) throws IOException, SAXException {
+    private static void validateXml(final @NotNull Schema schema, final @NotNull Document document) throws IOException, SAXException {
         Validator validator = schema.newValidator();
         validator.validate(new DOMSource(document));
     }

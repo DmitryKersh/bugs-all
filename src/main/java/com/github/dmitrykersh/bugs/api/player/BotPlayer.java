@@ -2,6 +2,7 @@ package com.github.dmitrykersh.bugs.api.player;
 
 import com.github.dmitrykersh.bugs.api.board.Board;
 import javafx.scene.paint.Color;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Empty class for now. Don't use!
@@ -20,7 +21,7 @@ public class BotPlayer implements Player {
     }
 
     @Override
-    public void setBoard(Board b) {
+    public void setBoard(@NotNull Board b) {
 
     }
 

@@ -1,5 +1,7 @@
 package com.github.dmitrykersh.bugs.api.util;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.text.DecimalFormat;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -8,7 +10,7 @@ import java.util.regex.Pattern;
  * This class contains methods to work with arithmetic equations.
  * Note: All arithmetic signs except unary minus should be prefixed with '$' and surrounded with spaces
  *
- * i.e.    evaluateSimpleEquation("2 $+ 2 $* 2") -> "6"
+ * i.e.    evaluateSimpleEquation("2 $+ 2 $* 2") -> "6" (not 8 LOL)
  *         evaluateSimpleEquation(2$+2) -> "2$+2"
  */
 
@@ -23,7 +25,15 @@ public class Evaluator {
     public static final Pattern ARITH_BRACKETS_PATTERN = Pattern.compile(
             "\\(" + DECIMAL + "(\\s\\$[+\\-/*\\^]\\s" + DECIMAL + ")+\\)");
 
-    public static String evaluateSimpleEquation(final String str) {
+    /**
+     * Evaluates arithmetic equation without brackets (resolves all arithmetic actions). Equation may contain other
+     * symbols, they will be preserved.
+     *
+     * i.e. "foo21 $+ 12bar" ---> "foo33bar"
+     * @param str equation
+     * @return result
+     */
+    public static String evaluateSimpleEquation(final @NotNull String str) {
         String s = str;
 
         Matcher prior1Matcher = ARITH_PRIOR_1.matcher(s);
@@ -115,12 +125,21 @@ public class Evaluator {
         return s;
     }
 
-    public static int evaluateSimpleEquationAsInt(String s) {
-        Double value = Double.parseDouble(evaluateSimpleEquation(s));
+    public static int evaluateSimpleEquationAsInt(final @NotNull String str) {
+        Double value = Double.parseDouble(evaluateSimpleEquation(str));
         return value.intValue();
     }
 
-    public static String evaluateComplexEquation(String equation) {
+    /**
+     * Evaluates arithmetic equation with or without brackets (resolves all arithmetic actions).
+     * Equation may contain other symbols, they will be preserved.
+     *
+     * i.e. "(2 $+ 2) $* 2" ---> "8"
+     * @param s equation
+     * @return result
+     */
+    public static String evaluateComplexEquation(final @NotNull String s) {
+        String equation = s;
         Matcher arithBracketsMatcher = ARITH_BRACKETS_PATTERN.matcher(equation);
         arithBracketsMatcher.reset(equation);
         // evaluate all brackets

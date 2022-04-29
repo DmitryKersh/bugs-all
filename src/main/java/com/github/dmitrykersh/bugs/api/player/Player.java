@@ -2,11 +2,13 @@ package com.github.dmitrykersh.bugs.api.player;
 
 import com.github.dmitrykersh.bugs.api.board.Board;
 import javafx.scene.paint.Color;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public interface Player {
     boolean tryMakeTurn(int tileId);
     String getNickname();
-    void setBoard(Board b);
+    void setBoard(final @NotNull Board b);
 
     void setPlace(int place);
     int getPlace();

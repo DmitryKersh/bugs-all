@@ -1,5 +1,6 @@
 package com.github.dmitrykersh.bugs.api.util;
 
+import org.jetbrains.annotations.NotNull;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -19,7 +20,7 @@ public class NdList implements NodeList, Iterable<Node> {
 
     private List<Node> nodes;
 
-    public NdList(NodeList list) {
+    public NdList(final @NotNull NodeList list) {
         nodes = new ArrayList<>();
         for (int i = 0; i < list.getLength(); i++) {
             if (!isWhitespaceNode(list.item(i))) {

@@ -7,6 +7,7 @@ import com.github.dmitrykersh.bugs.api.player.Player;
 import com.github.dmitrykersh.bugs.api.board.tile.Tile;
 import com.github.dmitrykersh.bugs.api.board.tile.TileState;
 import com.github.dmitrykersh.bugs.api.player.PlayerState;
+import org.jetbrains.annotations.NotNull;
 
 import static com.github.dmitrykersh.bugs.api.board.tile.TileState.*;
 
@@ -20,35 +21,37 @@ import java.util.*;
  *
  * @TileID from zero, right-to-left, top-to-bottom.
  * Thus, ID can be counted as (row * colsAmount + col)
- *       Row can be counted as (ID / colsAmount)
- *       Column can be counted as (ID % colsAmount)
- *
- *  +---+---+---+---+---+
- *  | 0 | 1 | 2 | 3 | 4 |
- *  +---+---+---+---+---+
- *  | 5 | 6 | 7 | 8 | 9 |
- *  +---+---+---+---+---+
+ * Row can be counted as (ID / colsAmount)
+ * Column can be counted as (ID % colsAmount)
+ * <p>
+ * +---+---+---+---+---+
+ * | 0 | 1 | 2 | 3 | 4 |
+ * +---+---+---+---+---+
+ * | 5 | 6 | 7 | 8 | 9 |
+ * +---+---+---+---+---+
  */
 
 public final class RectangleBoard implements Board {
-    private boolean ended;
     private final List<Player> players;
     private final List<List<Tile>> tiles;
+    private final TurnValidator turnValidator;
+
+    // game-state variables
     private Integer currentPlaceForLostPlayer;
     private int activePlayerNumber;
-    private TurnValidator turnValidator;
 
-    private int rowsAmount;
-    private int colsAmount;
+    // board size
+    private final int rowsAmount;
+    private final int colsAmount;
 
-    private RectangleBoard(Layout layout, TurnValidator validator, int rowsAmount, int colsAmount, List<Player> players) {
+    private RectangleBoard(final @NotNull Layout layout, final @NotNull TurnValidator validator,
+                           int rowsAmount, int colsAmount, final @NotNull List<Player> players) {
         this.rowsAmount = rowsAmount;
         this.colsAmount = colsAmount;
         this.turnValidator = validator;
         this.players = players;
         activePlayerNumber = 0;
 
-        ended = false;
         currentPlaceForLostPlayer = players.size();
         for (Player p : players)
             p.setBoard(this);
@@ -59,13 +62,14 @@ public final class RectangleBoard implements Board {
             List<Tile> tileRow = tiles.get(row);
 
             for (int col = 0; col < this.colsAmount; col++) {
-                tileRow.add(col, getFromLayout(layout,row * this.colsAmount + col));
+                tileRow.add(col, getFromLayout(layout, row * this.colsAmount + col));
             }
         }
     }
 
-    public static RectangleBoard createBoard(Layout layout, TurnValidator validator, int rowsAmount, int colsAmount, List<String> nicknames) {
-        if (rowsAmount <= 0 || colsAmount <= 0){
+    public static RectangleBoard createBoard(final @NotNull Layout layout, final @NotNull TurnValidator validator,
+                                             final int rowsAmount, final int colsAmount, final @NotNull List<String> nicknames) {
+        if (rowsAmount <= 0 || colsAmount <= 0) {
             throw new IllegalArgumentException("Incorrect RectangleBoard size");
         }
 
@@ -84,7 +88,7 @@ public final class RectangleBoard implements Board {
     }
 
     @Override
-    public void activateTiles(Player player) {
+    public void activateTiles(@NotNull Player player) {
         for (List<Tile> row : tiles)
             for (Tile tile : row)
                 tile.deactivate();
@@ -101,7 +105,7 @@ public final class RectangleBoard implements Board {
     }
 
     @Override
-    public boolean tryMakeTurn(Player player, int tileId) {
+    public boolean tryMakeTurn(@NotNull Player player, int tileId) {
         int row = tileId / colsAmount;
         int col = tileId % colsAmount;
         if (row >= rowsAmount) return false;
@@ -125,14 +129,14 @@ public final class RectangleBoard implements Board {
     }
 
     @Override
-    public void freezeLostPlayer(final Player player) {
+    public void freezeLostPlayer(final @NotNull Player player) {
         player.setPlace(currentPlaceForLostPlayer);
         players.remove(player);
         currentPlaceForLostPlayer--;
     }
 
     @Override
-    public List<Tile> getNearbyTilesForPlayer(Tile origin, Player player) {
+    public List<Tile> getNearbyTilesForPlayer(final @NotNull Tile origin, final @NotNull Player player) {
         int row = origin.getId() / colsAmount;
         int col = origin.getId() % colsAmount;
         List<Tile> result = new LinkedList<>();
@@ -154,7 +158,7 @@ public final class RectangleBoard implements Board {
         return players.get(activePlayerNumber);
     }
 
-    private void activateTilesCluster(Tile origin, Player player) {
+    private void activateTilesCluster(final @NotNull Tile origin, final @NotNull Player player) {
         origin.activate();
         for (Tile tile : getNearbyTilesForPlayer(origin, player)) {
             if (tile.getState() == UNAVAILABLE) return;
@@ -174,10 +178,10 @@ public final class RectangleBoard implements Board {
      *
      * @param layout given layout
      * @param id     tile id to search for in layout
-     * @return       if not found in layout: default tile (id=id, owner=null, state=FREE, active=false)
-     *               if found: tile created from template
+     * @return if not found in layout: default tile (id=id, owner=null, state=FREE, active=false)
+     * if found: tile created from template
      */
-    private Tile getFromLayout(Layout layout, int id) {
+    private Tile getFromLayout(final @NotNull Layout layout, int id) {
         // in layout file OwnerNumber-s start from 1. 0 represents null owner.
         Layout.TileTemplate tt = layout.getTileTemplate(id);
         int ownerNumber;
@@ -200,7 +204,7 @@ public final class RectangleBoard implements Board {
 
     ////////////// TESTING IN CONSOLE STUFF ////////////////////
     @Override
-    public void print(PrintStream ps, Player player) {
+    public void print(final @NotNull PrintStream ps, final @NotNull Player player) {
         TurnValidator validator = SimpleTurnValidator.INSTANCE;
         for (List<Tile> row : tiles) {
             for (Tile t : row) {
