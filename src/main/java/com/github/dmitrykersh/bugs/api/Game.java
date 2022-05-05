@@ -24,21 +24,6 @@ public class Game {
     }
 
     public void startGame() {
-        List<Player> playersQueue = board.getPlayers();
 
-        // main loop
-        while (playersQueue.size() > 1) { // while more than 1 active player
-            Iterator<Player> iter = playersQueue.iterator();
-            while (iter.hasNext()){
-                Player currentPlayer = iter.next();
-
-                currentPlayer.restoreTurns();
-                while (currentPlayer.getTurnsLeft() > 0) {
-                    // turn
-                }
-            }
-        }
-        // getting scoreboard
-        List<Player> scoreboard = new ArrayList<>(board.getPlayers());
     }
 }

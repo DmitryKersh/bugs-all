@@ -13,6 +13,15 @@
             <Description>Board width</Description>
         </Param>
 	</Parameters>
+    <Players>
+        <Default>
+            <MaxActions>5</MaxActions>
+        </Default>
+        <Player>
+            <Number>1</Number>
+            <MaxActions>5</MaxActions>
+        </Player>
+    </Players>
 	<Tiles>
 		<Tile>
 			<Id>0</Id>

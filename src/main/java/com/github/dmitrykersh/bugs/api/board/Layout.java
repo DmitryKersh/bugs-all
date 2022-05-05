@@ -5,11 +5,8 @@ import com.github.dmitrykersh.bugs.api.util.Evaluator;
 import com.github.dmitrykersh.bugs.api.util.NdList;
 import org.jetbrains.annotations.NotNull;
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
-import org.xml.sax.SAXParseException;
 
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
@@ -21,7 +18,6 @@ import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -52,23 +48,39 @@ public class Layout {
         }
     }
 
+    class PlayerTemplate {
+        private final int maxTurns;
+
+        public int getMaxTurns() {
+            return maxTurns;
+        }
+
+        PlayerTemplate(int maxTurns) {
+            this.maxTurns = maxTurns;
+        }
+    }
+
+    private String description;
+    private Map<Integer, PlayerTemplate> players;
+    private Map<String, Integer> params;
+    private Map<Integer, TileTemplate> tiles;
+
     public Layout() {
         params = new HashMap<>();
         tiles = new HashMap<>();
+        players = new HashMap<>();
     }
 
     public Layout(final @NotNull Map<String, Integer> params) {
         this.params = params;
         tiles = new HashMap<>();
+        players = new HashMap<>();
     }
-
-    private String description;
-    private Map<String, Integer> params;
-    private Map<Integer, TileTemplate> tiles;
 
     public TileTemplate getTileTemplate(int id) {
         return tiles.get(id);
     }
+    public PlayerTemplate getPlayerTemplate(int id) { return players.get(id); }
 
     /**
      * This method loads data from XML document to Layout.
@@ -92,7 +104,8 @@ public class Layout {
 
             // [0] - description
             // [1] - parameters
-            // [2] - tile array
+            // [2] - player array
+            // [3] - tile array
             NdList nodes = new NdList(doc.getDocumentElement().getChildNodes());
             description = nodes.item(0).getTextContent();
 
@@ -100,7 +113,11 @@ public class Layout {
             for (int i = 0; i < paramList.getLength(); i++)
                 processNodeAsParam(paramList.item(i));
 
-            NdList tileList = new NdList(nodes.item(2).getChildNodes());
+            NdList playerList = new NdList(nodes.item(2).getChildNodes());
+            for (int i = 0; i < playerList.getLength(); i++)
+                processNodeAsPlayer(playerList.item(i));
+
+            NdList tileList = new NdList(nodes.item(3).getChildNodes());
             for (int i = 0; i < tileList.getLength(); i++)
                 processNodeAsTile(tileList.item(i));
 
@@ -127,6 +144,22 @@ public class Layout {
                 // if parameter is not set then it's set by default as stated in layout file
                 params.put(children.item(0).getTextContent(), Integer.parseInt(children.item(1).getTextContent()));
             }
+        }
+    }
+
+    /**
+     * Called after document validation by schema
+     * Creates PlayerTemplate from Document.
+     * Default player is stored at key 0 in `players` map
+     * @param node input Document Node
+     */
+    private void processNodeAsPlayer(final @NotNull Node node) {
+        NdList children = new NdList(node.getChildNodes());
+        if (node.getNodeName().equals("Default")) {
+            players.put(0, new PlayerTemplate(Integer.parseInt(children.item(0).getTextContent())));
+        } else {
+            players.put(Integer.parseInt(children.item(0).getTextContent()),
+                    new PlayerTemplate(Integer.parseInt(children.item(1).getTextContent())));
         }
     }
 

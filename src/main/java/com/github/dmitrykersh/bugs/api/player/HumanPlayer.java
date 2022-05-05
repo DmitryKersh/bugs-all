@@ -14,6 +14,7 @@ public class HumanPlayer implements Player {
 
     public HumanPlayer(final @Nullable Board board, final @NotNull String nickname, final @NotNull PlayerState state, int maxTurns) {
         this.state = state;
+        state.turnsLeft = maxTurns;
         this.nickname = nickname;
         this.maxTurns = maxTurns;
         this.board = board;

@@ -37,11 +37,32 @@
         </xs:sequence>
     </xs:complexType>
 
+    <xs:complexType name="defaultPlayerType">
+        <xs:sequence>
+            <xs:element name="MaxActions" type="xs:positiveInteger"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="playerType">
+        <xs:sequence>
+            <xs:element name="Number" type="xs:positiveInteger"/>
+            <xs:element name="MaxActions" type="xs:positiveInteger"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="playerListType">
+        <xs:sequence>
+            <xs:element name="Default" type="defaultPlayerType"/>
+            <xs:element name="Player" type="playerType" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+
     <xs:element name="Layout">
         <xs:complexType>
             <xs:sequence>
                 <xs:element name="Description" type="xs:string" />
                 <xs:element name="Parameters" type="paramListType"/>
+                <xs:element name="Players" type="playerListType"/>
                 <xs:element name="Tiles" type="tileListType"/>
             </xs:sequence>
         </xs:complexType>

@@ -27,7 +27,7 @@ public class MainWindow /*extends Application*/ {
 
     public static void main(String[] args) {
         //launch();
-        final int rows = 6;
+        final int rows = 10;
         final int columns = 6;
 
         Map<String, Integer> layoutParams = Map.of(
@@ -36,7 +36,7 @@ public class MainWindow /*extends Application*/ {
         );
 
         Layout l = new Layout(layoutParams);
-        l.LoadLayout("src\\main\\resources\\4player.xml");
+        l.LoadLayout("src\\main\\resources\\layout_example.xml");
 
         Board board = RectangleBoard.createBoard(l, SimpleTurnValidator.INSTANCE, rows, columns, Arrays.asList("Alan", "Ben"));
 
@@ -45,7 +45,7 @@ public class MainWindow /*extends Application*/ {
 
         while (!board.ended()) {
             currentPlayer = board.getActivePlayer();
-            System.out.printf("[ %s's turn ]\n", currentPlayer.getNickname());
+            System.out.printf("[ %s's turn. Left: %d]\n", currentPlayer.getNickname(), currentPlayer.getTurnsLeft());
             board.print(System.out, currentPlayer);
             currentPlayer.tryMakeTurn(s.nextInt());
         }

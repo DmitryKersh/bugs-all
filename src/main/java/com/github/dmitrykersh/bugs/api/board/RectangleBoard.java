@@ -46,17 +46,19 @@ public final class RectangleBoard implements Board {
     private final int colsAmount;
 
     private RectangleBoard(final @NotNull Layout layout, final @NotNull TurnValidator validator,
-                           int rowsAmount, int colsAmount, final @NotNull List<Player> players) {
+                           int rowsAmount, int colsAmount, final @NotNull List<String> nicknames) {
         this.rowsAmount = rowsAmount;
         this.colsAmount = colsAmount;
         this.turnValidator = validator;
-        this.players = players;
         this.scoreboard = new LinkedList<>();
+
         activePlayerNumber = 0;
         ended = false;
 
-        for (Player p : players)
-            p.setBoard(this);
+        players = new ArrayList<>(nicknames.size());
+        for (int i = 0; i < nicknames.size(); i++) {
+            players.add(getPlayerFromLayout(layout, i + 1, nicknames.get(i)));
+        }
 
         tiles = new ArrayList<>(rowsAmount);
         for (int row = 0; row < rowsAmount; row++) {
@@ -75,13 +77,7 @@ public final class RectangleBoard implements Board {
             throw new IllegalArgumentException("Incorrect RectangleBoard size");
         }
 
-        // Creating players by nicknames
-        List<Player> players = new ArrayList<>(nicknames.size());
-        for (String nickname : nicknames) {
-            players.add(new HumanPlayer(null, nickname, new PlayerState(), 5 /* TODO: maxTurns should be passed by layout*/));
-        }
-
-        return new RectangleBoard(layout, validator, rowsAmount, colsAmount, players);
+        return new RectangleBoard(layout, validator, rowsAmount, colsAmount, nicknames);
     }
 
     @Override
@@ -140,7 +136,14 @@ public final class RectangleBoard implements Board {
             }
 
             tile.changeState(player);
-            activePlayerNumber++;
+
+            player.spendTurn();
+
+            if (player.getTurnsLeft() == 0) {
+                player.restoreTurns();
+                activePlayerNumber++;
+            }
+
             if (activePlayerNumber >= players.size()) activePlayerNumber = 0;
             return true;
         }
@@ -217,6 +220,16 @@ public final class RectangleBoard implements Board {
                 ownerNumber == 0 ? null : players.get(ownerNumber - 1),
                 tt.getState()
         );
+    }
+
+    private Player getPlayerFromLayout(final @NotNull Layout layout, int number, String nickname) {
+        Layout.PlayerTemplate pt = layout.getPlayerTemplate(number);
+        if (pt == null) {
+            Layout.PlayerTemplate dflt = layout.getPlayerTemplate(0);
+            if (dflt == null) throw new RuntimeException("Default player not stated in layout");
+            return new HumanPlayer(this, nickname, new PlayerState(), dflt.getMaxTurns());
+        }
+        return new HumanPlayer(this, nickname, new PlayerState(), pt.getMaxTurns());
     }
 
     ////////////// TESTING IN CONSOLE STUFF ////////////////////
