@@ -1,32 +1,37 @@
 package com.github.dmitrykersh.bugs.gui;
 
-import com.github.dmitrykersh.bugs.api.board.Board;
-import com.github.dmitrykersh.bugs.api.board.Layout;
-import com.github.dmitrykersh.bugs.api.board.RectangleBoard;
-import com.github.dmitrykersh.bugs.api.board.validator.SimpleTurnValidator;
-import com.github.dmitrykersh.bugs.api.player.HumanPlayer;
-import com.github.dmitrykersh.bugs.api.player.Player;
-import com.github.dmitrykersh.bugs.api.player.PlayerState;
+import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
-public class MainWindow /*extends Application*/ {
-    /*@Override
+import static javafx.application.Application.launch;
+
+public class MainWindow extends Application {
+    @Override
     public void start(final Stage stage) throws Exception {
         try {
-            FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(MainWindow.class.getResource("/gameWindow.fxml"));
-            Scene scene = loader.load();
-            stage.setScene(scene);
+            SceneCollection.loadScene("main-menu", "/ui/main-menu.fxml");
+            SceneCollection.loadScene("settings-menu", "/ui/settings-menu.fxml");
+            stage.setMinWidth(900);
+            stage.setMinHeight(700);
+
+            stage.setScene(SceneCollection.getScene("main-menu"));
 
             stage.show();
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }*/
+    }
 
     public static void main(String[] args) {
-        //launch();
+        launch();
+        /*
         final int rows = 10;
         final int columns = 6;
 
@@ -49,9 +54,10 @@ public class MainWindow /*extends Application*/ {
             board.print(System.out, currentPlayer);
             currentPlayer.tryMakeTurn(s.nextInt());
         }
+
         for (Player player : board.getScoreboard()) {
             System.out.println(player.getNickname());
         }
-
+         */
     }
 }

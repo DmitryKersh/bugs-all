@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.Scene?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<Scene xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.github.dmitrykersh.bugs.gui.controller.MainMenuController">
+   <root>
+      <BorderPane maxHeight="1080.0" maxWidth="1920.0" minHeight="500.0" minWidth="700.0" prefHeight="800.0" prefWidth="1000.0" style="-fx-background-color: #666666;">
+         <top>
+            <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="112.0" prefWidth="434.0" text="Bugs" textAlignment="CENTER" textFill="WHITE" BorderPane.alignment="CENTER">
+               <font>
+                  <Font name="Consolas" size="96.0" />
+               </font>
+               <opaqueInsets>
+                  <Insets />
+               </opaqueInsets>
+            </Label>
+         </top>
+         <center>
+            <VBox alignment="TOP_CENTER" maxHeight="500.0" maxWidth="320.0" prefHeight="500.0" prefWidth="320.0" BorderPane.alignment="CENTER">
+               <children>
+                  <Button maxHeight="100.0" maxWidth="320.0" mnemonicParsing="false" prefHeight="100.0" prefWidth="320.0" text="Local Game" textAlignment="CENTER">
+                     <font>
+                        <Font name="Consolas" size="30.0" />
+                     </font>
+                  </Button>
+                  <Button mnemonicParsing="false" prefHeight="100.0" prefWidth="320.0" text="Online Game" textAlignment="CENTER">
+                     <font>
+                        <Font name="Consolas" size="30.0" />
+                     </font>
+                  </Button>
+                  <Button mnemonicParsing="false" onAction="#settingsButton_onPressed" prefHeight="100.0" prefWidth="320.0" text="Settings" textAlignment="CENTER">
+                     <font>
+                        <Font name="Consolas" size="30.0" />
+                     </font>
+                  </Button>
+                  <Button mnemonicParsing="false" prefHeight="100.0" prefWidth="320.0" text="Quit" textAlignment="CENTER">
+                     <font>
+                        <Font name="Consolas" size="30.0" />
+                     </font>
+                  </Button>
+               </children>
+               <opaqueInsets>
+                  <Insets />
+               </opaqueInsets>
+            </VBox>
+         </center>
+      </BorderPane>
+   </root>
+</Scene>
