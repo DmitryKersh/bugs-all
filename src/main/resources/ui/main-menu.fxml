@@ -24,12 +24,12 @@
          <center>
             <VBox alignment="TOP_CENTER" maxHeight="500.0" maxWidth="320.0" prefHeight="500.0" prefWidth="320.0" BorderPane.alignment="CENTER">
                <children>
-                  <Button maxHeight="100.0" maxWidth="320.0" mnemonicParsing="false" prefHeight="100.0" prefWidth="320.0" text="Local Game" textAlignment="CENTER">
+                  <Button maxHeight="100.0" maxWidth="320.0" mnemonicParsing="false" onAction="#localGameButton_onPressed" prefHeight="100.0" prefWidth="320.0" text="Local Game" textAlignment="CENTER">
                      <font>
                         <Font name="Consolas" size="30.0" />
                      </font>
                   </Button>
-                  <Button mnemonicParsing="false" prefHeight="100.0" prefWidth="320.0" text="Online Game" textAlignment="CENTER">
+                  <Button mnemonicParsing="false" onAction="#onlineGameButton_onPressed" prefHeight="100.0" prefWidth="320.0" text="Online Game" textAlignment="CENTER">
                      <font>
                         <Font name="Consolas" size="30.0" />
                      </font>
@@ -39,7 +39,7 @@
                         <Font name="Consolas" size="30.0" />
                      </font>
                   </Button>
-                  <Button mnemonicParsing="false" prefHeight="100.0" prefWidth="320.0" text="Quit" textAlignment="CENTER">
+                  <Button mnemonicParsing="false" onAction="#quitButton_onPressed" prefHeight="100.0" prefWidth="320.0" text="Quit" textAlignment="CENTER">
                      <font>
                         <Font name="Consolas" size="30.0" />
                      </font>

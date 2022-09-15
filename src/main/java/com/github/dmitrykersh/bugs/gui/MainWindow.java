@@ -18,6 +18,8 @@ public class MainWindow extends Application {
         try {
             SceneCollection.loadScene("main-menu", "/ui/main-menu.fxml");
             SceneCollection.loadScene("settings-menu", "/ui/settings-menu.fxml");
+            SceneCollection.loadScene("local-game-menu", "/ui/local-game-menu.fxml");
+            SceneCollection.loadScene("online-game-menu", "/ui/online-game-menu.fxml");
             stage.setMinWidth(900);
             stage.setMinHeight(700);
 

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.Scene?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+
+<?import javafx.scene.control.Button?>
+<Scene xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.github.dmitrykersh.bugs.gui.controller.LocalGameMenuController">
+   <root>
+      <AnchorPane prefHeight="800.0" prefWidth="1000.0" style="-fx-background-color: #666666;">
+         <children>
+            <Label alignment="CENTER" layoutX="330.0" layoutY="14.0" prefHeight="82.0" prefWidth="340.0" text="New local game" textFill="WHITE">
+               <font>
+                  <Font name="Consolas" size="36.0" />
+               </font>
+            </Label>
+             <Button cancelButton="true" contentDisplay="CENTER" layoutX="14.0" layoutY="14.0" maxHeight="50.0" maxWidth="50.0" minHeight="50.0" minWidth="50.0" mnemonicParsing="false" onAction="#backButton_onClick" prefHeight="50.0" prefWidth="50.0" text="&lt;">
+                 <font>
+                     <Font name="Consolas" size="26.0" />
+                 </font>
+             </Button>
+         </children>
+      </AnchorPane>
+   </root>
+</Scene>
