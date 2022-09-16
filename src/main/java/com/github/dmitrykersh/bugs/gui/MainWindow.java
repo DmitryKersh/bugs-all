@@ -19,8 +19,8 @@ import java.util.Scanner;
 
 import static javafx.application.Application.launch;
 
-public class MainWindow /*extends Application*/ {
-    /*
+public class MainWindow extends Application {
+
     @Override
     public void start(final Stage stage) throws Exception {
         try {
@@ -37,11 +37,11 @@ public class MainWindow /*extends Application*/ {
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }*/
+    }
 
     public static void main(String[] args) {
-        // launch();
-
+        launch();
+/*
         final int rows = 10;
         final int columns = 6;
 
@@ -68,6 +68,6 @@ public class MainWindow /*extends Application*/ {
         for (Player player : board.getScoreboard()) {
             System.out.println(player.getNickname());
         }
-
+ */
     }
 }
