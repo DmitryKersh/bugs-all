@@ -33,6 +33,7 @@ import java.util.Map;
 public class Layout {
     @Getter
     private String description;
+    @Getter
     private final List<PlayerConfig> playerConfigs;
     private final Map<String, Integer> params;
     private final Map<Integer, TileTemplate> tiles;
