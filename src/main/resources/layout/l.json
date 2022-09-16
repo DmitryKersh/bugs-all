@@ -1,6 +1,6 @@
 {
   "desc": "this is a description",
-  "map_types": ["RECT"],
+  "board_type": "RECT",
   "player_configs": {
     "4-player": [3, 3, 3, 3],
     "2 vs 1": [5, 3, 3],

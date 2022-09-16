@@ -230,12 +230,11 @@ public final class RectangleBoard implements Board {
     private List<PlayerTemplate> getPlayerTemplatesFromLayout(final @NotNull Layout layout, String configName) {
         List<PlayerTemplate> playerInfo = new ArrayList<>();
         PlayerConfig config = layout.getPlayerConfigByName(configName);
-        // TODO handle case if config==null
-        if (config != null) {
-            for (int i = 1; i <= config.getPlayerCount(); i++) {
-                playerInfo.add(new PlayerTemplate(i, config.getMaxTurnsForPlayer(i)));
-            }
+
+        for (int i = 1; i <= config.getPlayerCount(); i++) {
+            playerInfo.add(new PlayerTemplate(i, config.getMaxTurnsForPlayer(i)));
         }
+
         return playerInfo;
     }
 

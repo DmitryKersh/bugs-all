@@ -51,13 +51,11 @@ public class Layout {
         for (val config : playerConfigs) {
             if (name.equals(config.getName())) return config;
         }
-        return null;
+        throw new RuntimeException("No such PlayerConfig:" + name);
     }
 
     /**
-     * This method loads data from XML document to Layout.
-     * Layout.tiles stores TileTemplate-s, loaded from XML, after counting their IDs using parameters' values
-     * specified in Layout.params (or default values specified in XML).
+     * This method loads data from JSON to Layout.
      *
      * @param filename path to file
      */
@@ -80,7 +78,7 @@ public class Layout {
                 playerConfigs.add(new PlayerConfig(config.getKey(), (List<Integer>) config.getValue()));
             }
 
-            //
+            // process tiles
             JSONArray tileArray = layout.getJSONArray("tiles");
             for (int i = 0; i < tileArray.length(); i++) {
                 val tile = tileArray.getJSONObject(i);
