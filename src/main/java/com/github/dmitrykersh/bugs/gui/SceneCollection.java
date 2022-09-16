@@ -29,6 +29,10 @@ public class SceneCollection {
 
     public static void switchToScene(String name, ActionEvent e) {
         Stage mainStage = (Stage)((Node)e.getSource()).getScene().getWindow();
+        double h = mainStage.getHeight();
+        double w = mainStage.getWidth();
         mainStage.setScene(SceneCollection.getScene(name));
+        mainStage.setHeight(h);
+        mainStage.setWidth(w);
     }
 }

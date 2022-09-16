@@ -1,5 +1,9 @@
 package com.github.dmitrykersh.bugs.api.board;
 
+import com.github.dmitrykersh.bugs.api.board.layout.Layout;
+import com.github.dmitrykersh.bugs.api.board.layout.PlayerConfig;
+import com.github.dmitrykersh.bugs.api.board.layout.PlayerTemplate;
+import com.github.dmitrykersh.bugs.api.board.layout.TileTemplate;
 import com.github.dmitrykersh.bugs.api.board.validator.SimpleTurnValidator;
 import com.github.dmitrykersh.bugs.api.board.validator.TurnValidator;
 import com.github.dmitrykersh.bugs.api.player.HumanPlayer;
@@ -45,7 +49,7 @@ public final class RectangleBoard implements Board {
     private final int rowsAmount;
     private final int colsAmount;
 
-    private RectangleBoard(final @NotNull Layout layout, final @NotNull TurnValidator validator,
+    private RectangleBoard(final @NotNull Layout layout, final @NotNull String configName, final @NotNull TurnValidator validator,
                            int rowsAmount, int colsAmount, final @NotNull List<String> nicknames) {
         this.rowsAmount = rowsAmount;
         this.colsAmount = colsAmount;
@@ -55,9 +59,10 @@ public final class RectangleBoard implements Board {
         activePlayerNumber = 0;
         ended = false;
 
-        players = new ArrayList<>(nicknames.size());
-        for (int i = 0; i < nicknames.size(); i++) {
-            players.add(getPlayerFromLayout(layout, i + 1, nicknames.get(i)));
+        List<PlayerTemplate> templates = getPlayerTemplatesFromLayout(layout, configName);
+        players = new ArrayList<>(templates.size());
+        for (int i = 0; i < templates.size(); i++) {
+            players.add(new HumanPlayer(this, nicknames.size() <= i ? ("p_" + i) : nicknames.get(i), new PlayerState(), templates.get(i).getMaxTurns()));
         }
 
         tiles = new ArrayList<>(rowsAmount);
@@ -71,13 +76,13 @@ public final class RectangleBoard implements Board {
         }
     }
 
-    public static RectangleBoard createBoard(final @NotNull Layout layout, final @NotNull TurnValidator validator,
+    public static RectangleBoard createBoard(final @NotNull Layout layout, final @NotNull String configName, final @NotNull TurnValidator validator,
                                              final int rowsAmount, final int colsAmount, final @NotNull List<String> nicknames) {
         if (rowsAmount <= 0 || colsAmount <= 0) {
             throw new IllegalArgumentException("Incorrect RectangleBoard size");
         }
 
-        return new RectangleBoard(layout, validator, rowsAmount, colsAmount, nicknames);
+        return new RectangleBoard(layout, configName, validator, rowsAmount, colsAmount, nicknames);
     }
 
     @Override
@@ -203,7 +208,7 @@ public final class RectangleBoard implements Board {
      */
     private Tile getTileFromLayout(final @NotNull Layout layout, int id) {
         // in layout file OwnerNumber-s start from 1. 0 represents null owner.
-        Layout.TileTemplate tt = layout.getTileTemplate(id);
+        TileTemplate tt = layout.getTileTemplate(id);
         int ownerNumber;
 
         if (tt == null || players.size() <= (ownerNumber = tt.getOwnerNumber()) - 1) {
@@ -222,14 +227,16 @@ public final class RectangleBoard implements Board {
         );
     }
 
-    private Player getPlayerFromLayout(final @NotNull Layout layout, int number, String nickname) {
-        Layout.PlayerTemplate pt = layout.getPlayerTemplate(number);
-        if (pt == null) {
-            Layout.PlayerTemplate dflt = layout.getPlayerTemplate(0);
-            if (dflt == null) throw new RuntimeException("Default player not stated in layout");
-            return new HumanPlayer(this, nickname, new PlayerState(), dflt.getMaxTurns());
+    private List<PlayerTemplate> getPlayerTemplatesFromLayout(final @NotNull Layout layout, String configName) {
+        List<PlayerTemplate> playerInfo = new ArrayList<>();
+        PlayerConfig config = layout.getPlayerConfigByName(configName);
+        // TODO handle case if config==null
+        if (config != null) {
+            for (int i = 1; i <= config.getPlayerCount(); i++) {
+                playerInfo.add(new PlayerTemplate(i, config.getMaxTurnsForPlayer(i)));
+            }
         }
-        return new HumanPlayer(this, nickname, new PlayerState(), pt.getMaxTurns());
+        return playerInfo;
     }
 
     ////////////// TESTING IN CONSOLE STUFF ////////////////////
