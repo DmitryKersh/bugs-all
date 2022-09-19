@@ -23,10 +23,6 @@ public class PlayerConfig {
 
     @Override
     public String toString() {
-        val sb = new StringBuilder(name).append(": ");
-        for (int i = 0; i < maxTurns.size(); i++) {
-            sb.append("player ").append(i+1).append(": ").append(maxTurns.get(i)).append(" turns; ");
-        }
-        return sb.toString();
+        return name;
     }
 }
