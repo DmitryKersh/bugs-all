@@ -23,9 +23,9 @@ import java.util.regex.Pattern;
 public class LocalGameMenuController {
     private static final int MIN_HUE_DIFF = 25;
     private static final String LAYOUT_DIR = "src/main/resources/layout";
-    private static final Pattern NICKNAME_PATTERN = Pattern.compile("^\\w{5,}$");
+    private static final Pattern NICKNAME_PATTERN = Pattern.compile("^\\w{3,20}$");
     private static final String COLOR_ERROR = "Unallowed colors chosen: There are too light, too dark or too similar colors";
-    private static final String NICKNAME_ERROR = "Unallowed nicknames: Nicknames must be different, at least 5 characters long and contain only of letters, digits and \'_\'";
+    private static final String NICKNAME_ERROR = "Unallowed nicknames: Nicknames must be different, 3 to 20 characters long and contain only of letters, digits and \'_\'";
     private static final String GAME_STARTED = "Starting game...";
     @FXML
     public ComboBox<String> layoutComboBox;
