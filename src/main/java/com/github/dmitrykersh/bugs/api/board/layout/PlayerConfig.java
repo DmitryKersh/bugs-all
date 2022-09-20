@@ -23,6 +23,10 @@ public class PlayerConfig {
 
     @Override
     public String toString() {
-        return name;
+        StringBuilder sb = new StringBuilder("Max turns for players:\n");
+        for (int i = 0; i < maxTurns.size(); i++) {
+            sb.append("player ").append(i+1).append(": ").append(maxTurns.get(i)).append("\n");
+        }
+        return sb.toString();
     }
 }

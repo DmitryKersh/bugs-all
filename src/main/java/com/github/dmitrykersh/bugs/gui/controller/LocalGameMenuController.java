@@ -1,5 +1,6 @@
 package com.github.dmitrykersh.bugs.gui.controller;
 
+import com.github.dmitrykersh.bugs.api.board.RectangleBoard;
 import com.github.dmitrykersh.bugs.api.board.layout.Layout;
 import com.github.dmitrykersh.bugs.api.board.layout.PlayerConfig;
 import com.github.dmitrykersh.bugs.gui.SceneCollection;
@@ -26,6 +27,7 @@ public class LocalGameMenuController {
     private static final Pattern NICKNAME_PATTERN = Pattern.compile("^\\w{3,20}$");
     private static final String COLOR_ERROR = "Unallowed colors chosen: There are too light, too dark or too similar colors";
     private static final String NICKNAME_ERROR = "Unallowed nicknames: Nicknames must be different, 3 to 20 characters long and contain only of letters, digits and \'_\'";
+    private static final String GAME_MODE_ERROR = "Please select layout and game mode";
     private static final String GAME_STARTED = "Starting game...";
     @FXML
     public ComboBox<String> layoutComboBox;
@@ -35,6 +37,10 @@ public class LocalGameMenuController {
     public GridPane playersGridPane;
     @FXML
     public Label errorLabel;
+    @FXML
+    public Label layoutDescLabel;
+    @FXML
+    public Label gameModeDescLabel;
 
     @FXML
     public void initialize() {
@@ -44,20 +50,24 @@ public class LocalGameMenuController {
     private List<PlayerConfig> configs;
     private final List<Color> selectedColors = new ArrayList<>();
     private final Set<String> selectedNicknames = new HashSet<>();
+    private Layout layout;
 
     public void layoutComboBox_onChanged() {
         if (layoutComboBox.getValue() == null) {
             playerConfigComboBox.setItems(null);
+            layoutDescLabel.setText("");
             return;
         }
 
-        Layout layout = new Layout(new HashMap<>());
+        layout = new Layout(new HashMap<>());
         layout.LoadLayout(LAYOUT_DIR + "/" + layoutComboBox.getValue());
         configs = layout.getPlayerConfigs();
         List<String> configDesc = new ArrayList<>();
         for (PlayerConfig config : configs)
-            configDesc.add(config.toString());
+            configDesc.add(config.getName());
         playerConfigComboBox.setItems(new ObservableListWrapper<>(configDesc));
+        gameModeDescLabel.setText("");
+        layoutDescLabel.setText(layout.getDescription());
     }
 
     public void playerConfigComboBox_onChanged() {
@@ -66,6 +76,7 @@ public class LocalGameMenuController {
         for (val config : configs) {
             if (config.getName().equals(configName)) {
                 playersAmount = config.getPlayerCount();
+                gameModeDescLabel.setText(config.toString());
             }
         }
         playersGridPane.getChildren().clear();
@@ -99,6 +110,10 @@ public class LocalGameMenuController {
         return colorPicker;
     }
 
+    public boolean checkLayoutAndGameMode() {
+        return !(layoutComboBox.getValue() == null || playerConfigComboBox.getValue() == null);
+    }
+
     public boolean checkSelectedColors() {
         selectedColors.clear();
         for (val el : playersGridPane.getChildren()) {
@@ -130,6 +145,10 @@ public class LocalGameMenuController {
     }
 
     public void startGame() {
+        if (!checkLayoutAndGameMode()) {
+            errorLabel.setText(GAME_MODE_ERROR);
+            return;
+        }
         if (!checkSelectedColors()) {
             errorLabel.setText(COLOR_ERROR);
             return;
@@ -139,5 +158,10 @@ public class LocalGameMenuController {
             return;
         }
         errorLabel.setText(GAME_STARTED);
+        switch (layout.getBoardType()) {
+            case "RECT" : {
+                //RectangleBoard board = RectangleBoard.createBoard(layout, )
+            }
+        }
     }
 }
