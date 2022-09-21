@@ -11,10 +11,7 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * This class represents initial state of the board (initial state of all tiles)
@@ -29,6 +26,7 @@ public class Layout {
     private String boardType;
     private final Map<String, Integer> params;
     private final Map<Integer, TileTemplate> tiles;
+    private JSONArray tileArray;
 
     public Layout(final @NotNull Map<String, Integer> params) {
         this.params = new HashMap<>(params);
@@ -46,6 +44,15 @@ public class Layout {
         }
         throw new RuntimeException("No such PlayerConfig:" + name);
     }
+
+    public void setParam(String paramName, Integer value) {
+        params.put(paramName, value);
+    }
+    public Integer getParam(String paramName) {
+        return params.get(paramName);
+    }
+
+    public Set<String> getParamNameList() { return params.keySet(); }
 
     /**
      * This method loads data from JSON to Layout.
@@ -72,21 +79,24 @@ public class Layout {
                 playerConfigs.add(new PlayerConfig(config.getKey(), (List<Integer>) config.getValue()));
             }
 
-            // process tiles
-            JSONArray tileArray = layout.getJSONArray("tiles");
-            for (int i = 0; i < tileArray.length(); i++) {
-                val tile = tileArray.getJSONObject(i);
-                String idStr = tile.getString("id");
-
-                // apply parameters to ID and evaluate it with Evaluator
-                for (Map.Entry<String, Integer> param : params.entrySet()) {
-                    idStr = idStr.replace(param.getKey(), param.getValue().toString());
-                }
-                tiles.put(Evaluator.evaluateComplexEquationAsInt(idStr),
-                        new TileTemplate(tile.getInt("owner"), TileState.valueOf(tile.getString("state"))));
-            }
+            tileArray = layout.getJSONArray("tiles");
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void processTiles() {
+        tiles.clear();
+        for (int i = 0; i < tileArray.length(); i++) {
+            val tile = tileArray.getJSONObject(i);
+            String idStr = tile.getString("id");
+
+            // apply parameters to ID and evaluate it with Evaluator
+            for (Map.Entry<String, Integer> param : params.entrySet()) {
+                idStr = idStr.replace(param.getKey(), param.getValue().toString());
+            }
+            tiles.put(Evaluator.evaluateComplexEquationAsInt(idStr),
+                    new TileTemplate(tile.getInt("owner"), TileState.valueOf(tile.getString("state"))));
         }
     }
 }

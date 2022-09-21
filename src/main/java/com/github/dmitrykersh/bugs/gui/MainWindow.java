@@ -29,7 +29,7 @@ public class MainWindow extends Application {
             SceneCollection.loadScene("local-game-menu", "/ui/local-game-menu.fxml");
             SceneCollection.loadScene("online-game-menu", "/ui/online-game-menu.fxml");
             stage.setMinWidth(900);
-            stage.setMinHeight(700);
+            stage.setMinHeight(900);
 
             stage.setScene(SceneCollection.getScene("main-menu"));
 
