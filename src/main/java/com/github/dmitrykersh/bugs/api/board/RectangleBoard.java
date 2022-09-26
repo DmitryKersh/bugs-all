@@ -11,12 +11,18 @@ import com.github.dmitrykersh.bugs.api.player.Player;
 import com.github.dmitrykersh.bugs.api.board.tile.Tile;
 import com.github.dmitrykersh.bugs.api.board.tile.TileState;
 import com.github.dmitrykersh.bugs.api.player.PlayerState;
+import javafx.event.EventHandler;
+import javafx.scene.Group;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import org.jetbrains.annotations.NotNull;
 
 import static com.github.dmitrykersh.bugs.api.board.tile.TileState.*;
 
 import java.io.PrintStream;
 import java.util.*;
+import java.util.List;
 
 /**
  * this class represents game board
@@ -36,6 +42,7 @@ import java.util.*;
  */
 
 public final class RectangleBoard implements Board {
+    private static final int TILE_SIZE = 50;
     private final List<Player> players;
     private final List<Player> scoreboard;
     private final List<List<Tile>> tiles;
@@ -236,6 +243,38 @@ public final class RectangleBoard implements Board {
         }
 
         return playerInfo;
+    }
+
+    private EventHandler<MouseEvent> buildMouseEvent(Group panel) {
+        return event -> {
+            Rectangle rect = (Rectangle) event.getTarget();
+            //TODO implement mouse-click logic
+            rect.setFill(Color.RED);
+        };
+    }
+
+    private Rectangle createTile(int x, int y, int size) {
+        Rectangle rect = new Rectangle();
+        rect.setX(x * size);
+        rect.setY(y * size);
+        rect.setHeight(size);
+        rect.setWidth(size);
+        rect.setFill(Color.WHITE);
+        rect.setStroke(Color.BLACK);
+        return rect;
+    }
+
+    @Override
+    public Group buildGrid() {
+        Group grid = new Group();
+        for (int i = 0; i < rowsAmount; i++) {
+            for (int j = 0; j < colsAmount; j++) {
+                Rectangle rect = createTile(j, i, TILE_SIZE);
+                rect.setOnMouseClicked(buildMouseEvent(grid));
+                grid.getChildren().add(rect);
+            }
+        }
+        return grid;
     }
 
     ////////////// TESTING IN CONSOLE STUFF ////////////////////

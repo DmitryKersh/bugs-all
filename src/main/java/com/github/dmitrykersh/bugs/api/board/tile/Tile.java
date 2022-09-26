@@ -1,6 +1,7 @@
 package com.github.dmitrykersh.bugs.api.board.tile;
 
 import com.github.dmitrykersh.bugs.api.player.Player;
+import javafx.scene.shape.Shape;
 import org.jetbrains.annotations.NotNull;
 
 import static com.github.dmitrykersh.bugs.api.board.tile.TileState.*;

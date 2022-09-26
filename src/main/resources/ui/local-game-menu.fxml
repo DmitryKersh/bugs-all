@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.Scene?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
@@ -13,7 +15,7 @@
 
 <Scene xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.github.dmitrykersh.bugs.gui.controller.LocalGameMenuController">
    <root>
-      <BorderPane prefHeight="900.0" prefWidth="1000.0" style="-fx-background-color: #666666;">
+      <BorderPane fx:id="mainBorderPane" prefHeight="900.0" prefWidth="1000.0" style="-fx-background-color: #666666;">
          <top>
             <AnchorPane prefHeight="78.0" prefWidth="1000.0" BorderPane.alignment="CENTER">
                <children>
@@ -111,6 +113,17 @@
                </children>
             </AnchorPane>
          </left>
+         <center>
+            <ScrollPane fx:id="gameScrollPane" fitToHeight="true" fitToWidth="true" pannable="true" prefHeight="755.0" prefWidth="256.0" style="-fx-background-color: #666666;" BorderPane.alignment="CENTER">
+               <content>
+                  <BorderPane fx:id="innerBorderPane" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #666666;">
+                     <padding>
+                        <Insets bottom="50.0" left="50.0" right="50.0" top="50.0" />
+                     </padding>
+                  </BorderPane>
+               </content>
+            </ScrollPane>
+         </center>
       </BorderPane>
    </root>
 </Scene>

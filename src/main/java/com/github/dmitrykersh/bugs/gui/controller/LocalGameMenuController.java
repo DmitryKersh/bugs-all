@@ -9,10 +9,9 @@ import com.sun.javafx.collections.ObservableListWrapper;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.scene.control.ColorPicker;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -47,6 +46,15 @@ public class LocalGameMenuController {
     public Label gameModeDescLabel;
     @FXML
     public GridPane paramGridPane;
+
+    @FXML
+    public BorderPane mainBorderPane;
+
+    @FXML
+    public BorderPane innerBorderPane;
+
+    @FXML
+    public ScrollPane gameScrollPane;
 
     @FXML
     public void initialize() {
@@ -207,6 +215,8 @@ public class LocalGameMenuController {
                         layout.getParam("size_x"),
                         selectedNicknames.stream().toList()
                 );
+                //gameScrollPane.setContent(board.buildGrid());
+                innerBorderPane.setCenter(board.buildGrid());
             }
         }
     }
