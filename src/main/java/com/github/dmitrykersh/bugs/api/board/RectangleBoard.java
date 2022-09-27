@@ -1,15 +1,17 @@
 package com.github.dmitrykersh.bugs.api.board;
 
 import com.github.dmitrykersh.bugs.api.board.layout.Layout;
-import com.github.dmitrykersh.bugs.api.board.layout.PlayerConfig;
+import com.github.dmitrykersh.bugs.api.board.layout.GameMode;
 import com.github.dmitrykersh.bugs.api.board.layout.PlayerTemplate;
 import com.github.dmitrykersh.bugs.api.board.layout.TileTemplate;
+import com.github.dmitrykersh.bugs.api.board.tile.RectangleTile;
 import com.github.dmitrykersh.bugs.api.board.validator.SimpleTurnValidator;
 import com.github.dmitrykersh.bugs.api.board.validator.TurnValidator;
 import com.github.dmitrykersh.bugs.api.player.HumanPlayer;
 import com.github.dmitrykersh.bugs.api.player.Player;
 import com.github.dmitrykersh.bugs.api.board.tile.Tile;
 import com.github.dmitrykersh.bugs.api.board.tile.TileState;
+import com.github.dmitrykersh.bugs.api.player.PlayerSettings;
 import com.github.dmitrykersh.bugs.api.player.PlayerState;
 import javafx.event.EventHandler;
 import javafx.scene.Group;
@@ -57,7 +59,7 @@ public final class RectangleBoard implements Board {
     private final int colsAmount;
 
     private RectangleBoard(final @NotNull Layout layout, final @NotNull String configName, final @NotNull TurnValidator validator,
-                           int rowsAmount, int colsAmount, final @NotNull List<String> nicknames) {
+                           int rowsAmount, int colsAmount, final @NotNull List<PlayerSettings> playerSettings) {
         this.rowsAmount = rowsAmount;
         this.colsAmount = colsAmount;
         this.turnValidator = validator;
@@ -69,7 +71,11 @@ public final class RectangleBoard implements Board {
         List<PlayerTemplate> templates = getPlayerTemplatesFromLayout(layout, configName);
         players = new ArrayList<>(templates.size());
         for (int i = 0; i < templates.size(); i++) {
-            players.add(new HumanPlayer(this, nicknames.size() <= i ? ("p_" + i) : nicknames.get(i), new PlayerState(), templates.get(i).getMaxTurns()));
+            players.add(new HumanPlayer(this,
+                    playerSettings.size() <= i ? ("p_" + i) : playerSettings.get(i).getNickname(),
+                    new PlayerState(),
+                    templates.get(i).getMaxTurns(),
+                    playerSettings.get(i).getColor()));
         }
 
         tiles = new ArrayList<>(rowsAmount);
@@ -84,12 +90,14 @@ public final class RectangleBoard implements Board {
     }
 
     public static RectangleBoard createBoard(final @NotNull Layout layout, final @NotNull String configName, final @NotNull TurnValidator validator,
-                                             final int rowsAmount, final int colsAmount, final @NotNull List<String> nicknames) {
+                                             final @NotNull List<PlayerSettings> playerSettings) {
+        int rowsAmount = layout.getParam("size_y");
+        int colsAmount = layout.getParam("size_x");
         if (rowsAmount <= 0 || colsAmount <= 0) {
             throw new IllegalArgumentException("Incorrect RectangleBoard size");
         }
 
-        return new RectangleBoard(layout, configName, validator, rowsAmount, colsAmount, nicknames);
+        return new RectangleBoard(layout, configName, validator, rowsAmount, colsAmount, playerSettings);
     }
 
     @Override
@@ -236,7 +244,7 @@ public final class RectangleBoard implements Board {
 
     private List<PlayerTemplate> getPlayerTemplatesFromLayout(final @NotNull Layout layout, String configName) {
         List<PlayerTemplate> playerInfo = new ArrayList<>();
-        PlayerConfig config = layout.getPlayerConfigByName(configName);
+        GameMode config = layout.getPlayerConfigByName(configName);
 
         for (int i = 1; i <= config.getPlayerCount(); i++) {
             playerInfo.add(new PlayerTemplate(i, config.getMaxTurnsForPlayer(i)));
@@ -247,21 +255,26 @@ public final class RectangleBoard implements Board {
 
     private EventHandler<MouseEvent> buildMouseEvent(Group panel) {
         return event -> {
-            Rectangle rect = (Rectangle) event.getTarget();
+            RectangleTile tile = (RectangleTile) event.getTarget();
             //TODO implement mouse-click logic
-            rect.setFill(Color.RED);
+            Player activePlayer = this.getActivePlayer();
+            if (activePlayer.tryMakeTurn(tile.getTile().getId())) {
+                tile.setFill(activePlayer.getColor());
+                System.out.println(tile.getTile().getId());
+            }
         };
     }
 
-    private Rectangle createTile(int x, int y, int size) {
-        Rectangle rect = new Rectangle();
-        rect.setX(x * size);
-        rect.setY(y * size);
-        rect.setHeight(size);
-        rect.setWidth(size);
-        rect.setFill(Color.WHITE);
-        rect.setStroke(Color.BLACK);
-        return rect;
+    private RectangleTile createTile(int x, int y, int size) {
+        Tile t = tiles.get(y).get(x);
+        RectangleTile rectangleTile = new RectangleTile(t);
+        rectangleTile.setX(x * size);
+        rectangleTile.setY(y * size);
+        rectangleTile.setHeight(size);
+        rectangleTile.setWidth(size);
+        rectangleTile.setFill(t.getOwner() == null ? Color.WHITE : t.getOwner().getColor());
+        rectangleTile.setStroke(Color.BLACK);
+        return rectangleTile;
     }
 
     @Override
@@ -269,7 +282,7 @@ public final class RectangleBoard implements Board {
         Group grid = new Group();
         for (int i = 0; i < rowsAmount; i++) {
             for (int j = 0; j < colsAmount; j++) {
-                Rectangle rect = createTile(j, i, TILE_SIZE);
+                RectangleTile rect = createTile(j, i, TILE_SIZE);
                 rect.setOnMouseClicked(buildMouseEvent(grid));
                 grid.getChildren().add(rect);
             }

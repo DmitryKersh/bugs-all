@@ -9,11 +9,13 @@ public class HumanPlayer implements Player {
     private PlayerState state;
     private String nickname;
     private int maxTurns;
+    private final Color color;
 
     private Board board;
 
-    public HumanPlayer(final @Nullable Board board, final @NotNull String nickname, final @NotNull PlayerState state, int maxTurns) {
+    public HumanPlayer(final @Nullable Board board, final @NotNull String nickname, final @NotNull PlayerState state, int maxTurns, Color color) {
         this.state = state;
+        this.color = color;
         state.turnsLeft = maxTurns;
         this.nickname = nickname;
         this.maxTurns = maxTurns;
@@ -68,6 +70,6 @@ public class HumanPlayer implements Player {
 
     @Override
     public Color getColor() {
-        return null;
+        return color;
     }
 }

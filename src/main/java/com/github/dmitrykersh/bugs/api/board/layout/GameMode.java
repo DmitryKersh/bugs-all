@@ -2,12 +2,11 @@ package com.github.dmitrykersh.bugs.api.board.layout;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.val;
 
 import java.util.List;
 
 @AllArgsConstructor
-public class PlayerConfig {
+public class GameMode {
     @Getter
     private final String name;
 

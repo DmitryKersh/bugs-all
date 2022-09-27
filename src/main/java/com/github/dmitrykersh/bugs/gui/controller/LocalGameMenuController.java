@@ -2,21 +2,19 @@ package com.github.dmitrykersh.bugs.gui.controller;
 
 import com.github.dmitrykersh.bugs.api.board.RectangleBoard;
 import com.github.dmitrykersh.bugs.api.board.layout.Layout;
-import com.github.dmitrykersh.bugs.api.board.layout.PlayerConfig;
+import com.github.dmitrykersh.bugs.api.board.layout.GameMode;
 import com.github.dmitrykersh.bugs.api.board.validator.SimpleTurnValidator;
+import com.github.dmitrykersh.bugs.api.player.PlayerSettings;
 import com.github.dmitrykersh.bugs.gui.SceneCollection;
 import com.sun.javafx.collections.ObservableListWrapper;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import lombok.val;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.util.*;
@@ -61,9 +59,9 @@ public class LocalGameMenuController {
         layoutComboBox.setItems(new ObservableListWrapper<>(getAvailableLayoutFiles()));
     }
 
-    private List<PlayerConfig> configs;
+    private List<GameMode> gameModes;
     private final List<Color> selectedColors = new ArrayList<>();
-    private final Set<String> selectedNicknames = new HashSet<>();
+    private final List<String> selectedNicknames = new ArrayList<>();
     private Layout layout;
     private final Map<TextField, Label> paramMapping = new HashMap<>();
 
@@ -76,10 +74,10 @@ public class LocalGameMenuController {
 
         layout = new Layout(new HashMap<>());
         layout.LoadLayout(LAYOUT_DIR + "/" + layoutComboBox.getValue());
-        configs = layout.getPlayerConfigs();
+        gameModes = layout.getGameModes();
 
         List<String> configDesc = new ArrayList<>();
-        for (PlayerConfig config : configs)
+        for (GameMode config : gameModes)
             configDesc.add(config.getName());
 
         playerConfigComboBox.setItems(new ObservableListWrapper<>(configDesc));
@@ -103,7 +101,7 @@ public class LocalGameMenuController {
     public void playerConfigComboBox_onChanged() {
         String configName = playerConfigComboBox.getValue();
         int playersAmount = -1;
-        for (val config : configs) {
+        for (val config : gameModes) {
             if (config.getName().equals(configName)) {
                 playersAmount = config.getPlayerCount();
                 gameModeDescLabel.setText(config.toString());
@@ -205,15 +203,19 @@ public class LocalGameMenuController {
         }
         errorLabel.setText(GAME_STARTED);
         layout.processTiles();
+
+        List<PlayerSettings> playerSettings = new ArrayList<>();
+        for (int i = 0; i < selectedNicknames.size(); i++) {
+            playerSettings.add(new PlayerSettings(selectedNicknames.get(i), selectedColors.get(i)));
+        }
+
         switch (layout.getBoardType()) {
             case "RECT" : {
                 RectangleBoard board = RectangleBoard.createBoard(
                         layout,
                         playerConfigComboBox.getValue(),
                         SimpleTurnValidator.INSTANCE,
-                        layout.getParam("size_y"),
-                        layout.getParam("size_x"),
-                        selectedNicknames.stream().toList()
+                        playerSettings
                 );
                 //gameScrollPane.setContent(board.buildGrid());
                 innerBorderPane.setCenter(board.buildGrid());

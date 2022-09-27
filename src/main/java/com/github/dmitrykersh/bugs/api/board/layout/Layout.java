@@ -21,7 +21,7 @@ public class Layout {
     @Getter
     private String description;
     @Getter
-    private final List<PlayerConfig> playerConfigs;
+    private final List<GameMode> gameModes;
     @Getter
     private String boardType;
     private final Map<String, Integer> params;
@@ -31,15 +31,15 @@ public class Layout {
     public Layout(final @NotNull Map<String, Integer> params) {
         this.params = new HashMap<>(params);
         tiles = new HashMap<>();
-        playerConfigs = new ArrayList<>();
+        gameModes = new ArrayList<>();
     }
 
     public TileTemplate getTileTemplate(int id) {
         return tiles.get(id);
     }
 
-    public PlayerConfig getPlayerConfigByName(final @NotNull String name) {
-        for (val config : playerConfigs) {
+    public GameMode getPlayerConfigByName(final @NotNull String name) {
+        for (val config : gameModes) {
             if (name.equals(config.getName())) return config;
         }
         throw new RuntimeException("No such PlayerConfig:" + name);
@@ -76,7 +76,7 @@ public class Layout {
             // process player configurations
             val configMap = layout.getJSONObject("player_configs").toMap();
             for (val config : configMap.entrySet()) {
-                playerConfigs.add(new PlayerConfig(config.getKey(), (List<Integer>) config.getValue()));
+                gameModes.add(new GameMode(config.getKey(), (List<Integer>) config.getValue()));
             }
 
             tileArray = layout.getJSONArray("tiles");

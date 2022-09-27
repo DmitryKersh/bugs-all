@@ -2,14 +2,19 @@ package com.github.dmitrykersh.bugs.api.board.tile;
 
 import com.github.dmitrykersh.bugs.api.player.Player;
 import javafx.scene.shape.Shape;
+import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
 import static com.github.dmitrykersh.bugs.api.board.tile.TileState.*;
 
 public class Tile {
+    @Getter
     private int id;
+    @Getter
     private Player owner;
+    @Getter
     private TileState state;
+
     private boolean active;
 
     public Tile(int id) {
@@ -26,14 +31,9 @@ public class Tile {
         this.active = false;
     }
 
-    public Player getOwner() { return owner; }
-    public void setOwner(final @NotNull Player newOwner) { owner = newOwner; }
-    public TileState getState() { return state; }
     public void activate() { active = true; }
     public void deactivate() { active = false; }
     public  boolean isActive() { return active; }
-
-    public int getId() { return id; }
 
     public void changeState (final @NotNull Player attacker) {
         if (owner == attacker || state == WALL || state == UNAVAILABLE) return;
