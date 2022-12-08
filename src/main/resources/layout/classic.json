@@ -1,0 +1,98 @@
+{
+  "desc": "classic",
+  "board_type": "RECT",
+  "player_configs": {
+    "2 player": [5, 5],
+    "4 player": [5, 5, 5, 5]
+  },
+  "params": {
+    "size_x": 12,
+    "size_y": 12
+  },
+  "tiles": [
+    {
+      "id": "0",
+      "owner": "1",
+      "state": "QUEEN"
+    },
+    {
+      "id": "1",
+      "owner": "1",
+      "state": "QUEEN"
+    },
+    {
+      "id": "size_x",
+      "owner": "1",
+      "state": "QUEEN"
+    },
+    {
+      "id": "size_x $+ 1",
+      "owner": "1",
+      "state": "QUEEN"
+    },
+
+    {
+      "id": "size_x $- 1",
+      "owner": "2",
+      "state": "QUEEN"
+    },
+    {
+      "id": "size_x $- 2",
+      "owner": "2",
+      "state": "QUEEN"
+    },
+    {
+      "id": "2 $* size_x $- 1",
+      "owner": "2",
+      "state": "QUEEN"
+    },
+    {
+      "id": "2 $* size_x $- 2",
+      "owner": "2",
+      "state": "QUEEN"
+    },
+
+    {
+      "id": "size_x $* (size_y $- 1)",
+      "owner": "3",
+      "state": "QUEEN"
+    },
+    {
+      "id": "size_x $* (size_y $- 1) $+ 1",
+      "owner": "3",
+      "state": "QUEEN"
+    },
+    {
+      "id": "size_x $* (size_y $- 2)",
+      "owner": "3",
+      "state": "QUEEN"
+    },
+    {
+      "id": "size_x $* (size_y $- 2) $+ 1",
+      "owner": "3",
+      "state": "QUEEN"
+    },
+
+
+    {
+      "id": "size_x $* size_y $- 1",
+      "owner": "4",
+      "state": "QUEEN"
+    },
+    {
+      "id": "size_x $* size_y $- 2",
+      "owner": "4",
+      "state": "QUEEN"
+    },
+    {
+      "id": "size_x $* (size_y $- 1) $- 1",
+      "owner": "4",
+      "state": "QUEEN"
+    },
+    {
+      "id": "size_x $* (size_y $- 1) $- 2",
+      "owner": "4",
+      "state": "QUEEN"
+    }
+  ]
+}

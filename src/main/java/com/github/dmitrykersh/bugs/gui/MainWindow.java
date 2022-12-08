@@ -28,6 +28,12 @@ public class MainWindow extends Application {
             SceneCollection.loadScene("settings-menu", "/ui/settings-menu.fxml");
             SceneCollection.loadScene("local-game-menu", "/ui/local-game-menu.fxml");
             SceneCollection.loadScene("online-game-menu", "/ui/online-game-menu.fxml");
+
+            TextureCollection.loadImage("queen", "/textures/queen.png");
+            TextureCollection.loadImage("bug", "/textures/bug.png");
+            TextureCollection.loadImage("wall", "/textures/wall.png");
+            TextureCollection.loadImage("empty", "/textures/empty.png");
+
             stage.setMinWidth(900);
             stage.setMinHeight(900);
 

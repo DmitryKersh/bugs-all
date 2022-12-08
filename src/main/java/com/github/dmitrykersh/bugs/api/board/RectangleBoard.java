@@ -13,11 +13,15 @@ import com.github.dmitrykersh.bugs.api.board.tile.Tile;
 import com.github.dmitrykersh.bugs.api.board.tile.TileState;
 import com.github.dmitrykersh.bugs.api.player.PlayerSettings;
 import com.github.dmitrykersh.bugs.api.player.PlayerState;
+import com.github.dmitrykersh.bugs.gui.TextureCollection;
+import com.github.dmitrykersh.bugs.gui.util.TextureUtils;
 import javafx.event.EventHandler;
 import javafx.scene.Group;
+import javafx.scene.effect.Blend;
+import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
+import javafx.scene.paint.ImagePattern;
 import org.jetbrains.annotations.NotNull;
 
 import static com.github.dmitrykersh.bugs.api.board.tile.TileState.*;
@@ -49,6 +53,12 @@ public final class RectangleBoard implements Board {
     private final List<Player> scoreboard;
     private final List<List<Tile>> tiles;
     private final TurnValidator turnValidator;
+
+    private static final String QUEEN_TEX_NAME = "queen";
+    private static final String WALL_TEX_NAME  = "wall";
+    private static final String EMPTY_TEX_NAME = "empty";
+    private static final String BUG_TEX_NAME   = "bug";
+    private static final String UNAVAILABLE_TEX_NAME   = "unavailable";
 
     // game-state variables
     private boolean ended;
@@ -253,16 +263,44 @@ public final class RectangleBoard implements Board {
         return playerInfo;
     }
 
-    private EventHandler<MouseEvent> buildMouseEvent(Group panel) {
+    private EventHandler<MouseEvent> buildMouseEvent() {
         return event -> {
+            if (ended()) {
+                for (int i = 0; i < scoreboard.size(); i++) {
+                    System.out.println(i + 1 + ". " + scoreboard.get(i).getNickname());
+                }
+
+                return;
+            }
             RectangleTile tile = (RectangleTile) event.getTarget();
-            //TODO implement mouse-click logic
+
             Player activePlayer = this.getActivePlayer();
             if (activePlayer.tryMakeTurn(tile.getTile().getId())) {
-                tile.setFill(activePlayer.getColor());
+                redrawTile(tile);
+
                 System.out.println(tile.getTile().getId());
             }
+
         };
+    }
+
+    private void redrawTile(RectangleTile rt) {
+        Tile t = rt.getTile();
+        String texName;
+        switch (t.getState()) {
+            case WALL -> texName = WALL_TEX_NAME;
+            case QUEEN -> texName = QUEEN_TEX_NAME;
+            case BUG -> texName = BUG_TEX_NAME;
+            case FREE -> texName = EMPTY_TEX_NAME;
+            case UNAVAILABLE -> texName = UNAVAILABLE_TEX_NAME;
+            default -> texName = EMPTY_TEX_NAME;
+        }
+        Image tex = TextureCollection.getImageByName(texName);
+        rt.setFill(new ImagePattern(tex));
+        if (t.getOwner() != null) {
+            Blend b = TextureUtils.makeBlend(tex, t.getOwner().getColor(), rt.getX(), rt.getY(), rt.getWidth(), rt.getHeight());
+            rt.setEffect(b);
+        }
     }
 
     private RectangleTile createTile(int x, int y, int size) {
@@ -272,7 +310,9 @@ public final class RectangleBoard implements Board {
         rectangleTile.setY(y * size);
         rectangleTile.setHeight(size);
         rectangleTile.setWidth(size);
-        rectangleTile.setFill(t.getOwner() == null ? Color.WHITE : t.getOwner().getColor());
+
+        redrawTile(rectangleTile);
+
         rectangleTile.setStroke(Color.BLACK);
         return rectangleTile;
     }
@@ -283,7 +323,7 @@ public final class RectangleBoard implements Board {
         for (int i = 0; i < rowsAmount; i++) {
             for (int j = 0; j < colsAmount; j++) {
                 RectangleTile rect = createTile(j, i, TILE_SIZE);
-                rect.setOnMouseClicked(buildMouseEvent(grid));
+                rect.setOnMouseClicked(buildMouseEvent());
                 grid.getChildren().add(rect);
             }
         }
