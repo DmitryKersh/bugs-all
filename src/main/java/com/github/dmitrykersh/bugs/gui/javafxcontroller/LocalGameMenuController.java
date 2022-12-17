@@ -1,4 +1,4 @@
-package com.github.dmitrykersh.bugs.gui.controller;
+package com.github.dmitrykersh.bugs.gui.javafxcontroller;
 
 import com.github.dmitrykersh.bugs.api.board.RectangleBoard;
 import com.github.dmitrykersh.bugs.api.board.layout.Layout;

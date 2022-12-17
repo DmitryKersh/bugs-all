@@ -7,7 +7,7 @@
 
 
 <?import javafx.scene.control.Button?>
-<Scene xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.github.dmitrykersh.bugs.gui.controller.OnlineGameMenuController">
+<Scene xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.github.dmitrykersh.bugs.gui.javafxcontroller.OnlineGameMenuController">
     <root>
         <AnchorPane prefHeight="800.0" prefWidth="1000.0" style="-fx-background-color: #666666;">
             <children>

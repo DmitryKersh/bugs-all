@@ -1,10 +1,9 @@
-package com.github.dmitrykersh.bugs.gui.controller;
+package com.github.dmitrykersh.bugs.gui.javafxcontroller;
 
 import com.github.dmitrykersh.bugs.gui.SceneCollection;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
-import javafx.scene.control.Button;
 import javafx.stage.Stage;
 
 public class MainMenuController {

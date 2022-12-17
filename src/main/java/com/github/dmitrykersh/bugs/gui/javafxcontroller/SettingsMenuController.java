@@ -1,4 +1,4 @@
-package com.github.dmitrykersh.bugs.gui.controller;
+package com.github.dmitrykersh.bugs.gui.javafxcontroller;
 
 import com.github.dmitrykersh.bugs.gui.SceneCollection;
 import javafx.event.ActionEvent;
