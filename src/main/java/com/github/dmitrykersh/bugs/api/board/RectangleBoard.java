@@ -157,6 +157,8 @@ public final class RectangleBoard implements Board {
             if (attackedPlayer != null && tile.getState() == QUEEN) {
                 attackedPlayer.reduceQueenTile();
                 if (!attackedPlayer.hasQueenTiles()) {
+                    if (players.indexOf(attackedPlayer) < activePlayerNumber)
+                        activePlayerNumber--;
                     freezeLostPlayer(attackedPlayer);
                     if (players.size() == 1) {
                         freezeLostPlayer(players.get(0));

@@ -10,7 +10,7 @@
 
 <Scene xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.github.dmitrykersh.bugs.gui.javafxcontroller.MainMenuController">
    <root>
-      <BorderPane maxHeight="1080.0" maxWidth="1920.0" minHeight="500.0" minWidth="700.0" prefHeight="800.0" prefWidth="1000.0" style="-fx-background-color: #666666;">
+      <BorderPane maxHeight="1080.0" maxWidth="1920.0" minHeight="900.0" minWidth="700.0" prefHeight="900.0" prefWidth="1000.0" style="-fx-background-color: #666666;">
          <top>
             <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="112.0" prefWidth="434.0" text="Bugs" textAlignment="CENTER" textFill="WHITE" BorderPane.alignment="CENTER">
                <font>
