@@ -4,6 +4,8 @@ import com.github.dmitrykersh.bugs.api.board.layout.Layout;
 import com.github.dmitrykersh.bugs.api.board.layout.GameMode;
 import com.github.dmitrykersh.bugs.api.board.layout.PlayerTemplate;
 import com.github.dmitrykersh.bugs.api.board.layout.TileTemplate;
+import com.github.dmitrykersh.bugs.api.board.observer.BoardObserver;
+import com.github.dmitrykersh.bugs.api.board.observer.NoOpBoardObserver;
 import com.github.dmitrykersh.bugs.api.board.tile.RectangleTile;
 import com.github.dmitrykersh.bugs.api.board.validator.SimpleTurnValidator;
 import com.github.dmitrykersh.bugs.api.board.validator.TurnValidator;
@@ -53,6 +55,7 @@ public final class RectangleBoard implements Board {
     private final List<Player> scoreboard;
     private final List<List<Tile>> tiles;
     private final TurnValidator turnValidator;
+    private BoardObserver observer = new NoOpBoardObserver();
 
     private static final String QUEEN_TEX_NAME = "queen";
     private static final String WALL_TEX_NAME  = "wall";
@@ -106,7 +109,6 @@ public final class RectangleBoard implements Board {
         if (rowsAmount <= 0 || colsAmount <= 0) {
             throw new IllegalArgumentException("Incorrect RectangleBoard size");
         }
-
         return new RectangleBoard(layout, configName, validator, rowsAmount, colsAmount, playerSettings);
     }
 
@@ -161,7 +163,8 @@ public final class RectangleBoard implements Board {
                         activePlayerNumber--;
                     freezeLostPlayer(attackedPlayer);
                     if (players.size() == 1) {
-                        freezeLostPlayer(players.get(0));
+                        Player kicked = players.get(0);
+                        freezeLostPlayer(kicked);
                         ended = true;
                     }
                 }
@@ -177,6 +180,9 @@ public final class RectangleBoard implements Board {
             }
 
             if (activePlayerNumber >= players.size()) activePlayerNumber = 0;
+
+            if (!ended)
+                observer.onTurnMade(tile, getActivePlayer());
             return true;
         }
         return false;
@@ -189,8 +195,15 @@ public final class RectangleBoard implements Board {
 
     @Override
     public void freezeLostPlayer(final @NotNull Player player) {
+        observer.onPlayerKicked(player);
         players.remove(player);
         scoreboard.add(0, player);
+    }
+
+    @Override
+    public void setObserver(@NotNull BoardObserver obs) {
+        observer = obs;
+        observer.onInitialization(players);
     }
 
     private List<Tile> getNearbyTilesForPlayer(final @NotNull Tile origin, final @NotNull Player player) {

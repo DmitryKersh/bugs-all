@@ -1,14 +1,18 @@
 package com.github.dmitrykersh.bugs.gui.javafxcontroller;
 
+import com.github.dmitrykersh.bugs.api.board.Board;
 import com.github.dmitrykersh.bugs.api.board.RectangleBoard;
 import com.github.dmitrykersh.bugs.api.board.layout.Layout;
 import com.github.dmitrykersh.bugs.api.board.layout.GameMode;
+import com.github.dmitrykersh.bugs.api.board.observer.BoardObserver;
+import com.github.dmitrykersh.bugs.api.board.observer.LocalGameBoardObserver;
 import com.github.dmitrykersh.bugs.api.board.validator.SimpleTurnValidator;
 import com.github.dmitrykersh.bugs.api.player.PlayerSettings;
 import com.github.dmitrykersh.bugs.gui.SceneCollection;
 import com.sun.javafx.collections.ObservableListWrapper;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.Group;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
@@ -55,9 +59,16 @@ public class LocalGameMenuController {
     public ScrollPane gameScrollPane;
 
     @FXML
+    public Label playerListLabel;
+
+    @FXML
+    public Label activePlayerLabel;
+
+    @FXML
     public void initialize() {
         layoutComboBox.setItems(new ObservableListWrapper<>(getAvailableLayoutFiles()));
     }
+
 
     private List<GameMode> gameModes;
     private final List<Color> selectedColors = new ArrayList<>();
@@ -211,15 +222,19 @@ public class LocalGameMenuController {
 
         switch (layout.getBoardType()) {
             case "RECT" : {
-                RectangleBoard board = RectangleBoard.createBoard(
+                Board board = RectangleBoard.createBoard(
                         layout,
                         playerConfigComboBox.getValue(),
                         SimpleTurnValidator.INSTANCE,
                         playerSettings
                 );
+                BoardObserver obs = new LocalGameBoardObserver(activePlayerLabel, playerListLabel, new ArrayList<>(board.getPlayers()));
+                board.setObserver(obs);
                 //gameScrollPane.setContent(board.buildGrid());
-                innerBorderPane.setCenter(board.buildGrid());
+                Group g = board.buildGrid();
+                innerBorderPane.setCenter(g);
             }
         }
+
     }
 }

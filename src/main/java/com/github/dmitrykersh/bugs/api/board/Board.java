@@ -1,5 +1,6 @@
 package com.github.dmitrykersh.bugs.api.board;
 
+import com.github.dmitrykersh.bugs.api.board.observer.BoardObserver;
 import com.github.dmitrykersh.bugs.api.player.Player;
 import com.github.dmitrykersh.bugs.api.board.tile.Tile;
 import javafx.scene.Group;
@@ -17,6 +18,7 @@ public interface Board {
     void activateTiles(final @NotNull Player player);
     boolean tryMakeTurn(final @NotNull Player player, int tileId);
     void freezeLostPlayer(final @NotNull Player player);
+    void setObserver(final @NotNull BoardObserver obs);
 
     Group buildGrid();
 
