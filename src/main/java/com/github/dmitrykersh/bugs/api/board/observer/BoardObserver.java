@@ -8,7 +8,7 @@ import java.util.List;
 public interface BoardObserver {
     void onInitialization(List<Player> players);
     void onPlayerKicked(Player kickedPlayer);
-    void onTurnMade(Tile target, Player player);
-    void onGameEnded();
+    void onTurnMade(TurnInfo turnInfo);
+    void onGameEnded(List<Player> scoreboard);
 
 }

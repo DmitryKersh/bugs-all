@@ -18,12 +18,12 @@ public class NoOpBoardObserver implements BoardObserver {
     }
 
     @Override
-    public void onTurnMade(Tile target, Player player) {
+    public void onTurnMade(TurnInfo turnInfo) {
 
     }
 
     @Override
-    public void onGameEnded() {
+    public void onGameEnded(List<Player> scoreboard) {
 
     }
 }

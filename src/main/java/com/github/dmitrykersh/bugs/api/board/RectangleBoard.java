@@ -6,6 +6,7 @@ import com.github.dmitrykersh.bugs.api.board.layout.PlayerTemplate;
 import com.github.dmitrykersh.bugs.api.board.layout.TileTemplate;
 import com.github.dmitrykersh.bugs.api.board.observer.BoardObserver;
 import com.github.dmitrykersh.bugs.api.board.observer.NoOpBoardObserver;
+import com.github.dmitrykersh.bugs.api.board.observer.TurnInfo;
 import com.github.dmitrykersh.bugs.api.board.tile.RectangleTile;
 import com.github.dmitrykersh.bugs.api.board.validator.SimpleTurnValidator;
 import com.github.dmitrykersh.bugs.api.board.validator.TurnValidator;
@@ -24,6 +25,7 @@ import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
+import lombok.val;
 import org.jetbrains.annotations.NotNull;
 
 import static com.github.dmitrykersh.bugs.api.board.tile.TileState.*;
@@ -154,18 +156,26 @@ public final class RectangleBoard implements Board {
 
         Tile tile = tiles.get(row).get(col);
         if (turnValidator.validateTurn(this, player, tile)) {
+            val infoBuilder = TurnInfo.builder().attacker(player).targetTile(tile);
             Player attackedPlayer = tile.getOwner();
 
             if (attackedPlayer != null && tile.getState() == QUEEN) {
                 attackedPlayer.reduceQueenTile();
+                infoBuilder.isAttack(true).prevOwner(attackedPlayer);
+
                 if (!attackedPlayer.hasQueenTiles()) {
                     if (players.indexOf(attackedPlayer) < activePlayerNumber)
                         activePlayerNumber--;
                     freezeLostPlayer(attackedPlayer);
+                    infoBuilder.isKnockout(true);
                     if (players.size() == 1) {
+                        infoBuilder.isLastMove(true);
                         Player kicked = players.get(0);
                         freezeLostPlayer(kicked);
                         ended = true;
+
+                        observer.onTurnMade(infoBuilder.build());
+                        observer.onGameEnded(scoreboard);
                     }
                 }
             }
@@ -182,7 +192,9 @@ public final class RectangleBoard implements Board {
             if (activePlayerNumber >= players.size()) activePlayerNumber = 0;
 
             if (!ended)
-                observer.onTurnMade(tile, getActivePlayer());
+                observer.onTurnMade(infoBuilder.nextActivePlayer(getActivePlayer()).build());
+            else
+                return true;
             return true;
         }
         return false;
@@ -280,20 +292,13 @@ public final class RectangleBoard implements Board {
 
     private EventHandler<MouseEvent> buildMouseEvent() {
         return event -> {
-            if (ended()) {
-                for (int i = 0; i < scoreboard.size(); i++) {
-                    System.out.println(i + 1 + ". " + scoreboard.get(i).getNickname());
-                }
+            if (ended) return;
 
-                return;
-            }
             RectangleTile tile = (RectangleTile) event.getTarget();
 
             Player activePlayer = this.getActivePlayer();
             if (activePlayer.tryMakeTurn(tile.getTile().getId())) {
                 redrawTile(tile);
-
-                System.out.println(tile.getTile().getId());
             }
 
         };

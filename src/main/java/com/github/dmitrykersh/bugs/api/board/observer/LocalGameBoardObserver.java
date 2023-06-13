@@ -1,9 +1,9 @@
 package com.github.dmitrykersh.bugs.api.board.observer;
 
-import com.github.dmitrykersh.bugs.api.board.tile.Tile;
 import com.github.dmitrykersh.bugs.api.player.Player;
 import javafx.scene.control.Label;
 import lombok.AllArgsConstructor;
+import lombok.val;
 
 import java.util.List;
 
@@ -16,7 +16,7 @@ public class LocalGameBoardObserver implements BoardObserver {
     @Override
     public void onInitialization(List<Player> playerList) {
         players = playerList;
-        activePlayerLabel.setText(buildActivePlayerString(playerList.get(0)));
+        buildActivePlayerLabel(playerList.get(0));
         playerListLabel.setText(buildPlayerListString());
     }
 
@@ -27,21 +27,29 @@ public class LocalGameBoardObserver implements BoardObserver {
     }
 
     @Override
-    public void onTurnMade(Tile target, Player player) {
-        activePlayerLabel.setText(buildActivePlayerString(player));
+    public void onTurnMade(TurnInfo turnInfo) {
+        val nextPlayer = turnInfo.getNextActivePlayer();
+        if (nextPlayer != null) {
+            buildActivePlayerLabel(nextPlayer);
+        }
+        System.out.println(turnInfo);
     }
 
     @Override
-    public void onGameEnded() {
-
+    public void onGameEnded(List<Player> scoreboard) {
+        System.out.println("--- SCOREBOARD ---");
+        for (int i = 0; i < scoreboard.size(); i++) {
+            System.out.println((i + 1) + ". " + scoreboard.get(i).getNickname());
+        }
     }
 
-    private String buildActivePlayerString(Player p) {
+    private void buildActivePlayerLabel(Player p) {
+        activePlayerLabel.setText(p.getNickname() + ": " + p.getTurnsLeft() + " left");
         activePlayerLabel.setTextFill(p.getColor());
-        return new StringBuilder(p.getNickname()).append(": ").append(p.getTurnsLeft()).append(" left").toString();
     }
+
     private String buildPlayerListString() {
-        StringBuilder sb =  new StringBuilder("Still alive: ");
+        StringBuilder sb = new StringBuilder("Still alive: ");
         for (Player p : players)
             sb.append(p.getNickname()).append(" ");
         return sb.toString();
