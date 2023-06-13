@@ -9,6 +9,7 @@ import lombok.Data;
 @Builder
 public class TurnInfo {
     private boolean isAttack;
+    private boolean isQueenAttack;
     private boolean isLastMove;
     private boolean isKnockout;
     private Player attacker;
@@ -16,11 +17,18 @@ public class TurnInfo {
     private Player prevOwner;
     private Player nextActivePlayer;
 
+    /**
+     * Sample string representation in style of battle log
+     */
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder(attacker.getNickname());
         if (isAttack) {
-            sb.append(" attacked ").append(prevOwner.getNickname()).append(" on tile ").append(targetTile.getId());
+            sb.append(" attacked ").append(prevOwner.getNickname());
+            if (isQueenAttack)
+                sb.append("'s queen");
+
+            sb.append(" on tile ").append(targetTile.getId());
             if (isKnockout)
                 sb.append(" and kicked them out");
             if (isLastMove)

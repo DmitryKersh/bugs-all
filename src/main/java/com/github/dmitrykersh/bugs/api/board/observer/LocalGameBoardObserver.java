@@ -32,6 +32,7 @@ public class LocalGameBoardObserver implements BoardObserver {
         if (nextPlayer != null) {
             buildActivePlayerLabel(nextPlayer);
         }
+        // using sample string representation declared in class. no overriding yet
         System.out.println(turnInfo);
     }
 

@@ -158,16 +158,22 @@ public final class RectangleBoard implements Board {
         if (turnValidator.validateTurn(this, player, tile)) {
             val infoBuilder = TurnInfo.builder().attacker(player).targetTile(tile);
             Player attackedPlayer = tile.getOwner();
-
-            if (attackedPlayer != null && tile.getState() == QUEEN) {
-                attackedPlayer.reduceQueenTile();
+            // general attack
+            if (attackedPlayer != null)
                 infoBuilder.isAttack(true).prevOwner(attackedPlayer);
 
+            // queen tile attack
+            if (attackedPlayer != null && tile.getState() == QUEEN) {
+                attackedPlayer.reduceQueenTile();
+                infoBuilder.isQueenAttack(true);
+
+                // knockout
                 if (!attackedPlayer.hasQueenTiles()) {
                     if (players.indexOf(attackedPlayer) < activePlayerNumber)
                         activePlayerNumber--;
                     freezeLostPlayer(attackedPlayer);
                     infoBuilder.isKnockout(true);
+                    // game end
                     if (players.size() == 1) {
                         infoBuilder.isLastMove(true);
                         Player kicked = players.get(0);
@@ -238,7 +244,7 @@ public final class RectangleBoard implements Board {
     private void activateTilesCluster(final @NotNull Tile origin, final @NotNull Player player) {
         origin.activate();
         for (Tile tile : getNearbyTilesForPlayer(origin, player)) {
-            if (tile.getState() == UNAVAILABLE) return;
+            // if (tile.getState() == UNAVAILABLE) return;
             if (tile.getOwner() == player && tile.getState() == WALL && !tile.isActive())
                 activateTilesCluster(tile, player);
             else if (tile.getState() == FREE ||
@@ -332,8 +338,9 @@ public final class RectangleBoard implements Board {
         rectangleTile.setWidth(size);
 
         redrawTile(rectangleTile);
+        if (t.getState() != UNAVAILABLE)
+            rectangleTile.setStroke(Color.BLACK);
 
-        rectangleTile.setStroke(Color.BLACK);
         return rectangleTile;
     }
 

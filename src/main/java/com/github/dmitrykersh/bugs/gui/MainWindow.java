@@ -33,6 +33,7 @@ public class MainWindow extends Application {
             TextureCollection.loadImage("bug", "/textures/bug.png");
             TextureCollection.loadImage("wall", "/textures/wall.png");
             TextureCollection.loadImage("empty", "/textures/empty.png");
+            TextureCollection.loadImage("unavailable", "/textures/unavailable.png");
 
             stage.setMinWidth(900);
             stage.setMinHeight(900);
