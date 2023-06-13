@@ -7,4 +7,5 @@ import org.jetbrains.annotations.NotNull;
 
 public interface TurnValidator {
     boolean validateTurn(final @NotNull Board board, final @NotNull Player attacker, final @NotNull Tile attackedTile);
+    boolean validateTurn(final @NotNull Board board, final @NotNull Player attacker, final @NotNull Tile attackedTile, boolean reactivate);
 }

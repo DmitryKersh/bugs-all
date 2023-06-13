@@ -4,6 +4,7 @@ import com.github.dmitrykersh.bugs.api.board.tile.Tile;
 import com.github.dmitrykersh.bugs.api.player.Player;
 
 import java.util.List;
+import java.util.Map;
 
 public class NoOpBoardObserver implements BoardObserver {
 
@@ -23,7 +24,7 @@ public class NoOpBoardObserver implements BoardObserver {
     }
 
     @Override
-    public void onGameEnded(List<Player> scoreboard) {
+    public void onGameEnded(Map<Player, Integer> scoreboard) {
 
     }
 }

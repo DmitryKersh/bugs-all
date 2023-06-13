@@ -54,7 +54,7 @@ import java.util.List;
 public final class RectangleBoard implements Board {
     private static final int TILE_SIZE = 50;
     private final List<Player> players;
-    private final List<Player> scoreboard;
+    private final Map<Player, Integer> scoreboard;
     private final List<List<Tile>> tiles;
     private final TurnValidator turnValidator;
     private BoardObserver observer = new NoOpBoardObserver();
@@ -78,7 +78,7 @@ public final class RectangleBoard implements Board {
         this.rowsAmount = rowsAmount;
         this.colsAmount = colsAmount;
         this.turnValidator = validator;
-        this.scoreboard = new LinkedList<>();
+        this.scoreboard = new LinkedHashMap<>();
 
         activePlayerNumber = 0;
         ended = false;
@@ -102,6 +102,11 @@ public final class RectangleBoard implements Board {
                 tileRow.add(col, getTileFromLayout(layout, row * this.colsAmount + col));
             }
         }
+        if (checkIfStalemate(getActivePlayer())) {
+            ended = true;
+            System.out.println("Impossible setup. First player has no legal moves");
+        }
+
     }
 
     public static RectangleBoard createBoard(final @NotNull Layout layout, final @NotNull String configName, final @NotNull TurnValidator validator,
@@ -125,8 +130,8 @@ public final class RectangleBoard implements Board {
     }
 
     @Override
-    public List<Player> getScoreboard() {
-        return Collections.unmodifiableList(scoreboard);
+    public Map<Player, Integer> getScoreboard() {
+        return Collections.unmodifiableMap(scoreboard);
     }
 
     @Override
@@ -148,7 +153,7 @@ public final class RectangleBoard implements Board {
 
     @Override
     public boolean tryMakeTurn(@NotNull Player player, int tileId) {
-        if (ended || players.get(activePlayerNumber) != player) return false;
+        if (ended || getActivePlayer() != player) return false;
 
         int row = tileId / colsAmount;
         int col = tileId % colsAmount;
@@ -197,10 +202,21 @@ public final class RectangleBoard implements Board {
 
             if (activePlayerNumber >= players.size()) activePlayerNumber = 0;
 
+
+            if (!ended && checkIfStalemate(getActivePlayer())) {
+                for (Player drawed : players) {
+                    scoreboard.put(drawed, 1);
+                }
+                players.clear();
+                observer.onTurnMade(infoBuilder.toStalemate(true).build());
+                observer.onGameEnded(scoreboard);
+                ended = true;
+            }
+
             if (!ended)
                 observer.onTurnMade(infoBuilder.nextActivePlayer(getActivePlayer()).build());
-            else
-                return true;
+
+
             return true;
         }
         return false;
@@ -215,7 +231,7 @@ public final class RectangleBoard implements Board {
     public void freezeLostPlayer(final @NotNull Player player) {
         observer.onPlayerKicked(player);
         players.remove(player);
-        scoreboard.add(0, player);
+        scoreboard.put(player, players.size() + 1);
     }
 
     @Override
@@ -252,6 +268,15 @@ public final class RectangleBoard implements Board {
                             || tile.getState() == QUEEN)))
                 tile.activate();
         }
+    }
+
+    private boolean checkIfStalemate(Player activePlayer) {
+        activateTiles(activePlayer);
+        for (val row : tiles)
+            for (val tile : row)
+                if (turnValidator.validateTurn(this, activePlayer, tile, false))
+                    return false;
+        return true;
     }
 
     /**
@@ -306,7 +331,6 @@ public final class RectangleBoard implements Board {
             if (activePlayer.tryMakeTurn(tile.getTile().getId())) {
                 redrawTile(tile);
             }
-
         };
     }
 

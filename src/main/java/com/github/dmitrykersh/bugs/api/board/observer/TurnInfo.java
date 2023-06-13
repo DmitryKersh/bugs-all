@@ -12,6 +12,7 @@ public class TurnInfo {
     private boolean isQueenAttack;
     private boolean isLastMove;
     private boolean isKnockout;
+    private boolean toStalemate;
     private Player attacker;
     private Tile targetTile;
     private Player prevOwner;
@@ -33,6 +34,8 @@ public class TurnInfo {
                 sb.append(" and kicked them out");
             if (isLastMove)
                 sb.append(" ending the game");
+            else if (toStalemate)
+                sb.append(" causing stalemate");
         } else {
             sb.append(" placed a bug in tile ").append(targetTile.getId());
         }

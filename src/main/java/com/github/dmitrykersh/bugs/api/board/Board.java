@@ -8,12 +8,13 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.PrintStream;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 
 public interface Board {
     boolean ended();
     List<Player> getPlayers();
-    List<Player> getScoreboard();
+    Map<Player, Integer> getScoreboard();
     Player getActivePlayer();
     void activateTiles(final @NotNull Player player);
     boolean tryMakeTurn(final @NotNull Player player, int tileId);

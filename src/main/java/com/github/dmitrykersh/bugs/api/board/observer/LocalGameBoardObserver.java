@@ -5,7 +5,10 @@ import javafx.scene.control.Label;
 import lombok.AllArgsConstructor;
 import lombok.val;
 
+import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 @AllArgsConstructor
 public class LocalGameBoardObserver implements BoardObserver {
@@ -37,10 +40,14 @@ public class LocalGameBoardObserver implements BoardObserver {
     }
 
     @Override
-    public void onGameEnded(List<Player> scoreboard) {
+    public void onGameEnded(Map<Player, Integer> scoreboard) {
         System.out.println("--- SCOREBOARD ---");
-        for (int i = 0; i < scoreboard.size(); i++) {
-            System.out.println((i + 1) + ". " + scoreboard.get(i).getNickname());
+        List<String> strings = new LinkedList<>();
+        for (val entry : scoreboard.entrySet()) {
+            strings.add(0, entry.getValue() + ". " + entry.getKey().getNickname());
+        }
+        for (String s : strings) {
+            System.out.println(s);
         }
     }
 
