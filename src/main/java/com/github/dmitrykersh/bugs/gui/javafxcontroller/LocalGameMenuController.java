@@ -177,7 +177,8 @@ public class LocalGameMenuController {
         for (val el : playersGridPane.getChildren()) {
             if (el instanceof TextField) {
                 String nickname = ((TextField) el).getCharacters().toString();
-                if (!NICKNAME_PATTERN.matcher(nickname).matches() || !selectedNicknames.add(nickname)) return false;
+                if (!NICKNAME_PATTERN.matcher(nickname).matches() || selectedNicknames.contains(nickname)) return false;
+                selectedNicknames.add(nickname);
             }
         }
         return selectedNicknames.size() > 0;
