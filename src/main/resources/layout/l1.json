@@ -2,9 +2,7 @@
   "desc": "this is a description of layout l1",
   "board_type": "RECT",
   "player_configs": {
-    "5-player": [3, 3, 3, 3, 3],
-    "3": [2, 2, 2],
-    "duel!": [5, 5]
+    "3-player": [4, 4, 4]
   },
   "params": {
     "size_x": 5,
@@ -12,23 +10,18 @@
   },
   "tiles": [
     {
-      "id": "0",
+      "id": "size_x $/ 2",
       "owner": "1",
       "state": "QUEEN"
     },
     {
-      "id": "size_x $- 1",
+      "id": "size_x $* (size_y $- 1)",
       "owner": "2",
       "state": "QUEEN"
     },
     {
-      "id": "size_x $* (size_y $- 1)",
-      "owner": "3",
-      "state": "QUEEN"
-    },
-    {
       "id": "size_x $* size_y $- 1",
-      "owner": "4",
+      "owner": "3",
       "state": "QUEEN"
     }
   ]

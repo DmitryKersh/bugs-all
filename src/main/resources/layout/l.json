@@ -4,7 +4,6 @@
   "player_configs": {
     "5-player": [3, 3, 3, 3, 3],
     "2 vs 1": [5, 3, 3],
-    "3-player": [4, 4, 4],
     "duel": [5, 5]
   },
   "params": {
