@@ -1,19 +1,12 @@
 package com.github.dmitrykersh.bugs.api.board;
 
 import com.github.dmitrykersh.bugs.api.board.layout.Layout;
-import com.github.dmitrykersh.bugs.api.board.layout.GameMode;
-import com.github.dmitrykersh.bugs.api.board.layout.PlayerTemplate;
-import com.github.dmitrykersh.bugs.api.board.layout.TileTemplate;
-import com.github.dmitrykersh.bugs.api.board.observer.BoardObserver;
-import com.github.dmitrykersh.bugs.api.board.observer.NoOpBoardObserver;
-import com.github.dmitrykersh.bugs.api.board.observer.TurnInfo;
-import com.github.dmitrykersh.bugs.api.board.tile.RectangleTile;
+import com.github.dmitrykersh.bugs.api.board.tile.DrawableRectangleTile;
 import com.github.dmitrykersh.bugs.api.board.validator.SimpleTurnValidator;
 import com.github.dmitrykersh.bugs.api.board.validator.TurnValidator;
 import com.github.dmitrykersh.bugs.api.player.HumanPlayer;
 import com.github.dmitrykersh.bugs.api.player.Player;
 import com.github.dmitrykersh.bugs.api.board.tile.Tile;
-import com.github.dmitrykersh.bugs.api.board.tile.TileState;
 import com.github.dmitrykersh.bugs.api.player.PlayerSettings;
 import com.github.dmitrykersh.bugs.api.player.PlayerState;
 import com.github.dmitrykersh.bugs.gui.TextureCollection;
@@ -51,23 +44,16 @@ import java.util.List;
  * +---+---+---+---+---+
  */
 
-public final class RectangleBoard implements Board {
+public final class RectangleBoard extends AbstractBoard {
     private static final int TILE_SIZE = 50;
-    private final List<Player> players;
-    private final Map<Player, Integer> scoreboard;
+
     private final List<List<Tile>> tiles;
-    private final TurnValidator turnValidator;
-    private BoardObserver observer = new NoOpBoardObserver();
 
     private static final String QUEEN_TEX_NAME = "queen";
-    private static final String WALL_TEX_NAME  = "wall";
+    private static final String WALL_TEX_NAME = "wall";
     private static final String EMPTY_TEX_NAME = "empty";
-    private static final String BUG_TEX_NAME   = "bug";
-    private static final String UNAVAILABLE_TEX_NAME   = "unavailable";
-
-    // game-state variables
-    private boolean ended;
-    private int activePlayerNumber;
+    private static final String BUG_TEX_NAME = "bug";
+    private static final String UNAVAILABLE_TEX_NAME = "unavailable";
 
     // board size
     private final int rowsAmount;
@@ -75,42 +61,35 @@ public final class RectangleBoard implements Board {
 
     private RectangleBoard(final @NotNull Layout layout, final @NotNull String configName, final @NotNull TurnValidator validator,
                            int rowsAmount, int colsAmount, final @NotNull List<PlayerSettings> playerSettings) {
+        super(layout, configName, validator);
         this.rowsAmount = rowsAmount;
         this.colsAmount = colsAmount;
-        this.turnValidator = validator;
-        this.scoreboard = new LinkedHashMap<>();
 
-        activePlayerNumber = 0;
-        ended = false;
 
-        List<PlayerTemplate> templates = getPlayerTemplatesFromLayout(layout, configName);
-        players = new ArrayList<>(templates.size());
-        for (int i = 0; i < templates.size(); i++) {
+        for (int i = 0; i < playerTemplates.size(); i++) {
             players.add(new HumanPlayer(this,
                     playerSettings.size() <= i ? ("p_" + i) : playerSettings.get(i).getNickname(),
                     new PlayerState(),
-                    templates.get(i).getMaxTurns(),
+                    playerTemplates.get(i).getMaxTurns(),
                     playerSettings.get(i).getColor()));
         }
 
         tiles = new ArrayList<>(rowsAmount);
-        for (int row = 0; row < rowsAmount; row++) {
-            tiles.add(row, new ArrayList<>(this.colsAmount));
-            List<Tile> tileRow = tiles.get(row);
-
-            for (int col = 0; col < this.colsAmount; col++) {
-                tileRow.add(col, getTileFromLayout(layout, row * this.colsAmount + col));
-            }
-        }
-        if (checkIfStalemate(getActivePlayer())) {
-            ended = true;
-            System.out.println("Impossible setup. First player has no legal moves");
-        }
+        prepareBoard();
 
     }
 
-    public static RectangleBoard createBoard(final @NotNull Layout layout, final @NotNull String configName, final @NotNull TurnValidator validator,
-                                             final @NotNull List<PlayerSettings> playerSettings) {
+    private RectangleBoard(final @NotNull Layout layout, final @NotNull String configName, final @NotNull TurnValidator validator,
+                           int rowsAmount, int colsAmount) {
+        super(layout, configName, validator);
+        this.rowsAmount = rowsAmount;
+        this.colsAmount = colsAmount;
+
+        tiles = new ArrayList<>(rowsAmount);
+    }
+
+    public static RectangleBoard createBoardWithPlayers(final @NotNull Layout layout, final @NotNull String configName, final @NotNull TurnValidator validator,
+                                                        final @NotNull List<PlayerSettings> playerSettings) {
         int rowsAmount = layout.getParam("size_y");
         int colsAmount = layout.getParam("size_x");
         if (rowsAmount <= 0 || colsAmount <= 0) {
@@ -119,19 +98,44 @@ public final class RectangleBoard implements Board {
         return new RectangleBoard(layout, configName, validator, rowsAmount, colsAmount, playerSettings);
     }
 
-    @Override
-    public boolean ended() {
-        return ended;
+    public static RectangleBoard createEmptyBoard(final @NotNull Layout layout, final @NotNull String configName, final @NotNull TurnValidator validator) {
+        int rowsAmount = layout.getParam("size_y");
+        int colsAmount = layout.getParam("size_x");
+        if (rowsAmount <= 0 || colsAmount <= 0) {
+            throw new IllegalArgumentException("Incorrect RectangleBoard size");
+        }
+        return new RectangleBoard(layout, configName, validator, rowsAmount, colsAmount);
+    }
+
+    public boolean prepareBoard() {
+        for (Player p : players)
+            if (p == null)
+                return false;
+
+        for (int row = 0; row < rowsAmount; row++) {
+            tiles.add(row, new ArrayList<>(this.colsAmount));
+            List<Tile> tileRow = tiles.get(row);
+
+            for (int col = 0; col < this.colsAmount; col++) {
+                tileRow.add(col, createTileFromLayout(row * this.colsAmount + col));
+            }
+        }
+        if (checkIfStalemate(getActivePlayer())) {
+            System.out.println("Impossible setup. First player has no legal moves");
+            return false;
+        }
+        return true;
     }
 
     @Override
-    public List<Player> getPlayers() {
-        return Collections.unmodifiableList(players);
-    }
+    protected Tile getTileById(int tileId) throws RuntimeException {
+        int row = tileId / colsAmount;
+        int col = tileId % colsAmount;
+        if (row >= rowsAmount) {
+            throw new RuntimeException(String.format("RectangleBoard: no tile with id = %d : has %d rows and %d columns", tileId, rowsAmount, colsAmount));
+        }
 
-    @Override
-    public Map<Player, Integer> getScoreboard() {
-        return Collections.unmodifiableMap(scoreboard);
+        return tiles.get(row).get(col);
     }
 
     @Override
@@ -152,95 +156,7 @@ public final class RectangleBoard implements Board {
     }
 
     @Override
-    public boolean tryMakeTurn(@NotNull Player player, int tileId) {
-        if (ended || getActivePlayer() != player) return false;
-
-        int row = tileId / colsAmount;
-        int col = tileId % colsAmount;
-        if (row >= rowsAmount) return false;
-
-        Tile tile = tiles.get(row).get(col);
-        if (turnValidator.validateTurn(this, player, tile)) {
-            val infoBuilder = TurnInfo.builder().attacker(player).targetTile(tile);
-            Player attackedPlayer = tile.getOwner();
-            // general attack
-            if (attackedPlayer != null)
-                infoBuilder.isAttack(true).prevOwner(attackedPlayer);
-
-            // queen tile attack
-            if (attackedPlayer != null && tile.getState() == QUEEN) {
-                attackedPlayer.reduceQueenTile();
-                infoBuilder.isQueenAttack(true);
-
-                // knockout
-                if (!attackedPlayer.hasQueenTiles()) {
-                    if (players.indexOf(attackedPlayer) < activePlayerNumber)
-                        activePlayerNumber--;
-                    freezeLostPlayer(attackedPlayer);
-                    infoBuilder.isKnockout(true);
-                    // game end
-                    if (players.size() == 1) {
-                        infoBuilder.isLastMove(true);
-                        Player kicked = players.get(0);
-                        freezeLostPlayer(kicked);
-                        ended = true;
-
-                        observer.onTurnMade(infoBuilder.build());
-                        observer.onGameEnded(scoreboard);
-                    }
-                }
-            }
-
-            tile.changeState(player);
-
-            player.spendTurn();
-
-            if (player.getTurnsLeft() == 0) {
-                player.restoreTurns();
-                activePlayerNumber++;
-            }
-
-            if (activePlayerNumber >= players.size()) activePlayerNumber = 0;
-
-
-            if (!ended && checkIfStalemate(getActivePlayer())) {
-                for (Player drawed : players) {
-                    scoreboard.put(drawed, 1);
-                }
-                players.clear();
-                observer.onTurnMade(infoBuilder.toStalemate(true).build());
-                observer.onGameEnded(scoreboard);
-                ended = true;
-            }
-
-            if (!ended)
-                observer.onTurnMade(infoBuilder.nextActivePlayer(getActivePlayer()).build());
-
-
-            return true;
-        }
-        return false;
-    }
-
-    @Override
-    public Player getActivePlayer() {
-        return players.get(activePlayerNumber);
-    }
-
-    @Override
-    public void freezeLostPlayer(final @NotNull Player player) {
-        observer.onPlayerKicked(player);
-        players.remove(player);
-        scoreboard.put(player, players.size() + 1);
-    }
-
-    @Override
-    public void setObserver(@NotNull BoardObserver obs) {
-        observer = obs;
-        observer.onInitialization(players);
-    }
-
-    private List<Tile> getNearbyTilesForPlayer(final @NotNull Tile origin, final @NotNull Player player) {
+    protected List<Tile> getNearbyTilesForPlayer(final @NotNull Tile origin, final @NotNull Player player) {
         int row = origin.getId() / colsAmount;
         int col = origin.getId() % colsAmount;
         List<Tile> result = new LinkedList<>();
@@ -257,6 +173,29 @@ public final class RectangleBoard implements Board {
         return result;
     }
 
+    @Override
+    protected boolean checkIfStalemate(Player activePlayer) {
+        activateTiles(activePlayer);
+        for (val row : tiles)
+            for (val tile : row)
+                if (turnValidator.validateTurn(this, activePlayer, tile, false))
+                    return false;
+        return true;
+    }
+
+    @Override
+    public Group buildDrawableGrid() {
+        Group grid = new Group();
+        for (int i = 0; i < rowsAmount; i++) {
+            for (int j = 0; j < colsAmount; j++) {
+                DrawableRectangleTile rect = createDrawableTile(j, i, TILE_SIZE);
+                rect.setOnMouseClicked(clickOnTileEvent());
+                grid.getChildren().add(rect);
+            }
+        }
+        return grid;
+    }
+
     private void activateTilesCluster(final @NotNull Tile origin, final @NotNull Player player) {
         origin.activate();
         for (Tile tile : getNearbyTilesForPlayer(origin, player)) {
@@ -270,62 +209,11 @@ public final class RectangleBoard implements Board {
         }
     }
 
-    private boolean checkIfStalemate(Player activePlayer) {
-        activateTiles(activePlayer);
-        for (val row : tiles)
-            for (val tile : row)
-                if (turnValidator.validateTurn(this, activePlayer, tile, false))
-                    return false;
-        return true;
-    }
-
-    /**
-     * This method gets TileTemplate from a given layout and returns a Tile created from it.
-     * In addition, it counts QUEEN-tiles: if there's a QUEEN tile,
-     * the method increments PlayerState.queenTiles for its owner
-     *
-     * @param layout given layout
-     * @param id     tile id to search for in layout
-     * @return if not found in layout: default tile (id=id, owner=null, state=FREE, active=false)
-     * if found: tile created from template
-     */
-    private Tile getTileFromLayout(final @NotNull Layout layout, int id) {
-        // in layout file OwnerNumber-s start from 1. 0 represents null owner.
-        TileTemplate tt = layout.getTileTemplate(id);
-        int ownerNumber;
-
-        if (tt == null || players.size() <= (ownerNumber = tt.getOwnerNumber()) - 1) {
-            return new Tile(id);
-        }
-
-        TileState state = tt.getState();
-        if (state == QUEEN && ownerNumber != 0) {
-            players.get(ownerNumber - 1).restoreQueenTile();
-        }
-
-        return new Tile(
-                id,
-                ownerNumber == 0 ? null : players.get(ownerNumber - 1),
-                tt.getState()
-        );
-    }
-
-    private List<PlayerTemplate> getPlayerTemplatesFromLayout(final @NotNull Layout layout, String configName) {
-        List<PlayerTemplate> playerInfo = new ArrayList<>();
-        GameMode config = layout.getPlayerConfigByName(configName);
-
-        for (int i = 1; i <= config.getPlayerCount(); i++) {
-            playerInfo.add(new PlayerTemplate(i, config.getMaxTurnsForPlayer(i)));
-        }
-
-        return playerInfo;
-    }
-
-    private EventHandler<MouseEvent> buildMouseEvent() {
+    private EventHandler<MouseEvent> clickOnTileEvent() {
         return event -> {
             if (ended) return;
 
-            RectangleTile tile = (RectangleTile) event.getTarget();
+            DrawableRectangleTile tile = (DrawableRectangleTile) event.getTarget();
 
             Player activePlayer = this.getActivePlayer();
             if (activePlayer.tryMakeTurn(tile.getTile().getId())) {
@@ -334,7 +222,7 @@ public final class RectangleBoard implements Board {
         };
     }
 
-    private void redrawTile(RectangleTile rt) {
+    private void redrawTile(DrawableRectangleTile rt) {
         Tile t = rt.getTile();
         String texName;
         switch (t.getState()) {
@@ -353,36 +241,21 @@ public final class RectangleBoard implements Board {
         }
     }
 
-    private RectangleTile createTile(int x, int y, int size) {
+    private DrawableRectangleTile createDrawableTile(int x, int y, int size) {
         Tile t = tiles.get(y).get(x);
-        RectangleTile rectangleTile = new RectangleTile(t);
-        rectangleTile.setX(x * size);
-        rectangleTile.setY(y * size);
-        rectangleTile.setHeight(size);
-        rectangleTile.setWidth(size);
+        DrawableRectangleTile drawableRectangleTile = new DrawableRectangleTile(t);
+        drawableRectangleTile.setX(x * size);
+        drawableRectangleTile.setY(y * size);
+        drawableRectangleTile.setHeight(size);
+        drawableRectangleTile.setWidth(size);
 
-        redrawTile(rectangleTile);
+        redrawTile(drawableRectangleTile);
         if (t.getState() != UNAVAILABLE)
-            rectangleTile.setStroke(Color.BLACK);
+            drawableRectangleTile.setStroke(Color.BLACK);
 
-        return rectangleTile;
+        return drawableRectangleTile;
     }
 
-    @Override
-    public Group buildGrid() {
-        Group grid = new Group();
-        for (int i = 0; i < rowsAmount; i++) {
-            for (int j = 0; j < colsAmount; j++) {
-                RectangleTile rect = createTile(j, i, TILE_SIZE);
-                rect.setOnMouseClicked(buildMouseEvent());
-                grid.getChildren().add(rect);
-            }
-        }
-        return grid;
-    }
-
-    ////////////// TESTING IN CONSOLE STUFF ////////////////////
-    @Override
     public void print(final @NotNull PrintStream ps, final @NotNull Player player) {
         TurnValidator validator = SimpleTurnValidator.INSTANCE;
         for (List<Tile> row : tiles) {
@@ -396,6 +269,4 @@ public final class RectangleBoard implements Board {
             ps.print("\n");
         }
     }
-
-    ////////////////////////////////////////////////////////////
 }

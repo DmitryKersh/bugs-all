@@ -34,12 +34,11 @@ public class TurnInfo {
                 sb.append(" and kicked them out");
             if (isLastMove)
                 sb.append(" ending the game");
-            else if (toStalemate)
-                sb.append(" causing stalemate");
         } else {
             sb.append(" placed a bug in tile ").append(targetTile.getId());
         }
-
+        if (toStalemate)
+            sb.append(" causing stalemate");
         return sb.toString();
     }
 }

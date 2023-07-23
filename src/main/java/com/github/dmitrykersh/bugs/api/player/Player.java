@@ -1,14 +1,13 @@
 package com.github.dmitrykersh.bugs.api.player;
 
-import com.github.dmitrykersh.bugs.api.board.Board;
+import com.github.dmitrykersh.bugs.api.board.AbstractBoard;
 import javafx.scene.paint.Color;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public interface Player {
     boolean tryMakeTurn(int tileId);
     String getNickname();
-    void setBoard(final @NotNull Board b);
+    void setBoard(final @NotNull AbstractBoard b);
 
     boolean hasQueenTiles();
     void reduceQueenTile();

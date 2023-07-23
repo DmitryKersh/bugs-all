@@ -1,6 +1,6 @@
 package com.github.dmitrykersh.bugs.gui.javafxcontroller;
 
-import com.github.dmitrykersh.bugs.api.board.Board;
+import com.github.dmitrykersh.bugs.api.board.AbstractBoard;
 import com.github.dmitrykersh.bugs.api.board.RectangleBoard;
 import com.github.dmitrykersh.bugs.api.board.layout.Layout;
 import com.github.dmitrykersh.bugs.api.board.layout.GameMode;
@@ -220,21 +220,24 @@ public class LocalGameMenuController {
             playerSettings.add(new PlayerSettings(selectedNicknames.get(i), selectedColors.get(i)));
         }
 
+        AbstractBoard board = null;
         switch (layout.getBoardType()) {
             case "RECT" : {
-                Board board = RectangleBoard.createBoard(
+                 board = RectangleBoard.createBoardWithPlayers(
                         layout,
                         playerConfigComboBox.getValue(),
                         SimpleTurnValidator.INSTANCE,
                         playerSettings
                 );
                 BoardObserver obs = new LocalGameBoardObserver(activePlayerLabel, playerListLabel, new ArrayList<>(board.getPlayers()));
-                board.setObserver(obs);
+                board.addObserver(obs);
                 //gameScrollPane.setContent(board.buildGrid());
-                Group g = board.buildGrid();
+                Group g = board.buildDrawableGrid();
                 innerBorderPane.setCenter(g);
             }
         }
+        if (board == null) return;
 
+        board.startGame();
     }
 }

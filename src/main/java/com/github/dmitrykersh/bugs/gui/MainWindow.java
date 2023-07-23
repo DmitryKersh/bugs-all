@@ -1,21 +1,7 @@
 package com.github.dmitrykersh.bugs.gui;
 
-import com.github.dmitrykersh.bugs.api.board.Board;
-import com.github.dmitrykersh.bugs.api.board.RectangleBoard;
-import com.github.dmitrykersh.bugs.api.board.layout.Layout;
-import com.github.dmitrykersh.bugs.api.board.validator.SimpleTurnValidator;
-import com.github.dmitrykersh.bugs.api.player.Player;
 import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
 import javafx.stage.Stage;
-import org.jetbrains.annotations.NotNull;
-
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Scanner;
 
 import static javafx.application.Application.launch;
 

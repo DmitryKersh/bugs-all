@@ -1,13 +1,7 @@
 package com.github.dmitrykersh.bugs.api;
 
-import com.github.dmitrykersh.bugs.api.board.Board;
-import com.github.dmitrykersh.bugs.api.player.Player;
+import com.github.dmitrykersh.bugs.api.board.AbstractBoard;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Vector;
 
 /**
  * [ DO NOT USE YET! ]
@@ -17,9 +11,9 @@ import java.util.Vector;
  */
 
 public class Game {
-    private Board board;
+    private AbstractBoard board;
 
-    public Game(final @NotNull Board board) {
+    public Game(final @NotNull AbstractBoard board) {
         this.board = board;
     }
 

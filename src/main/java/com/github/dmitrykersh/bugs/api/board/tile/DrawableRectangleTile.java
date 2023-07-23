@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @AllArgsConstructor
-public class RectangleTile extends Rectangle {
+public class DrawableRectangleTile extends Rectangle {
     @Getter
     private final Tile tile;
 
