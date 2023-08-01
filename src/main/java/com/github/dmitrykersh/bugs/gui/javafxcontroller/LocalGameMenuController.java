@@ -1,13 +1,13 @@
 package com.github.dmitrykersh.bugs.gui.javafxcontroller;
 
-import com.github.dmitrykersh.bugs.api.board.AbstractBoard;
-import com.github.dmitrykersh.bugs.api.board.RectangleBoard;
-import com.github.dmitrykersh.bugs.api.board.layout.Layout;
-import com.github.dmitrykersh.bugs.api.board.layout.GameMode;
-import com.github.dmitrykersh.bugs.api.board.observer.BoardObserver;
-import com.github.dmitrykersh.bugs.api.board.observer.LocalGameBoardObserver;
-import com.github.dmitrykersh.bugs.api.board.validator.SimpleTurnValidator;
-import com.github.dmitrykersh.bugs.api.player.PlayerSettings;
+import com.github.dmitrykersh.bugs.logic.board.AbstractBoard;
+import com.github.dmitrykersh.bugs.logic.board.RectangleBoard;
+import com.github.dmitrykersh.bugs.logic.board.layout.Layout;
+import com.github.dmitrykersh.bugs.logic.board.layout.GameMode;
+import com.github.dmitrykersh.bugs.logic.board.observer.BoardObserver;
+import com.github.dmitrykersh.bugs.logic.board.observer.LocalGameBoardObserver;
+import com.github.dmitrykersh.bugs.logic.board.validator.SimpleTurnValidator;
+import com.github.dmitrykersh.bugs.logic.player.PlayerSettings;
 import com.github.dmitrykersh.bugs.gui.SceneCollection;
 import com.sun.javafx.collections.ObservableListWrapper;
 import javafx.event.ActionEvent;

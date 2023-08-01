@@ -8,11 +8,11 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<Scene xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.github.dmitrykersh.bugs.gui.javafxcontroller.MainMenuController">
+<Scene xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.github.dmitrykersh.bugs.gui.javafxcontroller.MainMenuController">
    <root>
-      <BorderPane maxHeight="1080.0" maxWidth="1920.0" minHeight="900.0" minWidth="700.0" prefHeight="900.0" prefWidth="1000.0" style="-fx-background-color: #666666;">
+      <BorderPane cacheShape="false" maxHeight="1080.0" maxWidth="1920.0" minHeight="800.0" minWidth="700.0" style="-fx-background-color: #666666;">
          <top>
-            <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="112.0" prefWidth="434.0" text="Bugs" textAlignment="CENTER" textFill="WHITE" BorderPane.alignment="CENTER">
+            <Label alignment="CENTER" cacheShape="false" contentDisplay="CENTER" prefHeight="112.0" prefWidth="434.0" text="Bugs" textAlignment="CENTER" textFill="WHITE" BorderPane.alignment="CENTER">
                <font>
                   <Font name="Consolas" size="96.0" />
                </font>
@@ -24,22 +24,22 @@
          <center>
             <VBox alignment="TOP_CENTER" maxHeight="500.0" maxWidth="320.0" prefHeight="500.0" prefWidth="320.0" BorderPane.alignment="CENTER">
                <children>
-                  <Button maxHeight="100.0" maxWidth="320.0" mnemonicParsing="false" onAction="#localGameButton_onPressed" prefHeight="100.0" prefWidth="320.0" text="Local Game" textAlignment="CENTER">
+                  <Button alignment="CENTER" cacheShape="false" maxHeight="100.0" maxWidth="320.0" mnemonicParsing="false" onAction="#localGameButton_onPressed" prefHeight="100.0" prefWidth="320.0" text="Local Game" textAlignment="CENTER">
                      <font>
                         <Font name="Consolas" size="30.0" />
                      </font>
                   </Button>
-                  <Button mnemonicParsing="false" onAction="#onlineGameButton_onPressed" prefHeight="100.0" prefWidth="320.0" text="Online Game" textAlignment="CENTER">
+                  <Button alignment="CENTER" mnemonicParsing="false" onAction="#onlineGameButton_onPressed" prefHeight="100.0" prefWidth="320.0" text="Online Game" textAlignment="CENTER">
                      <font>
                         <Font name="Consolas" size="30.0" />
                      </font>
                   </Button>
-                  <Button mnemonicParsing="false" onAction="#settingsButton_onPressed" prefHeight="100.0" prefWidth="320.0" text="Settings" textAlignment="CENTER">
+                  <Button alignment="CENTER" mnemonicParsing="false" onAction="#settingsButton_onPressed" prefHeight="100.0" prefWidth="320.0" text="Settings" textAlignment="CENTER">
                      <font>
                         <Font name="Consolas" size="30.0" />
                      </font>
                   </Button>
-                  <Button mnemonicParsing="false" onAction="#quitButton_onPressed" prefHeight="100.0" prefWidth="320.0" text="Quit" textAlignment="CENTER">
+                  <Button alignment="CENTER" mnemonicParsing="false" onAction="#quitButton_onPressed" prefHeight="100.0" prefWidth="320.0" text="Quit" textAlignment="CENTER">
                      <font>
                         <Font name="Consolas" size="30.0" />
                      </font>

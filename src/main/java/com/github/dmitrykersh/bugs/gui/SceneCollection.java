@@ -5,6 +5,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import lombok.val;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -29,10 +30,22 @@ public class SceneCollection {
 
     public static void switchToScene(String name, ActionEvent e) {
         Stage mainStage = (Stage)((Node)e.getSource()).getScene().getWindow();
-        double h = mainStage.getHeight();
+        val scene = SceneCollection.getScene(name);
+
         double w = mainStage.getWidth();
-        mainStage.setScene(SceneCollection.getScene(name));
-        mainStage.setHeight(h);
-        mainStage.setWidth(w);
+        double h = mainStage.getHeight();
+        mainStage.setScene(scene);
+
+        if (h > scene.getHeight()){
+            mainStage.setHeight(h);
+        }
+
+        if (w > scene.getWidth()) {
+            mainStage.setWidth(w);
+        }
+
+        final boolean resizable = mainStage.isResizable();
+        mainStage.setResizable(!resizable);
+        mainStage.setResizable(resizable);
     }
 }
