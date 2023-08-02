@@ -13,12 +13,14 @@ import com.github.dmitrykersh.bugs.logic.player.Player;
 import com.github.dmitrykersh.bugs.logic.player.PlayerSettings;
 import com.github.dmitrykersh.bugs.logic.player.PlayerState;
 import javafx.scene.Group;
+import lombok.Getter;
 import lombok.val;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
-import static com.github.dmitrykersh.bugs.logic.board.tile.TileState.QUEEN;
+import static com.github.dmitrykersh.bugs.logic.board.BoardState.*;
+import static com.github.dmitrykersh.bugs.logic.board.tile.TileState.*;
 
 public abstract class AbstractBoard {
     protected final List<Player> players;
@@ -29,8 +31,8 @@ public abstract class AbstractBoard {
     protected final List<PlayerTemplate> playerTemplates;
     protected final List<BoardObserver> observers;
 
-    protected boolean isWaitingForTurn = false;
-    protected boolean ended;
+    @Getter
+    protected BoardState state;
     protected int activePlayerNumber;
 
     protected AbstractBoard(final @NotNull Layout layout, final @NotNull String gameModeName, final @NotNull TurnValidator validator) {
@@ -40,7 +42,7 @@ public abstract class AbstractBoard {
         this.observers = new ArrayList<>();
 
         activePlayerNumber = 0;
-        ended = false;
+        state = NOT_STARTED;
 
         playerTemplates = new ArrayList<>();
         val config = layout.getGameModeByName(gameModeName);
@@ -87,10 +89,6 @@ public abstract class AbstractBoard {
 
     public abstract Group buildDrawableGrid();
 
-    public boolean ended() {
-        return ended;
-    }
-
     public List<Player> getPlayers() {
         return Collections.unmodifiableList(players);
     }
@@ -115,8 +113,8 @@ public abstract class AbstractBoard {
     protected abstract boolean checkIfStalemate(Player p);
 
     public boolean tryMakeTurn(@NotNull Player player, int tileId) {
-        if (ended || getActivePlayer() != player || !isWaitingForTurn) return false;
-        isWaitingForTurn = false;
+        if (state == STARTED || getActivePlayer() != player ) return false;
+        state = STARTED;
 
         Tile tile = getTileById(tileId);
         if (turnValidator.validateTurn(this, player, tile)) {
@@ -142,7 +140,7 @@ public abstract class AbstractBoard {
                         infoBuilder.isLastMove(true);
                         Player kicked = players.get(0);
                         freezeLostPlayer(kicked);
-                        ended = true;
+                        state = ENDED;
 
                         for (val observer : observers) {
                             observer.onTurnMade(infoBuilder.build());
@@ -165,7 +163,7 @@ public abstract class AbstractBoard {
             if (activePlayerNumber >= players.size()) activePlayerNumber = 0;
 
 
-            if (!ended && checkIfStalemate(getActivePlayer())) {
+            if (state != ENDED && checkIfStalemate(getActivePlayer())) {
                 for (Player drawed : players) {
                     scoreboard.put(drawed, 1);
                 }
@@ -175,19 +173,19 @@ public abstract class AbstractBoard {
                     observer.onGameEnded(scoreboard);
                 }
 
-                ended = true;
+                state = ENDED;
             }
 
-            if (!ended) {
+            if (state != ENDED) {
                 for (val observer : observers) {
                     observer.onTurnMade(infoBuilder.nextActivePlayer(getActivePlayer()).build());
                 }
             }
 
-            isWaitingForTurn = true;
+            state = WAITING_FOR_TURN;
             return true;
         }
-        isWaitingForTurn = true;
+        state = WAITING_FOR_TURN;
         return false;
     }
 
@@ -221,6 +219,6 @@ public abstract class AbstractBoard {
         for (val observer : observers) {
             observer.onInitialization(players);
         }
-        isWaitingForTurn = true;
+        state = WAITING_FOR_TURN;
     }
 }

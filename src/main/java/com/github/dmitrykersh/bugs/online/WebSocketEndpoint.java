@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.dmitrykersh.bugs.logic.player.PlayerSettings;
 import javafx.scene.paint.Color;
+import lombok.val;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.*;
 
@@ -18,7 +19,7 @@ public class WebSocketEndpoint {
     private static final String LAYOUT_DIR = "C:\\Users\\dkarpukhin\\MINE\\bugs-client\\src\\main\\resources\\layout";
     private static final BoardManager boardManager = new BoardManager(LAYOUT_DIR);
     private final Map<Session, SessionInfo> sessionInfoMap = new HashMap<>();
-    private final Set<String> connectedUsers = new HashSet<>();
+    private final Map<String, Integer> userToOwnedBoard = new HashMap<>();
     private final ObjectMapper jsonMapper = new ObjectMapper();
 
     @OnWebSocketConnect
@@ -30,7 +31,7 @@ public class WebSocketEndpoint {
     @OnWebSocketClose
     public void clientClose(Session session){
         boardManager.disconnect(session);
-        connectedUsers.remove(sessionInfoMap.get(session).getUsername());
+        userToOwnedBoard.remove(sessionInfoMap.get(session).getUsername());
         sessionInfoMap.remove(session);
         System.out.println("Client disconnected: " + session.getRemoteAddress().toString());
     }
@@ -52,7 +53,7 @@ public class WebSocketEndpoint {
                 String password = msgRoot.get("password").asText();
                 String nickname = msgRoot.get("nickname").asText();
 
-                if (connectedUsers.contains(username)) {
+                if (userToOwnedBoard.containsKey(username)) {
                     sendError(session, String.format("user %s is already connected", username));
                     break;
                 }
@@ -64,6 +65,7 @@ public class WebSocketEndpoint {
                 sessionInfo.setState(LOGGED_IN);
                 sessionInfo.setUsername(username);
                 sessionInfo.setNickname(nickname);
+                userToOwnedBoard.put(username, null);
                 sendInfo(session, String.format("logged in as %s", username));
             }
             case LOGGED_IN -> {
@@ -72,6 +74,9 @@ public class WebSocketEndpoint {
                         String layoutName = msgRoot.get("layout_name").asText();
                         String configName = msgRoot.get("config_name").asText();
                         Map<String, Integer> layoutParams = jsonMapper.convertValue(msgRoot.get("params"), new TypeReference<>() {});
+                        if (userToOwnedBoard.get(sessionInfo.getUsername()) != null) {
+                            sendError(session, String.format("board already created by this client (id=%d)", userToOwnedBoard.get(sessionInfo.getUsername())));
+                        }
 
                         int boardId;
                         if ((boardId = boardManager.createBoard(layoutName, configName, layoutParams)) != 0) {
@@ -89,6 +94,21 @@ public class WebSocketEndpoint {
                         }
                         sessionInfo.setState(CONNECTED_TO_BOARD);
                         sendInfo(session, String.format("connected to board %d", boardId));
+                    }
+                    case "delete_board" -> {
+                        int id;
+                        List<Session> sessionsToLoggedIn;
+                        if ((sessionsToLoggedIn = boardManager.deleteBoard(id = userToOwnedBoard.get(sessionInfo.getUsername()))) != null) {
+                            sendInfo(session, String.format("deleted board with id %d", id));
+                            for (Session s : sessionsToLoggedIn) {
+                                sessionInfoMap.get(s).setState(LOGGED_IN);
+                                sendInfo(s, "the board you've been connected to was deleted");
+                            }
+
+                            userToOwnedBoard.put(sessionInfo.getUsername(), null);
+                        } else {
+                            sendError(session, String.format("cannot delete with id %d : game in progress or board does not exist", id));
+                        }
                     }
                     case "get_layout_info" -> {
                         sendJsonData(session, "layouts", boardManager.getLayoutsAsJsonStr());

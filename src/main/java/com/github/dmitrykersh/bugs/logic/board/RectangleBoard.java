@@ -21,6 +21,7 @@ import javafx.scene.paint.ImagePattern;
 import lombok.val;
 import org.jetbrains.annotations.NotNull;
 
+import static com.github.dmitrykersh.bugs.logic.board.BoardState.*;
 import static com.github.dmitrykersh.bugs.logic.board.tile.TileState.*;
 
 import java.io.PrintStream;
@@ -124,6 +125,7 @@ public final class RectangleBoard extends AbstractBoard {
             System.out.println("Impossible setup. First player has no legal moves");
             return false;
         }
+        startGame();
         return true;
     }
 
@@ -211,7 +213,7 @@ public final class RectangleBoard extends AbstractBoard {
 
     private EventHandler<MouseEvent> clickOnTileEvent() {
         return event -> {
-            if (ended) return;
+            if (state == ENDED) return;
 
             DrawableRectangleTile tile = (DrawableRectangleTile) event.getTarget();
 

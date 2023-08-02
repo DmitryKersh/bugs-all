@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.github.dmitrykersh.bugs.logic.board.AbstractBoard;
+import com.github.dmitrykersh.bugs.logic.board.BoardState;
 import com.github.dmitrykersh.bugs.logic.board.RectangleBoard;
 import com.github.dmitrykersh.bugs.logic.board.layout.Layout;
 import com.github.dmitrykersh.bugs.logic.board.validator.SimpleTurnValidator;
@@ -18,6 +19,8 @@ import org.jetbrains.annotations.NotNull;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
+
+import static com.github.dmitrykersh.bugs.logic.board.BoardState.*;
 
 public class BoardManager {
     private final Map<Session, Player> sessionToPlayer = new HashMap<>();
@@ -62,6 +65,28 @@ public class BoardManager {
         id++;
         activeBoards.put(id, board);
         return id;
+    }
+
+    // returns sessions for which to change status
+    public List<Session> deleteBoard(int id) {
+        AbstractBoard b;
+        List<Session> sessions = new ArrayList<>();
+        if ((b = activeBoards.get(id)) == null) return sessions;
+        if (b.getState() == ENDED || b.getState() == NOT_STARTED) {
+            for (val entry : sessionToPlayer.entrySet()) {
+                if (b.getPlayers().contains(entry.getValue())) {
+                    sessions.add(entry.getKey());
+                }
+            }
+            for (int i = 0; i < b.getPlayers().size(); i++) {
+                // does not change size of player vector!
+                b.removePlayer(i+1);
+            }
+
+            activeBoards.remove(id);
+            return sessions;
+        }
+        return null;
     }
 
     public boolean connectToBoard(Session session, int boardId, int playerNumber, PlayerSettings playerSettings) {
