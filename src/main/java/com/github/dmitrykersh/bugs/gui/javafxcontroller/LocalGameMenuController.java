@@ -84,7 +84,7 @@ public class LocalGameMenuController {
         }
 
         layout = new Layout(new HashMap<>());
-        layout.LoadLayout(LAYOUT_DIR + "/" + layoutComboBox.getValue());
+        layout.loadLayoutFromFile(LAYOUT_DIR + "/" + layoutComboBox.getValue());
         gameModes = layout.getGameModes();
 
         List<String> configDesc = new ArrayList<>();

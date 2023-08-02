@@ -59,9 +59,9 @@ public final class RectangleBoard extends AbstractBoard {
     private final int rowsAmount;
     private final int colsAmount;
 
-    private RectangleBoard(final @NotNull Layout layout, final @NotNull String configName, final @NotNull TurnValidator validator,
+    private RectangleBoard(final @NotNull Layout layout, final @NotNull String gameModeName, final @NotNull TurnValidator validator,
                            int rowsAmount, int colsAmount, final @NotNull List<PlayerSettings> playerSettings) {
-        super(layout, configName, validator);
+        super(layout, gameModeName, validator);
         this.rowsAmount = rowsAmount;
         this.colsAmount = colsAmount;
 
@@ -79,32 +79,32 @@ public final class RectangleBoard extends AbstractBoard {
 
     }
 
-    private RectangleBoard(final @NotNull Layout layout, final @NotNull String configName, final @NotNull TurnValidator validator,
+    private RectangleBoard(final @NotNull Layout layout, final @NotNull String gameModeName, final @NotNull TurnValidator validator,
                            int rowsAmount, int colsAmount) {
-        super(layout, configName, validator);
+        super(layout, gameModeName, validator);
         this.rowsAmount = rowsAmount;
         this.colsAmount = colsAmount;
 
         tiles = new ArrayList<>(rowsAmount);
     }
 
-    public static RectangleBoard createBoardWithPlayers(final @NotNull Layout layout, final @NotNull String configName, final @NotNull TurnValidator validator,
+    public static RectangleBoard createBoardWithPlayers(final @NotNull Layout layout, final @NotNull String gameModeName, final @NotNull TurnValidator validator,
                                                         final @NotNull List<PlayerSettings> playerSettings) {
         int rowsAmount = layout.getParam("size_y");
         int colsAmount = layout.getParam("size_x");
         if (rowsAmount <= 0 || colsAmount <= 0) {
             throw new IllegalArgumentException("Incorrect RectangleBoard size");
         }
-        return new RectangleBoard(layout, configName, validator, rowsAmount, colsAmount, playerSettings);
+        return new RectangleBoard(layout, gameModeName, validator, rowsAmount, colsAmount, playerSettings);
     }
 
-    public static RectangleBoard createEmptyBoard(final @NotNull Layout layout, final @NotNull String configName, final @NotNull TurnValidator validator) {
+    public static RectangleBoard createEmptyBoard(final @NotNull Layout layout, final @NotNull String gameModeName, final @NotNull TurnValidator validator) {
         int rowsAmount = layout.getParam("size_y");
         int colsAmount = layout.getParam("size_x");
         if (rowsAmount <= 0 || colsAmount <= 0) {
             throw new IllegalArgumentException("Incorrect RectangleBoard size");
         }
-        return new RectangleBoard(layout, configName, validator, rowsAmount, colsAmount);
+        return new RectangleBoard(layout, gameModeName, validator, rowsAmount, colsAmount);
     }
 
     public boolean prepareBoard() {

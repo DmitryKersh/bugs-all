@@ -33,7 +33,7 @@ public abstract class AbstractBoard {
     protected boolean ended;
     protected int activePlayerNumber;
 
-    protected AbstractBoard(final @NotNull Layout layout, final @NotNull String configName, final @NotNull TurnValidator validator) {
+    protected AbstractBoard(final @NotNull Layout layout, final @NotNull String gameModeName, final @NotNull TurnValidator validator) {
         this.turnValidator = validator;
         this.scoreboard = new LinkedHashMap<>();
         this.layout = layout;
@@ -43,29 +43,34 @@ public abstract class AbstractBoard {
         ended = false;
 
         playerTemplates = new ArrayList<>();
-        val config = layout.getPlayerConfigByName(configName);
+        val config = layout.getGameModeByName(gameModeName);
 
         for (int i = 1; i <= config.getPlayerCount(); i++) {
             playerTemplates.add(new PlayerTemplate(i, config.getMaxTurnsForPlayer(i)));
         }
 
         players = new ArrayList<>(playerTemplates.size());
+        for (int i = 0; i < playerTemplates.size(); i++) {
+            players.add(null);
+        }
     }
 
-    public Player tryAddPlayer(int number, PlayerSettings settings) {
-        Player p = null;
-        if (players.get(number) != null)
-            return p;
-        players.set(number, p = new HumanPlayer(this,
+    public Player tryAddPlayer(int playerNumber, PlayerSettings settings) {
+        int playerIndex = playerNumber - 1;
+        if (playerIndex >= players.size() || playerIndex < 0) return null;
+        Player p;
+        if (players.get(playerIndex) != null)
+            return null;
+        players.set(playerIndex, p = new HumanPlayer(this,
                 settings.getNickname(),
                 new PlayerState(),
-                playerTemplates.get(number).getMaxTurns(),
+                playerTemplates.get(playerIndex).getMaxTurns(),
                 settings.getColor()));
         return p;
     }
     // use set() to not change other player numbers
-    public void removePlayer(int number) {
-        players.set(number, null);
+    public void removePlayer(int playerNumber) {
+        players.set(playerNumber-1, null);
     }
     public void removePlayer(Player player) {
         players.set(players.indexOf(player), null);

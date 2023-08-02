@@ -38,11 +38,11 @@ public class Layout {
         return tiles.get(id);
     }
 
-    public GameMode getPlayerConfigByName(final @NotNull String name) {
-        for (val config : gameModes) {
-            if (name.equals(config.getName())) return config;
+    public GameMode getGameModeByName(final @NotNull String name) {
+        for (val gameMode : gameModes) {
+            if (name.equals(gameMode.getName())) return gameMode;
         }
-        throw new RuntimeException("No such PlayerConfig:" + name);
+        throw new RuntimeException("No such GameMode:" + name);
     }
 
     public void setParam(String paramName, Integer value) {
@@ -55,31 +55,34 @@ public class Layout {
     public Set<String> getParamNameList() { return params.keySet(); }
 
     /**
-     * This method loads data from JSON to Layout.
+     * This method loads data from JSON string to Layout.
      *
-     * @param filename path to file
+     * @param layoutStr JSON string
      */
-    public void LoadLayout(final @NotNull String filename) {
+    public void loadLayout(final @NotNull String layoutStr) {
+        JSONObject layout = new JSONObject(layoutStr);
+        description = layout.getString("desc");
+        boardType = layout.getString("board_type");
+
+        // process parameters map
+        Map<String, Object> defaultParams = layout.getJSONObject("params").toMap();
+        for (val defaultParam : defaultParams.entrySet()) {
+            if (!params.containsKey(defaultParam.getKey())) {
+                params.put(defaultParam.getKey(), Integer.parseInt(defaultParam.getValue().toString()));
+            }
+        }
+
+        // process player configurations
+        val configMap = layout.getJSONObject("player_configs").toMap();
+        for (val config : configMap.entrySet()) {
+            gameModes.add(new GameMode(config.getKey(), (List<Integer>) config.getValue()));
+        }
+
+        tileArray = layout.getJSONArray("tiles");
+    }
+    public void loadLayoutFromFile(final @NotNull String filename) {
         try {
-            JSONObject layout = new JSONObject(FileUtils.readFileToString(new File(filename), "utf-8"));
-            description = layout.getString("desc");
-            boardType = layout.getString("board_type");
-
-            // process parameters map
-            Map<String, Object> defaultParams = layout.getJSONObject("params").toMap();
-            for (val param : defaultParams.entrySet()) {
-                if (!params.containsKey(param.getKey())) {
-                    params.put(param.getKey(), Integer.parseInt(param.getValue().toString()));
-                }
-            }
-
-            // process player configurations
-            val configMap = layout.getJSONObject("player_configs").toMap();
-            for (val config : configMap.entrySet()) {
-                gameModes.add(new GameMode(config.getKey(), (List<Integer>) config.getValue()));
-            }
-
-            tileArray = layout.getJSONArray("tiles");
+            loadLayout(FileUtils.readFileToString(new File(filename), "utf-8"));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
