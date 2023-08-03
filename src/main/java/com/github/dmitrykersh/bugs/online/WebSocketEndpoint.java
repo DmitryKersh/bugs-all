@@ -3,6 +3,7 @@ package com.github.dmitrykersh.bugs.online;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.dmitrykersh.bugs.logic.board.AbstractBoard;
 import com.github.dmitrykersh.bugs.logic.player.PlayerSettings;
 import javafx.scene.paint.Color;
 import lombok.val;
@@ -122,7 +123,24 @@ public class WebSocketEndpoint {
                         boardManager.disconnect(session);
                         sessionInfo.setState(LOGGED_IN);
                     }
+                    case "start_game" -> {
+                        int boardId;
+                        if (boardManager.getBoard(session) != boardManager.getBoard(boardId = userToOwnedBoard.get(sessionInfo.getUsername()))) {
+                            sendError(session, "Cannot start game. You're not owner of board you're connected to");
+                            break;
+                        }
+                        List<Session> sessionsToInGame = boardManager.prepareAndStartBoard(boardId);
+                        if (sessionsToInGame != null) {
+                            for (Session s : sessionsToInGame) {
+                                sessionInfoMap.get(s).setState(IN_GAME);
+                                sendInfo(s, "Game started");
+                            }
+                        } else {
+                            sendError(session, "Cannot start game. Not all players are present");
+                        }
+                    }
                 }
+
             }
             case IN_GAME -> {
                 break;

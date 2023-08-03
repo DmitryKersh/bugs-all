@@ -8,9 +8,12 @@ import com.github.dmitrykersh.bugs.logic.board.AbstractBoard;
 import com.github.dmitrykersh.bugs.logic.board.BoardState;
 import com.github.dmitrykersh.bugs.logic.board.RectangleBoard;
 import com.github.dmitrykersh.bugs.logic.board.layout.Layout;
+import com.github.dmitrykersh.bugs.logic.board.observer.BoardObserver;
+import com.github.dmitrykersh.bugs.logic.board.observer.TurnInfo;
 import com.github.dmitrykersh.bugs.logic.board.validator.SimpleTurnValidator;
 import com.github.dmitrykersh.bugs.logic.player.Player;
 import com.github.dmitrykersh.bugs.logic.player.PlayerSettings;
+import lombok.AllArgsConstructor;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.eclipse.jetty.websocket.api.Session;
@@ -23,6 +26,30 @@ import java.util.*;
 import static com.github.dmitrykersh.bugs.logic.board.BoardState.*;
 
 public class BoardManager {
+    @AllArgsConstructor
+    private class OnlineBoardObserver implements BoardObserver {
+        private AbstractBoard board;
+        @Override
+        public void onInitialization(List<Player> players) {
+
+        }
+
+        @Override
+        public void onPlayerKicked(Player kickedPlayer) {
+
+        }
+
+        @Override
+        public void onTurnMade(TurnInfo turnInfo) {
+
+        }
+
+        @Override
+        public void onGameEnded(Map<Player, Integer> scoreboard) {
+
+        }
+    }
+
     private final Map<Session, Player> sessionToPlayer = new HashMap<>();
     private final Map<Integer, AbstractBoard> activeBoards = new HashMap<>();
     private final Map<String, String> layouts = new HashMap<>();
@@ -69,15 +96,10 @@ public class BoardManager {
 
     // returns sessions for which to change status
     public List<Session> deleteBoard(int id) {
-        AbstractBoard b;
-        List<Session> sessions = new ArrayList<>();
-        if ((b = activeBoards.get(id)) == null) return sessions;
+        AbstractBoard b = activeBoards.get(id);
+
         if (b.getState() == ENDED || b.getState() == NOT_STARTED) {
-            for (val entry : sessionToPlayer.entrySet()) {
-                if (b.getPlayers().contains(entry.getValue())) {
-                    sessions.add(entry.getKey());
-                }
-            }
+            List<Session> sessions = getSessionsForBoard(b);
             for (int i = 0; i < b.getPlayers().size(); i++) {
                 // does not change size of player vector!
                 b.removePlayer(i+1);
@@ -119,5 +141,31 @@ public class BoardManager {
         }
         layoutCachedStr = root.toString();
         return layoutCachedStr;
+    }
+
+    public List<Session> prepareAndStartBoard(int id) {
+        AbstractBoard b = activeBoards.get(id);
+        if (b == null || !b.prepareBoard()) {
+            return null;
+        }
+        b.startGame();
+        b.addObserver(new OnlineBoardObserver(b));
+        return getSessionsForBoard(id);
+    }
+
+    private List<Session> getSessionsForBoard(int boardId) {
+        return getSessionsForBoard(activeBoards.get(boardId));
+    }
+
+    private List<Session> getSessionsForBoard(AbstractBoard b) {
+        List<Session> sessions = new ArrayList<>();
+        if (b == null)
+            return sessions;
+        for (val entry : sessionToPlayer.entrySet()) {
+            if (b.getPlayers().contains(entry.getValue())) {
+                sessions.add(entry.getKey());
+            }
+        }
+        return sessions;
     }
 }

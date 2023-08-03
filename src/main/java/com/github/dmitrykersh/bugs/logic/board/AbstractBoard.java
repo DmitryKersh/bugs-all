@@ -215,10 +215,13 @@ public abstract class AbstractBoard {
         );
     }
 
-    public void startGame() {
+    public boolean startGame() {
+        if (state != PREPARED)
+            return false;
         for (val observer : observers) {
             observer.onInitialization(players);
         }
         state = WAITING_FOR_TURN;
+        return true;
     }
 }

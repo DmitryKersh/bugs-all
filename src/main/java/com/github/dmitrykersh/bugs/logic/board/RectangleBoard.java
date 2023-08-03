@@ -125,7 +125,7 @@ public final class RectangleBoard extends AbstractBoard {
             System.out.println("Impossible setup. First player has no legal moves");
             return false;
         }
-        startGame();
+
         return true;
     }
 
