@@ -1,0 +1,80 @@
+{
+  "desc": "this is a description of layout l1",
+  "board_type": "RECT",
+  "player_configs": {
+    "2-player [4]": [4, 4],
+    "2-player [5]": [5, 5],
+    "2-player [6]": [6, 6]
+  },
+  "params": {
+    "size_x": 13,
+    "size_y": 9
+  },
+  "tiles": [
+    {
+      "id": "((size_y $- 1) $/ 2) $* size_x $+ (size_x $- 1) $/ 2 $- size_x $- 1",
+      "owner": "1",
+      "state": "QUEEN"
+    },
+    {
+      "id": "((size_y $- 1) $/ 2) $* size_x $+ (size_x $- 1) $/ 2 $+ size_x $- 1",
+      "owner": "2",
+      "state": "QUEEN"
+    },
+    {
+      "id": "((size_y $- 1) $/ 2) $* size_x $+ (size_x $- 1) $/ 2 $- size_x $+ 1",
+      "owner": "1",
+      "state": "QUEEN"
+    },
+    {
+      "id": "((size_y $- 1) $/ 2) $* size_x $+ (size_x $- 1) $/ 2 $+ size_x $+ 1",
+      "owner": "2",
+      "state": "QUEEN"
+    },
+    {
+      "id": "((size_y $- 1) $/ 2) $* size_x $+ (size_x $- 1) $/ 2 $- size_x",
+      "owner": "1",
+      "state": "WALL"
+    },
+    {
+      "id": "((size_y $- 1) $/ 2) $* size_x $+ (size_x $- 1) $/ 2 $+ size_x",
+      "owner": "2",
+      "state": "WALL"
+    },
+    {
+      "id": "((size_y $- 1) $/ 2) $* size_x $+ (size_x $- 1) $/ 2",
+      "owner": "0",
+      "state": "UNAVAILABLE"
+    },
+    {
+      "id": "((size_y $- 1) $/ 2) $* size_x $+ (size_x $- 1) $/ 2 $+ 1",
+      "owner": "0",
+      "state": "UNAVAILABLE"
+    },
+    {
+      "id": "((size_y $- 1) $/ 2) $* size_x $+ (size_x $- 1) $/ 2 $+ 2",
+      "owner": "0",
+      "state": "UNAVAILABLE"
+    },
+    {
+      "id": "((size_y $- 1) $/ 2) $* size_x $+ (size_x $- 1) $/ 2 $+ 3",
+      "owner": "0",
+      "state": "UNAVAILABLE"
+    },
+    {
+      "id": "((size_y $- 1) $/ 2) $* size_x $+ (size_x $- 1) $/ 2 $- 1",
+      "owner": "0",
+      "state": "UNAVAILABLE"
+    },
+    {
+      "id": "((size_y $- 1) $/ 2) $* size_x $+ (size_x $- 1) $/ 2 $- 2",
+      "owner": "0",
+      "state": "UNAVAILABLE"
+    },
+    {
+      "id": "((size_y $- 1) $/ 2) $* size_x $+ (size_x $- 1) $/ 2 $- 3",
+      "owner": "0",
+      "state": "UNAVAILABLE"
+    }
+  ]
+}

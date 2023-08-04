@@ -2,14 +2,12 @@
   "desc": "this is a description of layout l",
   "board_type": "RECT",
   "player_configs": {
-    "5-player": [3, 3, 3, 3, 3],
-    "2 vs 1": [5, 3, 3],
-    "3-player": [4, 4, 4],
+    "4-player": [4, 4, 4, 4],
     "duel": [5, 5]
   },
   "params": {
-    "size_x": 5,
-    "size_y": 6
+    "size_x": 9,
+    "size_y": 12
   },
   "tiles": [
     {
@@ -19,7 +17,7 @@
     },
     {
       "id": "size_x $- 1",
-      "owner": "2",
+      "owner": "4",
       "state": "QUEEN"
     },
     {
@@ -28,13 +26,8 @@
       "state": "QUEEN"
     },
     {
-      "id": "(size_x $* size_y) $/ 2",
-      "owner": "5",
-      "state": "QUEEN"
-    },
-    {
       "id": "size_x $* size_y $- 1",
-      "owner": "4",
+      "owner": "2",
       "state": "QUEEN"
     },
     {
@@ -43,7 +36,27 @@
       "state": "UNAVAILABLE"
     },
     {
-      "id": "(size_y $/ 2 $* (size_x $- 1)) $/ 2",
+      "id": "size_x $+ (size_x $- 1) $/ 2",
+      "owner": "0",
+      "state": "UNAVAILABLE"
+    },
+    {
+      "id": "(size_y $- 2) $* size_x $+ (size_x $- 1) $/ 2",
+      "owner": "0",
+      "state": "UNAVAILABLE"
+    },
+    {
+      "id": "(size_y $- 1) $* size_x $+ (size_x $- 1) $/ 2",
+      "owner": "0",
+      "state": "UNAVAILABLE"
+    },
+    {
+      "id": "(size_y $/ 2) $* size_x $+ (size_x $- 1) $/ 2",
+      "owner": "0",
+      "state": "UNAVAILABLE"
+    },
+    {
+      "id": "(size_y $/ 2 $- 1) $* size_x $+ (size_x $- 1) $/ 2",
       "owner": "0",
       "state": "UNAVAILABLE"
     }
