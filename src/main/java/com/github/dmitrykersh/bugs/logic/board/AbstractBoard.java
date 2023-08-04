@@ -180,9 +180,10 @@ public abstract class AbstractBoard {
                 for (val observer : observers) {
                     observer.onTurnMade(infoBuilder.nextActivePlayer(getActivePlayer()).build());
                 }
+                state = WAITING_FOR_TURN;
             }
 
-            state = WAITING_FOR_TURN;
+
             return true;
         }
         state = WAITING_FOR_TURN;
