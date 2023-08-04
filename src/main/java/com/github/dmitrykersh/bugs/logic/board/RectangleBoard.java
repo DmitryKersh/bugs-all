@@ -68,7 +68,7 @@ public final class RectangleBoard extends AbstractBoard {
 
 
         for (int i = 0; i < playerTemplates.size(); i++) {
-            players.add(new HumanPlayer(this,
+            players.set(i, new HumanPlayer(this,
                     playerSettings.size() <= i ? ("p_" + i) : playerSettings.get(i).getNickname(),
                     new PlayerState(),
                     playerTemplates.get(i).getMaxTurns(),
@@ -126,6 +126,7 @@ public final class RectangleBoard extends AbstractBoard {
             return false;
         }
 
+        state = PREPARED;
         return true;
     }
 

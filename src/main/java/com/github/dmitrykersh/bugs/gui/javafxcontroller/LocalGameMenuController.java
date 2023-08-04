@@ -230,9 +230,7 @@ public class LocalGameMenuController {
                         SimpleTurnValidator.INSTANCE,
                         playerSettings
                 );
-                BoardObserver obs = new LocalGameBoardObserver(activePlayerLabel, playerListLabel, new ArrayList<>(board.getPlayers()));
-                board.addObserver(obs);
-                //gameScrollPane.setContent(board.buildGrid());
+                board.addObserver(new LocalGameBoardObserver(activePlayerLabel, playerListLabel, new ArrayList<>(board.getPlayers())));
                 Group g = board.buildDrawableGrid();
                 innerBorderPane.setCenter(g);
             }
