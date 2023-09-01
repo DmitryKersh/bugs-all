@@ -3,17 +3,23 @@ package com.github.dmitrykersh.bugs.online;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.dmitrykersh.bugs.logic.board.AbstractBoard;
+import com.github.dmitrykersh.bugs.logic.board.observer.BoardObserver;
+import com.github.dmitrykersh.bugs.logic.board.observer.TurnInfo;
+import com.github.dmitrykersh.bugs.logic.player.Player;
 import com.github.dmitrykersh.bugs.logic.player.PlayerSettings;
 import javafx.scene.paint.Color;
+import lombok.Setter;
 import lombok.val;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.*;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static com.github.dmitrykersh.bugs.online.SessionState.*;
+import static com.github.dmitrykersh.bugs.online.Utils.*;
 
 @WebSocket
 public class WebSocketEndpoint {
@@ -22,6 +28,38 @@ public class WebSocketEndpoint {
     private final Map<Session, SessionInfo> sessionInfoMap = new HashMap<>();
     private final Map<String, Integer> userToOwnedBoard = new HashMap<>();
     private final ObjectMapper jsonMapper = new ObjectMapper();
+
+    private class OnlineBoardObserver implements BoardObserver {
+        @Setter
+        private Map<Player, Session> playerToSession = new HashMap<>();
+
+        @Override
+        public void onInitialization(List<Player> players) {
+
+        }
+
+        @Override
+        public void onPlayerKicked(Player kickedPlayer) {
+            try {
+                Session session = playerToSession.get(kickedPlayer);
+                sendJsonData(session, "message", "kicked");
+                sessionInfoMap.get(session).setState(LOGGED_IN);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        }
+
+        @Override
+        public void onTurnMade(TurnInfo turnInfo) {
+
+        }
+
+        @Override
+        public void onGameEnded(Map<Player, Integer> scoreboard) {
+
+        }
+    }
 
     @OnWebSocketConnect
     public void clientConnected(Session session){
@@ -129,12 +167,14 @@ public class WebSocketEndpoint {
                             sendError(session, "Cannot start game. You're not owner of board you're connected to");
                             break;
                         }
-                        List<Session> sessionsToInGame = boardManager.prepareAndStartBoard(boardId);
-                        if (sessionsToInGame != null) {
-                            for (Session s : sessionsToInGame) {
-                                sessionInfoMap.get(s).setState(IN_GAME);
-                                sendInfo(s, "Game started");
+                        OnlineBoardObserver obs = new OnlineBoardObserver();
+                        val playerSessionForBoard = boardManager.prepareAndStartBoard(boardId, obs);
+                        if (playerSessionForBoard != null) {
+                            for (val entry : playerSessionForBoard.entrySet()) {
+                                sessionInfoMap.get(entry.getValue()).setState(IN_GAME);
+                                sendInfo(entry.getValue(), "Game started");
                             }
+                            obs.setPlayerToSession(playerSessionForBoard);
                         } else {
                             sendError(session, "Cannot start game. Not all players are present");
                         }
@@ -143,21 +183,19 @@ public class WebSocketEndpoint {
 
             }
             case IN_GAME -> {
-                break;
+                switch (msgRoot.get("action").asText()) {
+                    case "make_turn" -> {
+                        int tile_id = msgRoot.get("tile_id").asInt();
+                        if (boardManager.tryMakeTurn(session, tile_id)) {
+                            sendInfo(session, String.format("Turn made to tile %d", tile_id));
+                        } else {
+                            sendError(session, String.format("Cannot make turn to tile %d", tile_id));
+                        }
+                    }
+                }
             }
 
         }
-    }
-
-    private void sendError(Session s, String msg) throws IOException {
-        s.getRemote().sendString(String.format("{ \"type\" : \"ERROR\", \"message\" : \"%s\" }", msg));
-    }
-    private void sendInfo(Session s, String msg) throws IOException {
-        s.getRemote().sendString(String.format("{ \"type\" : \"INFO\", \"message\" : \"%s\" }", msg));
-    }
-
-    private void sendJsonData(Session s, String key, String jsonValue) throws IOException {
-        s.getRemote().sendString(String.format("{ \"type\" : \"DATA\", \"%s\" : %s }", key, jsonValue));
     }
 
     private boolean authenticate(String username, String password) {
