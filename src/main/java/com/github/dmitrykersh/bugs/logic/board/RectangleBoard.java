@@ -1,5 +1,7 @@
 package com.github.dmitrykersh.bugs.logic.board;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.dmitrykersh.bugs.logic.board.layout.Layout;
 import com.github.dmitrykersh.bugs.logic.board.tile.DrawableRectangleTile;
 import com.github.dmitrykersh.bugs.logic.board.validator.SimpleTurnValidator;
@@ -113,6 +115,7 @@ public final class RectangleBoard extends AbstractBoard {
             if (p == null)
                 return false;
 
+        layout.processTiles();
         for (int row = 0; row < rowsAmount; row++) {
             tiles.add(row, new ArrayList<>(this.colsAmount));
             List<Tile> tileRow = tiles.get(row);
@@ -187,6 +190,14 @@ public final class RectangleBoard extends AbstractBoard {
     }
 
     @Override
+    public String getTilesAsJsonArray() throws JsonProcessingException {
+        List<Tile> tileList = new ArrayList<>();
+        for (val row : tiles)
+            tileList.addAll(row);
+        return new ObjectMapper().writer().writeValueAsString(tileList);
+    }
+
+    @Override
     public Group buildDrawableGrid() {
         Group grid = new Group();
         for (int i = 0; i < rowsAmount; i++) {
@@ -202,7 +213,6 @@ public final class RectangleBoard extends AbstractBoard {
     private void activateTilesCluster(final @NotNull Tile origin, final @NotNull Player player) {
         origin.activate();
         for (Tile tile : getNearbyTilesForPlayer(origin, player)) {
-            // if (tile.getState() == UNAVAILABLE) return;
             if (tile.getOwner() == player && tile.getState() == WALL && !tile.isActive())
                 activateTilesCluster(tile, player);
             else if (tile.getState() == FREE ||
@@ -221,6 +231,11 @@ public final class RectangleBoard extends AbstractBoard {
             Player activePlayer = this.getActivePlayer();
             if (activePlayer.tryMakeTurn(tile.getTile().getId())) {
                 redrawTile(tile);
+            }
+            try {
+                System.out.println(getTilesAsJsonArray());
+            } catch (JsonProcessingException e) {
+                throw new RuntimeException(e);
             }
         };
     }

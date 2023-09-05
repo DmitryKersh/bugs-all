@@ -7,14 +7,14 @@ import java.io.IOException;
 
 @UtilityClass
 public class Utils {
-    public void sendError(Session s, String msg) throws IOException {
-        s.getRemote().sendString(String.format("{ \"type\" : \"ERROR\", \"message\" : \"%s\" }", msg));
+    public static void sendError(Session s, SessionState state, String msg) throws IOException {
+        s.getRemote().sendString(String.format("{ \"type\" : \"ERROR\", \"state\" : \"%s\", \"message\" : \"%s\" }", state, msg));
     }
-    public void sendInfo(Session s, String msg) throws IOException {
-        s.getRemote().sendString(String.format("{ \"type\" : \"INFO\", \"message\" : \"%s\" }", msg));
+    public static void sendInfo(Session s, SessionState state, String msg) throws IOException {
+        s.getRemote().sendString(String.format("{ \"type\" : \"INFO\", \"state\" : \"%s\", \"message\" : \"%s\" }", state, msg));
     }
 
-    public void sendJsonData(Session s, String key, String jsonValue) throws IOException {
-        s.getRemote().sendString(String.format("{ \"type\" : \"DATA\", \"%s\" : %s }", key, jsonValue));
+    public static void sendJsonData(Session s, SessionState state, String key, String jsonValue) throws IOException {
+        s.getRemote().sendString(String.format("{ \"type\" : \"DATA\", \"state\" : \"%s\", \"%s\" : %s }", state, key, jsonValue));
     }
 }

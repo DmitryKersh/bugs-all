@@ -1,5 +1,9 @@
 package com.github.dmitrykersh.bugs.logic.board;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
 import com.github.dmitrykersh.bugs.logic.board.layout.Layout;
 import com.github.dmitrykersh.bugs.logic.board.layout.PlayerTemplate;
 import com.github.dmitrykersh.bugs.logic.board.layout.TileTemplate;
@@ -25,7 +29,6 @@ import static com.github.dmitrykersh.bugs.logic.board.tile.TileState.*;
 public abstract class AbstractBoard {
     protected final List<Player> players;
     protected final Map<Player, Integer> scoreboard;
-    //private final Collection<Tile> tiles;
     protected final TurnValidator turnValidator;
     protected final Layout layout;
     protected final List<PlayerTemplate> playerTemplates;
@@ -190,6 +193,7 @@ public abstract class AbstractBoard {
         return false;
     }
 
+    public abstract String getTilesAsJsonArray() throws JsonProcessingException;
 
     public void addObserver(final @NotNull BoardObserver obs) {
         observers.add(obs);

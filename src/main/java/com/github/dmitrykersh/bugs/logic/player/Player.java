@@ -4,6 +4,7 @@ import com.github.dmitrykersh.bugs.logic.board.AbstractBoard;
 import javafx.scene.paint.Color;
 import org.jetbrains.annotations.NotNull;
 
+
 public interface Player {
     boolean tryMakeTurn(int tileId);
     String getNickname();

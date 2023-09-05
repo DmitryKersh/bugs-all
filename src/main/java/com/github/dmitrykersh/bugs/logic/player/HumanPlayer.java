@@ -1,10 +1,12 @@
 package com.github.dmitrykersh.bugs.logic.player;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.github.dmitrykersh.bugs.logic.board.AbstractBoard;
 import javafx.scene.paint.Color;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+@JsonIgnoreProperties({"board"})
 public class HumanPlayer implements Player {
     private PlayerState state;
     private String nickname;
