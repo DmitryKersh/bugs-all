@@ -1,5 +1,6 @@
 {
-  "desc": "this is a description of layout l",
+  "name": "1234",
+  "desc": "this is a description of layout 1234",
   "board_type": "RECT",
   "player_configs": {
     "2 vs 1": [3, 3, 5],

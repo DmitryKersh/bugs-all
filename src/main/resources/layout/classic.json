@@ -1,5 +1,6 @@
 {
-  "desc": "classic",
+  "name": "classic",
+  "desc": "classic_desc",
   "board_type": "RECT",
   "player_configs": {
     "2 player": [5, 5],

@@ -1,5 +1,8 @@
 package com.github.dmitrykersh.bugs.online;
 
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.experimental.UtilityClass;
 import org.eclipse.jetty.websocket.api.Session;
 
@@ -17,4 +20,5 @@ public class Utils {
     public static void sendJsonData(Session s, SessionState state, String key, String jsonValue) throws IOException {
         s.getRemote().sendString(String.format("{ \"type\" : \"DATA\", \"state\" : \"%s\", \"%s\" : %s }", state, key, jsonValue));
     }
+
 }

@@ -1,5 +1,6 @@
 {
-  "desc": "this is a description of layout l",
+  "name": "holes",
+  "desc": "holes",
   "board_type": "RECT",
   "player_configs": {
     "4-player": [4, 4, 4, 4],

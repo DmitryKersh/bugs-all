@@ -232,11 +232,6 @@ public final class RectangleBoard extends AbstractBoard {
             if (activePlayer.tryMakeTurn(tile.getTile().getId())) {
                 redrawTile(tile);
             }
-            try {
-                System.out.println(getTilesAsJsonArray());
-            } catch (JsonProcessingException e) {
-                throw new RuntimeException(e);
-            }
         };
     }
 

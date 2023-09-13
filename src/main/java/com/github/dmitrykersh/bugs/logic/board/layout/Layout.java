@@ -19,11 +19,14 @@ import java.util.*;
  */
 public class Layout {
     @Getter
+    private String name;
+    @Getter
     private String description;
     @Getter
     private final List<GameMode> gameModes;
     @Getter
     private String boardType;
+    @Getter
     private final Map<String, Integer> params;
     private final Map<Integer, TileTemplate> tiles;
     private JSONArray tileArray;
@@ -63,6 +66,7 @@ public class Layout {
         JSONObject layout = new JSONObject(layoutStr);
         description = layout.getString("desc");
         boardType = layout.getString("board_type");
+        name = layout.getString("name");
 
         // process parameters map
         Map<String, Object> defaultParams = layout.getJSONObject("params").toMap();

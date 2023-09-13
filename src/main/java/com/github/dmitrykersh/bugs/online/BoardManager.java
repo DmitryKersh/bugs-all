@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.github.dmitrykersh.bugs.logic.board.AbstractBoard;
+import com.github.dmitrykersh.bugs.logic.board.BoardInfo;
 import com.github.dmitrykersh.bugs.logic.board.RectangleBoard;
 import com.github.dmitrykersh.bugs.logic.board.layout.Layout;
 import com.github.dmitrykersh.bugs.logic.board.observer.BoardObserver;
@@ -46,6 +47,12 @@ public class BoardManager {
 
     public AbstractBoard getBoard(Session s) { return sessionToPlayer.get(s).getBoard(); }
     public AbstractBoard getBoard(int id) { return activeBoards.get(id); }
+
+    public BoardInfo getBoardInfo(int id) {
+        AbstractBoard b = getBoard(id);
+        if (b == null) return null;
+        return b.getInfo();
+    }
 
     // id = 0 indicates error
     public int createBoard(final @NotNull String layoutName, final @NotNull String gameModeName, final @NotNull Map<String, Integer> layoutParams) {

@@ -1,5 +1,6 @@
 {
-  "desc": "this is a description of layout l1",
+  "name": "wall",
+  "desc": "this is a description of layout wall",
   "board_type": "RECT",
   "player_configs": {
     "2-player [4]": [4, 4],

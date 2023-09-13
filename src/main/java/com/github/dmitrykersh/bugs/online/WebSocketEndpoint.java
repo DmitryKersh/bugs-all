@@ -3,6 +3,7 @@ package com.github.dmitrykersh.bugs.online;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.dmitrykersh.bugs.logic.board.BoardInfo;
 import com.github.dmitrykersh.bugs.logic.board.observer.BoardObserver;
 import com.github.dmitrykersh.bugs.logic.board.observer.TurnInfo;
 import com.github.dmitrykersh.bugs.logic.player.Player;
@@ -159,6 +160,15 @@ public class WebSocketEndpoint {
                         sessionInfo.setState(CONNECTED_TO_BOARD);
                         sendInfo(session, CONNECTED_TO_BOARD,String.format("Connected to board %d", boardId));
                     }
+                    case "get_board_info" -> {
+                        int boardId = msgRoot.get("board_id").asInt();
+                        BoardInfo boardInfo = boardManager.getBoardInfo(boardId);
+                        if (boardInfo != null) {
+                            sendJsonData(session, currentState,"board_info", jsonMapper.writeValueAsString(boardInfo));
+                        } else {
+                            sendError(session, currentState, String.format("Board %d not found", boardId));
+                        }
+                    }
                     case "delete_board" -> {
                         int id;
                         List<Session> sessionsToLoggedIn;
@@ -171,7 +181,7 @@ public class WebSocketEndpoint {
 
                             userToOwnedBoard.put(sessionInfo.getUsername(), null);
                         } else {
-                            sendError(session, currentState,String.format("cannot delete with id %d : game in progress or board does not exist", id));
+                            sendError(session, currentState, String.format("cannot delete with id %d : game in progress or board does not exist", id));
                         }
                     }
                     case "get_layout_info" -> {
@@ -188,6 +198,7 @@ public class WebSocketEndpoint {
                     case "disconnect_from_board" -> {
                         boardManager.disconnect(session);
                         sessionInfo.setState(LOGGED_IN);
+                        sendInfo(session, LOGGED_IN, "disconnected from board");
                     }
                     case "start_game" -> {
                         int boardId;

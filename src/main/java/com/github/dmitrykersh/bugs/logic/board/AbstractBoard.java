@@ -104,6 +104,10 @@ public abstract class AbstractBoard {
         return players.get(activePlayerNumber);
     }
 
+    public BoardInfo getInfo() {
+        return new BoardInfo(layout.getName(), layout.getDescription(), layout.getBoardType(), layout.getParams(), getPlayers());
+    }
+
     public void freezeLostPlayer(final @NotNull Player player) {
         for (val observer : observers) {
             observer.onPlayerKicked(player);

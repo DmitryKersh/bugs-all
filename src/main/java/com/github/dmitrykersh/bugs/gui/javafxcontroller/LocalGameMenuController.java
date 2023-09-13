@@ -93,7 +93,7 @@ public class LocalGameMenuController {
 
         playerConfigComboBox.setItems(new ObservableListWrapper<>(configDesc));
         gameModeDescLabel.setText("");
-        layoutDescLabel.setText(layout.getDescription());
+        layoutDescLabel.setText(layout.getName() + ": " + layout.getDescription());
 
         int row = 0;
         paramGridPane.getChildren().clear(); paramMapping.clear();
