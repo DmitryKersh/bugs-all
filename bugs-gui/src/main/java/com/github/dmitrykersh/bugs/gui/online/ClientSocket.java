@@ -15,7 +15,9 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 
 import static com.github.dmitrykersh.bugs.server.ProtocolConstants.*;
@@ -48,7 +50,9 @@ public class ClientSocket {
                 List<String> names = new ArrayList<>();
                 JSONArray layouts = jsonMsg.getJSONArray(MSG_LAYOUT_INFO_KEY);
                 for (int i = 0; i < layouts.length(); i++) {
-                    names.add(layouts.getJSONObject(i).getString("name"));
+                    JSONObject layout = layouts.getJSONObject(i).getJSONObject("layout");
+                    names.add(layout.getString("name"));
+                    controller.layoutMap.put(layout.getString("name"), layout);
                 }
                 Platform.runLater(
                         ()->controller.layoutComboBox.setItems(new ObservableListWrapper<>(names))

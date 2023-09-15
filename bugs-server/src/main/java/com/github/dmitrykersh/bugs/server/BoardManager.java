@@ -15,6 +15,7 @@ import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.eclipse.jetty.websocket.api.Session;
 import org.jetbrains.annotations.NotNull;
+import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
@@ -57,10 +58,18 @@ public class BoardManager {
     // id = 0 indicates error
     public int createBoard(final @NotNull String layoutName, final @NotNull String gameModeName, final @NotNull Map<String, Integer> layoutParams) {
         Layout layout = new Layout(layoutParams);
-        if (!layouts.containsKey(layoutName)) {
+        /*if (!layouts.containsKey(layoutName)) {
             return 0;
+        }*/
+        boolean found = false;
+        for (val entry : layouts.entrySet()) {
+            if (new JSONObject(entry.getValue()).getString("name").equals(layoutName)) {
+                found = true;
+                layout.loadLayout(entry.getValue());
+            }
         }
-        layout.loadLayout(layouts.get(layoutName));
+        if (!found) return 0;
+        //layout.loadLayout(layouts.get(layoutName));
 
         AbstractBoard board = switch (layout.getBoardType()) {
             case "RECT" -> RectangleBoard.createEmptyBoard(

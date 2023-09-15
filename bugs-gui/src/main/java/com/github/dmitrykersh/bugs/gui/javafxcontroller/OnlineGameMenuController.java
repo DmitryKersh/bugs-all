@@ -2,11 +2,15 @@ package com.github.dmitrykersh.bugs.gui.javafxcontroller;
 
 import com.github.dmitrykersh.bugs.gui.SceneCollection;
 import com.github.dmitrykersh.bugs.gui.online.ClientSocket;
+import com.sun.javafx.collections.ObservableListWrapper;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import lombok.val;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.UpgradeException;
 import org.eclipse.jetty.websocket.client.WebSocketClient;
@@ -15,6 +19,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Future;
@@ -56,6 +61,8 @@ public class OnlineGameMenuController {
     private Session session;
 
     public boolean isConnected = false;
+    public final Map<String, JSONObject> layoutMap = new HashMap<>();
+    private final Map<TextField, Label> paramMap = new HashMap<>();
 
     public void connectButton_onClick(MouseEvent mouseEvent) {
         if (isConnected) {
@@ -109,9 +116,24 @@ public class OnlineGameMenuController {
     }
 
     public void layoutComboBox_onChanged(ActionEvent actionEvent) {
+        JSONObject layout = layoutMap.get(layoutComboBox.getValue());
+        playerConfigComboBox.setItems(new ObservableListWrapper<>(layout.getJSONObject("player_configs").keySet().stream().toList()));
+        paramGridPane.getChildren().clear(); paramMap.clear();
+        int row = 0;
+        for (String paramName : layout.getJSONObject("params").keySet()) {
+            Label label = new Label(paramName);
+            label.setFont(Font.font("Consolas"));
+            label.setTextFill(Color.WHITE);
+            paramGridPane.add(label, 0, row);
+            TextField textField = new TextField(String.valueOf(layout.getJSONObject("params").getInt(paramName)));
+            paramGridPane.add(textField, 1, row);
+            paramMap.put(textField, label);
+            row++;
+        }
     }
 
     public void playerConfigComboBox_onChanged(ActionEvent actionEvent) {
+
     }
 
     public void startGame(ActionEvent actionEvent) {
