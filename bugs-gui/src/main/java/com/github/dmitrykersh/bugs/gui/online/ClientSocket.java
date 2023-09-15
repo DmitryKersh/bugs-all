@@ -10,9 +10,11 @@ import lombok.Getter;
 import lombok.Setter;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.*;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
@@ -43,9 +45,13 @@ public class ClientSocket {
                 );
             }
             case MSG_LAYOUT_INFO -> {
-                List<String> layouts = mapper.readValue(jsonMsg.getString(MSG_LAYOUT_INFO_KEY), TypeFactory.defaultInstance().constructCollectionType(List.class, String.class));
+                List<String> names = new ArrayList<>();
+                JSONArray layouts = jsonMsg.getJSONArray(MSG_LAYOUT_INFO_KEY);
+                for (int i = 0; i < layouts.length(); i++) {
+                    names.add(layouts.getJSONObject(i).getString("name"));
+                }
                 Platform.runLater(
-                        ()->controller.layoutComboBox.setItems(new ObservableListWrapper<>(layouts))
+                        ()->controller.layoutComboBox.setItems(new ObservableListWrapper<>(names))
                 );
             }
         }

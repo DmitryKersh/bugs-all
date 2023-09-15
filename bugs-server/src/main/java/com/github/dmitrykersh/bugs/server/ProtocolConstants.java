@@ -5,7 +5,7 @@ import lombok.experimental.UtilityClass;
 @UtilityClass
 public class ProtocolConstants {
     public static final String ACTION = "action";
-    public static final String INFO = "info";
+    public static final String INFO = "INFO";
 
     // login req
     public static final String USERNAME = "username";
