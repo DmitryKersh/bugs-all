@@ -1,6 +1,6 @@
 package com.github.dmitrykersh.bugs.gui;
 
-import com.github.dmitrykersh.bugs.logic.TextureCollection;
+import com.github.dmitrykersh.bugs.engine.TextureCollection;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
