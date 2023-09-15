@@ -2,20 +2,13 @@ package com.github.dmitrykersh.bugs.gui.javafxcontroller;
 
 import com.github.dmitrykersh.bugs.gui.SceneCollection;
 import com.github.dmitrykersh.bugs.gui.online.ClientSocket;
-import com.sun.javafx.collections.ObservableListWrapper;
-import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
-import lombok.Getter;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.UpgradeException;
-import org.eclipse.jetty.websocket.api.annotations.OnWebSocketConnect;
-import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
-import org.eclipse.jetty.websocket.api.annotations.WebSocket;
-import org.eclipse.jetty.websocket.client.ClientUpgradeRequest;
 import org.eclipse.jetty.websocket.client.WebSocketClient;
 import org.json.JSONObject;
 
@@ -24,7 +17,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Future;
 
 import static com.github.dmitrykersh.bugs.server.ProtocolConstants.*;
@@ -84,7 +76,9 @@ public class OnlineGameMenuController {
                 client.start();
                 Future<Session> fut = client.connect(socket, serverUri);
                 session = fut.get();
+
                 sendLoginRequest(session);
+                sendAvailableLayoutsRequest(session);
             } catch (URISyntaxException e) {
                 errorLabel.setText("Incorrect URI syntax");
             } catch (IOException | UpgradeException e) {
@@ -100,11 +94,14 @@ public class OnlineGameMenuController {
 
     @FXML
     public void initialize() throws Exception {
-        //layoutComboBox.setItems(new ObservableListWrapper<>(getAvailableLayouts()));
+
     }
 
-    private List<String> getAvailableLayouts() {
-        return null;
+    private void sendAvailableLayoutsRequest(Session s) throws IOException {
+        JSONObject j = new JSONObject(Map.of(
+                ACTION, ACTION_LAYOUT_INFO
+        ));
+        s.getRemote().sendString(j.toString());
     }
 
     public void backButton_onClick(ActionEvent event) {
