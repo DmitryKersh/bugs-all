@@ -120,7 +120,11 @@ public class LocalGameMenuController {
         playersGridPane.getChildren().clear();
 
         for (int i = 0; i < playersAmount; i++) {
-            playersGridPane.add(new TextField(), 0, i);
+            TextField tf = new TextField();
+            tf.setPromptText("Player " + (i+1));
+            tf.setFont(new Font("Consolas", 12));
+            tf.setMinHeight(25);
+            playersGridPane.add(tf, 0, i);
             playersGridPane.add(getColorPicker(), 1, i);
             playersGridPane.add(new Label(), 2, i);
         }
@@ -145,6 +149,7 @@ public class LocalGameMenuController {
     private ColorPicker getColorPicker() {
         ColorPicker colorPicker = new ColorPicker();
         colorPicker.getStyleClass().add("button");
+        colorPicker.setMinHeight(25);
         return colorPicker;
     }
 

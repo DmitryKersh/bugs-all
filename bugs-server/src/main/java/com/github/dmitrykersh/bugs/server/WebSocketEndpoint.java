@@ -22,11 +22,12 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import static com.github.dmitrykersh.bugs.server.SessionState.*;
 import static com.github.dmitrykersh.bugs.server.Utils.*;
+import static com.github.dmitrykersh.bugs.server.ProtocolConstants.*;
 
 @WebSocket
 public class WebSocketEndpoint {
     // СУКА ЕСЛИ НЕ КОННЕКТИТСЯ, ПОМЕНЯЙ ЭТО vvv
-    private static final String LAYOUT_DIR = "C:\\Users\\dkarp\\IdeaProjects\\bugs-client\\src\\main\\resources\\layout";
+    private static final String LAYOUT_DIR = "C:\\Users\\TSP\\IdeaProjects\\bugs-all\\bugs-gui\\src\\main\\resources\\layout";
     private static final BoardManager boardManager = new BoardManager(LAYOUT_DIR);
     private static final Map<Session, SessionInfo> sessionInfoMap = new ConcurrentHashMap<>();
     private static final Map<String, Integer> userToOwnedBoard = new HashMap<>();
@@ -109,12 +110,13 @@ public class WebSocketEndpoint {
         SessionInfo sessionInfo = sessionInfoMap.get(session);
         JsonNode msgRoot = jsonMapper.readTree(message);
         SessionState currentState = sessionInfo.getState();
-        String action = msgRoot.get("action").asText();
+        val node = msgRoot.get(ACTION);
+        String action = node != null ? node.asText() : "";
         switch (currentState) {
             case NEW_CONNECTION -> {
-                String username = msgRoot.get("username").asText();
-                String password = msgRoot.get("password").asText();
-                String nickname = msgRoot.get("nickname").asText();
+                String username = msgRoot.get(USERNAME).asText();
+                String password = msgRoot.get(PASSWORD).asText();
+                String nickname = msgRoot.get(NICKNAME).asText();
 
                 if (userToOwnedBoard.containsKey(username)) {
                     sendError(session, sessionInfo.getState(), String.format("User %s is already connected", username));
