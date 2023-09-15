@@ -2,7 +2,10 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/Bugs.iml" filepath="$PROJECT_DIR$/Bugs.iml" />
+      <module fileurl="file://$PROJECT_DIR$/bugs-all.iml" filepath="$PROJECT_DIR$/bugs-all.iml" />
+      <module fileurl="file://$PROJECT_DIR$/bugs-engine/bugs-engine.iml" filepath="$PROJECT_DIR$/bugs-engine/bugs-engine.iml" />
+      <module fileurl="file://$PROJECT_DIR$/bugs-gui/bugs-gui.iml" filepath="$PROJECT_DIR$/bugs-gui/bugs-gui.iml" />
+      <module fileurl="file://$PROJECT_DIR$/bugs-server/bugs-server.iml" filepath="$PROJECT_DIR$/bugs-server/bugs-server.iml" />
     </modules>
   </component>
 </project>
