@@ -2,9 +2,15 @@ package com.github.dmitrykersh.bugs.gui.online;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.TypeFactory;
+import com.github.dmitrykersh.bugs.engine.board.BoardInfo;
+import com.github.dmitrykersh.bugs.engine.player.Player;
 import com.github.dmitrykersh.bugs.gui.javafxcontroller.OnlineGameMenuController;
 import com.sun.javafx.collections.ObservableListWrapper;
 import javafx.application.Platform;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -19,6 +25,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import static com.github.dmitrykersh.bugs.server.ProtocolConstants.*;
 
@@ -36,8 +44,9 @@ public class ClientSocket {
 
     @OnWebSocketMessage
     public void onMessage(Session session, String message) throws IOException {
+        System.out.println(message);
         JSONObject jsonMsg = new JSONObject(message);
-        String type = jsonMsg.getString("type");
+        String type = jsonMsg.getString(MSG_TYPE);
         switch (type) {
             case INFO -> {
                 Platform.runLater(
@@ -50,13 +59,46 @@ public class ClientSocket {
                 List<String> names = new ArrayList<>();
                 JSONArray layouts = jsonMsg.getJSONArray(MSG_LAYOUT_INFO_KEY);
                 for (int i = 0; i < layouts.length(); i++) {
-                    JSONObject layout = layouts.getJSONObject(i).getJSONObject("layout");
-                    names.add(layout.getString("name"));
-                    controller.layoutMap.put(layout.getString("name"), layout);
+                    JSONObject layout = layouts.getJSONObject(i).getJSONObject(LAYOUT);
+                    names.add(layout.getString(NAME));
+                    controller.layoutMap.put(layout.getString(NAME), layout);
                 }
                 Platform.runLater(
                         ()->controller.layoutComboBox.setItems(new ObservableListWrapper<>(names))
                 );
+            }
+            case MSG_BOARD_CREATED -> {
+                Platform.runLater(
+                        ()->{
+                            controller.createGameButton.setText(String.format("Delete Game %d", jsonMsg.getInt(MSG_BOARD_CREATED_ID)));
+                            controller.isCreatedBoard = true;
+                        }
+                );
+            }
+            case MSG_BOARD_INFO -> {
+                BoardInfo boardInfo = mapper.readValue(jsonMsg.getJSONObject(MSG_BOARD_INFO_KEY).toString(), BoardInfo.class);
+                Platform.runLater(
+                        ()->{
+                            for (int row = 0; row < boardInfo.getPlayers().size(); row++) {
+                                Player p;
+                                if ((p = boardInfo.getPlayers().get(row)) != null) {
+                                    Label label = new Label(p.getNickname());
+                                    label.setFont(Font.font("Consolas"));
+                                    label.setTextFill(p.getColor());
+                                    controller.playersGridPane.add(label, 0, row);
+                                } else {
+                                    Label label = new Label("< empty >");
+                                    label.setFont(Font.font("Consolas"));
+                                    label.setTextFill(Color.GREY);
+                                    controller.playersGridPane.add(label, 0, row);
+                                    Button button = new Button("Enter");
+                                    button.setOnMouseClicked(controller.connectToSlot_onClick(row + 1));
+                                    controller.playersGridPane.add(button, 1, row);
+                                }
+                            }
+                        }
+                );
+
             }
         }
     }

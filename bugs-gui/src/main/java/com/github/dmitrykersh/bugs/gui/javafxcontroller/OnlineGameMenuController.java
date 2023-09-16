@@ -1,9 +1,12 @@
 package com.github.dmitrykersh.bugs.gui.javafxcontroller;
 
+import com.github.dmitrykersh.bugs.engine.board.tile.DrawableRectangleTile;
+import com.github.dmitrykersh.bugs.engine.player.Player;
 import com.github.dmitrykersh.bugs.gui.SceneCollection;
 import com.github.dmitrykersh.bugs.gui.online.ClientSocket;
 import com.sun.javafx.collections.ObservableListWrapper;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
@@ -20,13 +23,15 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Future;
+import java.util.regex.Pattern;
 
+import static com.github.dmitrykersh.bugs.engine.board.BoardState.ENDED;
 import static com.github.dmitrykersh.bugs.server.ProtocolConstants.*;
 
 public class OnlineGameMenuController {
+    private static final Pattern PARAM_PATTERN = Pattern.compile("^\\d+$");
     @FXML
     public TextField serverField;
     @FXML
@@ -40,13 +45,13 @@ public class OnlineGameMenuController {
     @FXML
     public TabPane tabPane;
     @FXML
-    public TextField gameIdField;
+    public TextField boardIdTextField;
     @FXML
     public GridPane playersGridPane;
     @FXML
     public ComboBox<String> layoutComboBox;
     @FXML
-    public ComboBox<String> playerConfigComboBox;
+    public ComboBox<String> gameModeComboBox;
     @FXML
     public Button searchGameButton;
     @FXML
@@ -55,12 +60,17 @@ public class OnlineGameMenuController {
     public Label errorLabel;
     @FXML
     public Label infoLabel;
+    @FXML
+    public Button createGameButton;
 
     private final ClientSocket socket = new ClientSocket(this);
     private final WebSocketClient client = new WebSocketClient();
+
     private Session session;
 
     public boolean isConnected = false;
+    public boolean isCreatedBoard = false;
+
     public final Map<String, JSONObject> layoutMap = new HashMap<>();
     private final Map<TextField, Label> paramMap = new HashMap<>();
 
@@ -84,8 +94,8 @@ public class OnlineGameMenuController {
                 Future<Session> fut = client.connect(socket, serverUri);
                 session = fut.get();
 
-                sendLoginRequest(session);
-                sendAvailableLayoutsRequest(session);
+                sendLoginRequest();
+                sendAvailableLayoutsRequest();
             } catch (URISyntaxException e) {
                 errorLabel.setText("Incorrect URI syntax");
             } catch (IOException | UpgradeException e) {
@@ -99,16 +109,31 @@ public class OnlineGameMenuController {
 
     }
 
-    @FXML
-    public void initialize() throws Exception {
+    public void searchGameButton_onClick(MouseEvent event) {
+        try {
+            Integer.parseInt(boardIdTextField.getText());
+            sendBoardInfoRequest();
+            errorLabel.setText("");
+        } catch (NumberFormatException e) {
+            errorLabel.setText("Game id must be integer");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
     }
-
-    private void sendAvailableLayoutsRequest(Session s) throws IOException {
-        JSONObject j = new JSONObject(Map.of(
-                ACTION, ACTION_LAYOUT_INFO
-        ));
-        s.getRemote().sendString(j.toString());
+    public EventHandler<MouseEvent> connectToSlot_onClick(int playerNumber) {
+        return event -> {
+            try {
+                sendJson(new JSONObject(Map.of(
+                        ACTION, ACTION_CONNECT_TO_BOARD,
+                        BOARD_ID, boardIdTextField.getText(),
+                        PLAYER_NUMBER, playerNumber,
+                        PLAYER_COLOR, "red"
+                )));
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        };
     }
 
     public void backButton_onClick(ActionEvent event) {
@@ -116,8 +141,9 @@ public class OnlineGameMenuController {
     }
 
     public void layoutComboBox_onChanged(ActionEvent actionEvent) {
+        errorLabel.setText("");
         JSONObject layout = layoutMap.get(layoutComboBox.getValue());
-        playerConfigComboBox.setItems(new ObservableListWrapper<>(layout.getJSONObject("player_configs").keySet().stream().toList()));
+        gameModeComboBox.setItems(new ObservableListWrapper<>(layout.getJSONObject("player_configs").keySet().stream().toList()));
         paramGridPane.getChildren().clear(); paramMap.clear();
         int row = 0;
         for (String paramName : layout.getJSONObject("params").keySet()) {
@@ -133,23 +159,70 @@ public class OnlineGameMenuController {
     }
 
     public void playerConfigComboBox_onChanged(ActionEvent actionEvent) {
-
-    }
-
-    public void startGame(ActionEvent actionEvent) {
-    }
-
-    private void sendLoginRequest(Session s) throws IOException {
-        JSONObject j = new JSONObject(Map.of(
-                USERNAME, usernameField.getText(),
-                PASSWORD, passwordField.getText(),
-                NICKNAME, nicknameField.getText()
-        ));
-        s.getRemote().sendString(j.toString());
+        errorLabel.setText("");
     }
 
     public void updateInfoLabel(String message) {
         JSONObject j = new JSONObject(message);
         infoLabel.setText(String.format("[STATE] %s\n[MSG] %s", j.getString("state"), j.getString("message")));
+    }
+
+    public void createGameButton_onClick(ActionEvent event) throws IOException {
+        if (!isCreatedBoard) {
+            if (layoutComboBox.getValue().isBlank() || gameModeComboBox.getValue().isBlank()) {
+                errorLabel.setText("Specify layout and game mode");
+                return;
+            }
+            sendCreateGameRequest();
+        } else {
+            sendDeleteGameRequest();
+            isCreatedBoard = false;
+            createGameButton.setText("Create Game");
+        }
+    }
+
+    private void sendLoginRequest() throws IOException {
+        sendJson(new JSONObject(Map.of(
+                USERNAME, usernameField.getText(),
+                PASSWORD, passwordField.getText(),
+                NICKNAME, nicknameField.getText()
+        )));
+    }
+
+    private void sendAvailableLayoutsRequest() throws IOException {
+        sendJson(new JSONObject(Map.of(
+                ACTION, ACTION_LAYOUT_INFO
+        )));
+    }
+
+    private void sendCreateGameRequest() throws IOException {
+        Map<String, Integer> params = new HashMap<>();
+        for (val el : paramGridPane.getChildren()) {
+            if (el instanceof TextField) {
+                if (!PARAM_PATTERN.matcher(((TextField) el).getCharacters().toString()).matches())
+                    return;
+                params.put(paramMap.get(el).getText(), Integer.valueOf(((TextField) el).getText()));
+            }
+        }
+        sendJson(new JSONObject(Map.of(
+                ACTION, ACTION_CREATE_BOARD,
+                LAYOUT_NAME, layoutComboBox.getValue(),
+                GAME_MODE, gameModeComboBox.getValue(),
+                LAYOUT_PARAMS, params
+        )));
+    }
+    private void sendDeleteGameRequest() throws IOException {
+        sendJson(new JSONObject(Map.of(
+                ACTION, ACTION_DELETE_BOARD
+        )));
+    }
+    private void sendBoardInfoRequest() throws IOException {
+        sendJson(new JSONObject(Map.of(
+                ACTION, ACTION_BOARD_INFO,
+                BOARD_ID, Integer.parseInt(boardIdTextField.getText())
+        )));
+    }
+    private void sendJson(JSONObject j) throws IOException {
+        session.getRemote().sendString(j.toString());
     }
 }

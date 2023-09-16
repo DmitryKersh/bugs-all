@@ -77,7 +77,7 @@
                                     <content>
                                         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                                             <children>
-                                                <TextField fx:id="gameIdField" prefHeight="31.0" prefWidth="213.0" promptText="Enter Game ID" AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="35.0">
+                                                <TextField fx:id="boardIdTextField" prefHeight="31.0" prefWidth="213.0" promptText="Enter Game ID" AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="35.0">
                                                     <font>
                                                         <Font size="15.0" />
                                                     </font>
@@ -101,7 +101,7 @@
                                                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                                     </rowConstraints>
                                                 </GridPane>
-                                                <Button fx:id="searchGameButton" layoutX="235.0" layoutY="35.0" mnemonicParsing="false" prefHeight="31.0" prefWidth="91.0" text="Search">
+                                                <Button fx:id="searchGameButton" layoutX="235.0" layoutY="35.0" mnemonicParsing="false" onMouseClicked="#searchGameButton_onClick" prefHeight="31.0" prefWidth="91.0" text="Search">
                                                     <font>
                                                         <Font size="15.0" />
                                                     </font>
@@ -116,7 +116,7 @@
                                             <ComboBox fx:id="layoutComboBox" layoutX="14.0" layoutY="62.0" onAction="#layoutComboBox_onChanged" prefHeight="25.0" prefWidth="161.0" promptText="Select Layout" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="15.0">
 
                                             </ComboBox>
-                                            <ComboBox fx:id="playerConfigComboBox" layoutX="14.0" layoutY="156.0" onAction="#playerConfigComboBox_onChanged" prefHeight="25.0" prefWidth="171.0" promptText="Select Game Mode" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="50.0" />
+                                            <ComboBox fx:id="gameModeComboBox" layoutX="14.0" layoutY="156.0" onAction="#playerConfigComboBox_onChanged" prefHeight="25.0" prefWidth="171.0" promptText="Select Game Mode" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="50.0" />
                                  <Label layoutY="128.0" prefHeight="18.0" prefWidth="250.0" text="Layout settings" textFill="WHITE" AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="80.0">
                                     <font>
                                        <Font name="Consolas" size="15.0" />
@@ -133,7 +133,7 @@
                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                     </rowConstraints>
                                  </GridPane>
-                                 <Button alignment="CENTER" layoutX="78.0" layoutY="344.0" mnemonicParsing="false" onAction="#startGame" prefHeight="25.0" prefWidth="194.0" text="Create Game" textAlignment="CENTER" AnchorPane.bottomAnchor="14.0">
+                                 <Button fx:id="createGameButton" alignment="CENTER" layoutX="78.0" layoutY="344.0" mnemonicParsing="false" onAction="#createGameButton_onClick" prefHeight="25.0" prefWidth="194.0" text="Create Game" textAlignment="CENTER" AnchorPane.bottomAnchor="14.0">
                                     <font>
                                        <Font name="Consolas" size="15.0" />
                                     </font>
@@ -148,7 +148,7 @@
                         <Font name="Consolas" size="15.0" />
                      </font>
                   </Label>
-                  <Label fx:id="infoLabel" alignment="TOP_LEFT" layoutX="15.0" layoutY="189.0" prefHeight="47.0" prefWidth="320.0" textFill="#00ff2f" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="189.0">
+                  <Label fx:id="infoLabel" alignment="TOP_LEFT" layoutX="15.0" layoutY="189.0" prefHeight="47.0" prefWidth="320.0" textFill="LIME" wrapText="true" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="189.0">
                      <font>
                         <Font name="Consolas" size="12.0" />
                      </font>

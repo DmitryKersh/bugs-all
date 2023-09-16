@@ -10,6 +10,7 @@ import com.github.dmitrykersh.bugs.engine.player.Player;
 import com.github.dmitrykersh.bugs.engine.player.PlayerSettings;
 import javafx.scene.paint.Color;
 import lombok.Setter;
+import lombok.extern.java.Log;
 import lombok.val;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.*;
@@ -19,6 +20,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import static com.github.dmitrykersh.bugs.server.SessionState.*;
 import static com.github.dmitrykersh.bugs.server.Utils.*;
@@ -107,6 +110,7 @@ public class WebSocketEndpoint {
 
     @OnWebSocketMessage
     public void clientMessage(Session session, String message) throws IOException {
+        System.out.println(message);
         SessionInfo sessionInfo = sessionInfoMap.get(session);
         JsonNode msgRoot = jsonMapper.readTree(message);
         SessionState currentState = sessionInfo.getState();
@@ -135,25 +139,26 @@ public class WebSocketEndpoint {
             }
             case LOGGED_IN -> {
                 switch (action) {
-                    case "create_board" -> {
-                        String layoutName = msgRoot.get("layout_name").asText();
-                        String configName = msgRoot.get("config_name").asText();
-                        Map<String, Integer> layoutParams = jsonMapper.convertValue(msgRoot.get("params"), new TypeReference<>() {});
+                    case ACTION_CREATE_BOARD -> {
+                        String layoutName = msgRoot.get(LAYOUT_NAME).asText();
+                        String gameMode = msgRoot.get(GAME_MODE).asText();
+                        Map<String, Integer> layoutParams = jsonMapper.convertValue(msgRoot.get(LAYOUT_PARAMS), new TypeReference<>() {});
                         if (userToOwnedBoard.get(sessionInfo.getUsername()) != null) {
                             sendInfo(session, currentState, String.format("board already created by this client (id=%d)", userToOwnedBoard.get(sessionInfo.getUsername())));
                             return;
                         }
 
                         int boardId;
-                        if ((boardId = boardManager.createBoard(layoutName, configName, layoutParams)) != 0) {
+                        if ((boardId = boardManager.createBoard(layoutName, gameMode, layoutParams)) != 0) {
                             userToOwnedBoard.put(sessionInfo.getUsername(), boardId);
-                            sendJsonData(session, "board_created", currentState,"created_board_id", String.valueOf(boardId));
+                            sendInfo(session, currentState, String.format("Created board (id=%d)", boardId));
+                            sendJsonData(session, MSG_BOARD_CREATED, currentState,MSG_BOARD_CREATED_ID, String.valueOf(boardId));
                         }
                     }
-                    case "connect_to_board" -> {
-                        int boardId = msgRoot.get("board_id").asInt();
-                        int playerNumber = msgRoot.get("player_number").asInt();
-                        String colorStr = msgRoot.get("player_color").asText();
+                    case ACTION_CONNECT_TO_BOARD -> {
+                        int boardId = msgRoot.get(BOARD_ID).asInt();
+                        int playerNumber = msgRoot.get(PLAYER_NUMBER).asInt();
+                        String colorStr = msgRoot.get(PLAYER_COLOR).asText();
 
                         if (!boardManager.connectToBoard(session, boardId, playerNumber, new PlayerSettings(sessionInfo.getNickname(), Color.web(colorStr)))) {
                             sendInfo(session, currentState,"Error connecting to the board");
@@ -162,16 +167,16 @@ public class WebSocketEndpoint {
                         sessionInfo.setState(CONNECTED_TO_BOARD);
                         sendInfo(session, CONNECTED_TO_BOARD,String.format("Connected to board %d", boardId));
                     }
-                    case "get_board_info" -> {
-                        int boardId = msgRoot.get("board_id").asInt();
+                    case ACTION_BOARD_INFO -> {
+                        int boardId = msgRoot.get(BOARD_ID).asInt();
                         BoardInfo boardInfo = boardManager.getBoardInfo(boardId);
                         if (boardInfo != null) {
-                            sendJsonData(session,"board_info", currentState,"board_info", jsonMapper.writeValueAsString(boardInfo));
+                            sendJsonData(session,MSG_BOARD_INFO, currentState,MSG_BOARD_INFO_KEY, jsonMapper.writeValueAsString(boardInfo));
                         } else {
                             sendInfo(session, currentState, String.format("Board %d not found", boardId));
                         }
                     }
-                    case "delete_board" -> {
+                    case ACTION_DELETE_BOARD -> {
                         int id;
                         List<Session> sessionsToLoggedIn;
                         if ((sessionsToLoggedIn = boardManager.deleteBoard(id = userToOwnedBoard.get(sessionInfo.getUsername()))) != null) {
@@ -197,12 +202,12 @@ public class WebSocketEndpoint {
             }
             case CONNECTED_TO_BOARD -> {
                 switch (action) {
-                    case "disconnect_from_board" -> {
+                    case ACTION_DISCONNECT -> {
                         boardManager.disconnect(session);
                         sessionInfo.setState(LOGGED_IN);
                         sendInfo(session, LOGGED_IN, "disconnected from board");
                     }
-                    case "start_game" -> {
+                    case ACTION_START_GAME -> {
                         int boardId;
                         if (boardManager.getBoard(session) != boardManager.getBoard(boardId = userToOwnedBoard.get(sessionInfo.getUsername()))) {
                             sendInfo(session, currentState, String.format("Cannot start game. You're not owner of board you're connected to. Owned: %d", boardId));
@@ -213,7 +218,7 @@ public class WebSocketEndpoint {
                         if (playerSessionForBoard != null) {
                             for (val entry : playerSessionForBoard.entrySet()) {
                                 sessionInfoMap.get(entry.getValue()).setState(IN_GAME);
-                                sendJsonData(entry.getValue(), "game_started", IN_GAME,"start", jsonMapper.writeValueAsString(boardManager.getBoard(boardId)));
+                                sendJsonData(entry.getValue(), MSG_GAME_STARTED, IN_GAME,MSG_GAME_STARTED_KEY, jsonMapper.writeValueAsString(boardManager.getBoard(boardId)));
                             }
                             obs.setPlayerToSession(playerSessionForBoard);
                         } else {
@@ -228,8 +233,8 @@ public class WebSocketEndpoint {
             }
             case IN_GAME -> {
                 switch (action) {
-                    case "make_turn" -> {
-                        int tile_id = msgRoot.get("tile_id").asInt();
+                    case ACTION_MAKE_TURN -> {
+                        int tile_id = msgRoot.get(TILE_ID).asInt();
                         if (boardManager.tryMakeTurn(session, tile_id)) {
                             sendInfo(session, currentState,String.format("Turn made to tile %d", tile_id));
                         } else {
