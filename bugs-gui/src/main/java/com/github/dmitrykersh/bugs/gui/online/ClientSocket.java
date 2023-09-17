@@ -1,9 +1,11 @@
 package com.github.dmitrykersh.bugs.gui.online;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.github.dmitrykersh.bugs.engine.board.BoardInfo;
 import com.github.dmitrykersh.bugs.engine.player.Player;
+import com.github.dmitrykersh.bugs.engine.util.ColorDeserializer;
 import com.github.dmitrykersh.bugs.gui.javafxcontroller.OnlineGameMenuController;
 import com.sun.javafx.collections.ObservableListWrapper;
 import javafx.application.Platform;
@@ -33,13 +35,17 @@ import static com.github.dmitrykersh.bugs.server.ProtocolConstants.*;
 @WebSocket
 public class ClientSocket {
     private final OnlineGameMenuController controller;
-    private final ObjectMapper mapper = new ObjectMapper();
+    private final ObjectMapper mapper;
 
     @Setter
     private Session session;
 
     public ClientSocket(OnlineGameMenuController controller) {
         this.controller = controller;
+        this.mapper = new ObjectMapper();
+        SimpleModule module = new SimpleModule();
+        module.addDeserializer(Color.class, new ColorDeserializer());
+        mapper.registerModule(module);
     }
 
     @OnWebSocketMessage
@@ -79,6 +85,7 @@ public class ClientSocket {
                 BoardInfo boardInfo = mapper.readValue(jsonMsg.getJSONObject(MSG_BOARD_INFO_KEY).toString(), BoardInfo.class);
                 Platform.runLater(
                         ()->{
+                            controller.playersGridPane.getChildren().clear();
                             for (int row = 0; row < boardInfo.getPlayers().size(); row++) {
                                 Player p;
                                 if ((p = boardInfo.getPlayers().get(row)) != null) {

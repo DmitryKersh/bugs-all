@@ -165,7 +165,12 @@ public class WebSocketEndpoint {
                             break;
                         }
                         sessionInfo.setState(CONNECTED_TO_BOARD);
+                        sessionInfo.setBoardId(boardId);
                         sendInfo(session, CONNECTED_TO_BOARD,String.format("Connected to board %d", boardId));
+                        String boardInfoStr = jsonMapper.writeValueAsString(boardManager.getBoardInfo(boardId));
+                        for (Session s : boardManager.getSessionsForBoard(boardId)) {
+                            sendJsonData(s,MSG_BOARD_INFO, currentState,MSG_BOARD_INFO_KEY, boardInfoStr);
+                        }
                     }
                     case ACTION_BOARD_INFO -> {
                         int boardId = msgRoot.get(BOARD_ID).asInt();
@@ -203,9 +208,13 @@ public class WebSocketEndpoint {
             case CONNECTED_TO_BOARD -> {
                 switch (action) {
                     case ACTION_DISCONNECT -> {
-                        boardManager.disconnect(session);
+                        List<Session> sessionsToNotify = boardManager.disconnect(session);
                         sessionInfo.setState(LOGGED_IN);
                         sendInfo(session, LOGGED_IN, "disconnected from board");
+                        String boardInfoStr = jsonMapper.writeValueAsString(boardManager.getBoardInfo(sessionInfo.getBoardId()));
+                        for (Session s : sessionsToNotify) {
+                            sendJsonData(s,MSG_BOARD_INFO, currentState,MSG_BOARD_INFO_KEY, boardInfoStr);
+                        }
                     }
                     case ACTION_START_GAME -> {
                         int boardId;

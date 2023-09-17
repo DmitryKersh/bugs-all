@@ -6,11 +6,9 @@ import com.github.dmitrykersh.bugs.engine.board.layout.Layout;
 import com.github.dmitrykersh.bugs.engine.board.tile.DrawableRectangleTile;
 import com.github.dmitrykersh.bugs.engine.board.validator.SimpleTurnValidator;
 import com.github.dmitrykersh.bugs.engine.board.validator.TurnValidator;
-import com.github.dmitrykersh.bugs.engine.player.HumanPlayer;
 import com.github.dmitrykersh.bugs.engine.player.Player;
 import com.github.dmitrykersh.bugs.engine.board.tile.Tile;
 import com.github.dmitrykersh.bugs.engine.player.PlayerSettings;
-import com.github.dmitrykersh.bugs.engine.player.PlayerState;
 import com.github.dmitrykersh.bugs.engine.TextureCollection;
 import com.github.dmitrykersh.bugs.engine.util.TextureUtils;
 import javafx.event.EventHandler;
@@ -70,9 +68,8 @@ public final class RectangleBoard extends AbstractBoard {
 
 
         for (int i = 0; i < playerTemplates.size(); i++) {
-            players.set(i, new HumanPlayer(this,
+            players.set(i, new Player(this,
                     playerSettings.size() <= i ? ("p_" + i) : playerSettings.get(i).getNickname(),
-                    new PlayerState(),
                     playerTemplates.get(i).getMaxTurns(),
                     playerSettings.get(i).getColor()));
         }

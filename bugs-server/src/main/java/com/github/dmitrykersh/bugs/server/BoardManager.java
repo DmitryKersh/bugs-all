@@ -117,11 +117,15 @@ public class BoardManager {
         return false;
     }
 
-    public void disconnect(Session s) {
+    public List<Session> disconnect(Session s) {
         Player p = sessionToPlayer.get(s);
+        AbstractBoard b;
         if (p != null) {
+            b = p.getBoard();
             p.getBoard().removePlayer(p);
+            return getSessionsForBoard(b);
         }
+        return new ArrayList<>();
     }
 
     public String getLayoutsAsJsonStr() throws JsonProcessingException {
@@ -154,11 +158,11 @@ public class BoardManager {
         return p.tryMakeTurn(tileId);
     }
 
-    private List<Session> getSessionsForBoard(int boardId) {
+    public List<Session> getSessionsForBoard(int boardId) {
         return getSessionsForBoard(activeBoards.get(boardId));
     }
 
-    private List<Session> getSessionsForBoard(AbstractBoard b) {
+    public List<Session> getSessionsForBoard(AbstractBoard b) {
         List<Session> sessions = new ArrayList<>();
         if (b == null)
             return sessions;

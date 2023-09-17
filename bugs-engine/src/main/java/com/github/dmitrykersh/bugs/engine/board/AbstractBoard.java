@@ -9,10 +9,8 @@ import com.github.dmitrykersh.bugs.engine.board.observer.TurnInfo;
 import com.github.dmitrykersh.bugs.engine.board.tile.Tile;
 import com.github.dmitrykersh.bugs.engine.board.tile.TileState;
 import com.github.dmitrykersh.bugs.engine.board.validator.TurnValidator;
-import com.github.dmitrykersh.bugs.engine.player.HumanPlayer;
 import com.github.dmitrykersh.bugs.engine.player.Player;
 import com.github.dmitrykersh.bugs.engine.player.PlayerSettings;
-import com.github.dmitrykersh.bugs.engine.player.PlayerState;
 import javafx.scene.Group;
 import lombok.Getter;
 import lombok.val;
@@ -63,9 +61,8 @@ public abstract class AbstractBoard {
         Player p;
         if (players.get(playerIndex) != null)
             return null;
-        players.set(playerIndex, p = new HumanPlayer(this,
+        players.set(playerIndex, p = new Player(this,
                 settings.getNickname(),
-                new PlayerState(),
                 playerTemplates.get(playerIndex).getMaxTurns(),
                 settings.getColor()));
         return p;
@@ -90,11 +87,11 @@ public abstract class AbstractBoard {
     public abstract Group buildDrawableGrid();
 
     public List<Player> getPlayers() {
-        return Collections.unmodifiableList(players);
+        return new ArrayList<>(players);
     }
 
     public Map<Player, Integer> getScoreboard() {
-        return Collections.unmodifiableMap(scoreboard);
+        return new HashMap<>(scoreboard);
     }
 
     public Player getActivePlayer() {
