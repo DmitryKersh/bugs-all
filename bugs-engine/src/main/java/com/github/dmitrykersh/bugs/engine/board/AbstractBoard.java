@@ -61,6 +61,10 @@ public abstract class AbstractBoard {
         Player p;
         if (players.get(playerIndex) != null)
             return null;
+        for (Player player : players) {
+            if (player != null && player.getNickname().equals(settings.getNickname()))
+                return null;
+        }
         players.set(playerIndex, p = new Player(this,
                 settings.getNickname(),
                 playerTemplates.get(playerIndex).getMaxTurns(),

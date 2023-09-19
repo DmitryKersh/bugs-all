@@ -122,8 +122,9 @@ public class BoardManager {
         AbstractBoard b;
         if (p != null) {
             b = p.getBoard();
+            List<Session> toNotify = getSessionsForBoard(b);
             p.getBoard().removePlayer(p);
-            return getSessionsForBoard(b);
+            return toNotify;
         }
         return new ArrayList<>();
     }

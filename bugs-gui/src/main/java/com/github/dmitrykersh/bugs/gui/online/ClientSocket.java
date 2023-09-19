@@ -2,7 +2,6 @@ package com.github.dmitrykersh.bugs.gui.online;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.github.dmitrykersh.bugs.engine.board.BoardInfo;
 import com.github.dmitrykersh.bugs.engine.player.Player;
 import com.github.dmitrykersh.bugs.engine.util.ColorDeserializer;
@@ -13,8 +12,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
 import lombok.Setter;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.*;
@@ -23,12 +20,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.CountDownLatch;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import static com.github.dmitrykersh.bugs.server.ProtocolConstants.*;
 
@@ -93,6 +85,11 @@ public class ClientSocket {
                                     label.setFont(Font.font("Consolas"));
                                     label.setTextFill(p.getColor());
                                     controller.playersGridPane.add(label, 0, row);
+                                    if (p.getNickname().equals(controller.getCurrentPlayerNickname())) {
+                                        Button button = new Button("Quit");
+                                        button.setOnMouseClicked(controller.disconnectFromSlot_onClick(row + 1));
+                                        controller.playersGridPane.add(button, 1, row);
+                                    }
                                 } else {
                                     Label label = new Label("< empty >");
                                     label.setFont(Font.font("Consolas"));

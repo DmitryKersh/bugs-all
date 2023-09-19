@@ -1,7 +1,5 @@
 package com.github.dmitrykersh.bugs.gui.javafxcontroller;
 
-import com.github.dmitrykersh.bugs.engine.board.tile.DrawableRectangleTile;
-import com.github.dmitrykersh.bugs.engine.player.Player;
 import com.github.dmitrykersh.bugs.gui.SceneCollection;
 import com.github.dmitrykersh.bugs.gui.online.ClientSocket;
 import com.sun.javafx.collections.ObservableListWrapper;
@@ -13,6 +11,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
+import lombok.Getter;
 import lombok.val;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.UpgradeException;
@@ -27,7 +26,6 @@ import java.util.Map;
 import java.util.concurrent.Future;
 import java.util.regex.Pattern;
 
-import static com.github.dmitrykersh.bugs.engine.board.BoardState.ENDED;
 import static com.github.dmitrykersh.bugs.server.ProtocolConstants.*;
 
 public class OnlineGameMenuController {
@@ -73,6 +71,8 @@ public class OnlineGameMenuController {
 
     public final Map<String, JSONObject> layoutMap = new HashMap<>();
     private final Map<TextField, Label> paramMap = new HashMap<>();
+    @Getter
+    private String currentPlayerNickname;
 
     public void connectButton_onClick(MouseEvent mouseEvent) {
         if (isConnected) {
@@ -96,6 +96,7 @@ public class OnlineGameMenuController {
 
                 sendLoginRequest();
                 sendAvailableLayoutsRequest();
+                currentPlayerNickname = nicknameField.getText();
             } catch (URISyntaxException e) {
                 errorLabel.setText("Incorrect URI syntax");
             } catch (IOException | UpgradeException e) {
@@ -129,6 +130,17 @@ public class OnlineGameMenuController {
                         BOARD_ID, boardIdTextField.getText(),
                         PLAYER_NUMBER, playerNumber,
                         PLAYER_COLOR, "red"
+                )));
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        };
+    }
+    public EventHandler<MouseEvent> disconnectFromSlot_onClick(int playerNumber) {
+        return event -> {
+            try {
+                sendJson(new JSONObject(Map.of(
+                        ACTION, ACTION_DISCONNECT
                 )));
             } catch (IOException e) {
                 throw new RuntimeException(e);
