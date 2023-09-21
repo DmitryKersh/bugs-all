@@ -1,5 +1,6 @@
 package com.github.dmitrykersh.bugs.engine.board;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.dmitrykersh.bugs.engine.board.layout.Layout;
@@ -45,6 +46,7 @@ import java.util.List;
  * +---+---+---+---+---+
  */
 
+@JsonAutoDetect(getterVisibility = JsonAutoDetect.Visibility.NONE, isGetterVisibility = JsonAutoDetect.Visibility.NONE)
 public final class RectangleBoard extends AbstractBoard {
     private static final int TILE_SIZE = 50;
 
