@@ -60,9 +60,15 @@ public class OnlineGameMenuController {
     public Label infoLabel;
     @FXML
     public Button createGameButton;
+    @FXML
+    public Label boardIdLabel;
+    @FXML
+    public Button startGameButton;
 
     private final ClientSocket socket = new ClientSocket(this);
     private final WebSocketClient client = new WebSocketClient();
+    public int boardId;
+
 
     private Session session;
 
@@ -127,7 +133,7 @@ public class OnlineGameMenuController {
             try {
                 sendJson(new JSONObject(Map.of(
                         ACTION, ACTION_CONNECT_TO_BOARD,
-                        BOARD_ID, boardIdTextField.getText(),
+                        BOARD_ID, boardId,
                         PLAYER_NUMBER, playerNumber,
                         PLAYER_COLOR, "red"
                 )));
@@ -191,6 +197,15 @@ public class OnlineGameMenuController {
             isCreatedBoard = false;
             createGameButton.setText("Create Game");
         }
+    }
+
+    public void startGameButton_onClick(MouseEvent mouseEvent) throws IOException {
+        sendStartGameRequest();
+    }
+    private void sendStartGameRequest() throws IOException {
+        sendJson(new JSONObject(Map.of(
+                ACTION, ACTION_START_GAME
+        )));
     }
 
     private void sendLoginRequest() throws IOException {

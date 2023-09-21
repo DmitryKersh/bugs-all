@@ -10,7 +10,6 @@ import com.github.dmitrykersh.bugs.engine.player.Player;
 import com.github.dmitrykersh.bugs.engine.player.PlayerSettings;
 import javafx.scene.paint.Color;
 import lombok.Setter;
-import lombok.extern.java.Log;
 import lombok.val;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.*;
@@ -20,8 +19,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import static com.github.dmitrykersh.bugs.server.SessionState.*;
 import static com.github.dmitrykersh.bugs.server.Utils.*;
@@ -168,7 +165,9 @@ public class WebSocketEndpoint {
                         sessionInfo.setBoardId(boardId);
                         sendInfo(session, CONNECTED_TO_BOARD,String.format("Connected to board %d", boardId));
                         String boardInfoStr = jsonMapper.writeValueAsString(boardManager.getBoardInfo(boardId));
-                        for (Session s : boardManager.getSessionsForBoard(boardId)) {
+                        List<Session> toNotify = boardManager.getSessionsForBoard(boardId);
+                        toNotify.addAll(boardManager.getWatchers(boardId));
+                        for (Session s : toNotify) {
                             sendJsonData(s,MSG_BOARD_INFO, currentState,MSG_BOARD_INFO_KEY, boardInfoStr);
                         }
                     }
@@ -177,6 +176,7 @@ public class WebSocketEndpoint {
                         BoardInfo boardInfo = boardManager.getBoardInfo(boardId);
                         if (boardInfo != null) {
                             sendJsonData(session,MSG_BOARD_INFO, currentState,MSG_BOARD_INFO_KEY, jsonMapper.writeValueAsString(boardInfo));
+                            boardManager.setWatcher(session, boardId);
                         } else {
                             sendInfo(session, currentState, String.format("Board %d not found", boardId));
                         }

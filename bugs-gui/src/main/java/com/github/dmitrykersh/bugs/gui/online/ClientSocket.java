@@ -2,6 +2,7 @@ package com.github.dmitrykersh.bugs.gui.online;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.github.dmitrykersh.bugs.engine.board.AbstractBoard;
 import com.github.dmitrykersh.bugs.engine.board.BoardInfo;
 import com.github.dmitrykersh.bugs.engine.player.Player;
 import com.github.dmitrykersh.bugs.engine.util.ColorDeserializer;
@@ -77,6 +78,8 @@ public class ClientSocket {
                 BoardInfo boardInfo = mapper.readValue(jsonMsg.getJSONObject(MSG_BOARD_INFO_KEY).toString(), BoardInfo.class);
                 Platform.runLater(
                         ()->{
+                            controller.boardIdLabel.setText(String.format("[ BOARD #%d ]", boardInfo.getId()));
+                            controller.boardId = boardInfo.getId();
                             controller.playersGridPane.getChildren().clear();
                             for (int row = 0; row < boardInfo.getPlayers().size(); row++) {
                                 Player p;
@@ -89,6 +92,7 @@ public class ClientSocket {
                                         Button button = new Button("Quit");
                                         button.setOnMouseClicked(controller.disconnectFromSlot_onClick(row + 1));
                                         controller.playersGridPane.add(button, 1, row);
+                                        controller.startGameButton.setVisible(true);
                                     }
                                 } else {
                                     Label label = new Label("< empty >");
@@ -102,7 +106,9 @@ public class ClientSocket {
                             }
                         }
                 );
-
+            }
+            case MSG_GAME_STARTED -> {
+                //AbstractBoard b = mapper.readValue(jsonMsg.getJSONObject(MSG_GAME_STARTED_KEY).toString(), AbstractBoard.class);
             }
         }
     }

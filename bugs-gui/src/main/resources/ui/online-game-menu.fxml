@@ -82,7 +82,7 @@
                                                         <Font size="15.0" />
                                                     </font>
                                                 </TextField>
-                                                <Label prefHeight="18.0" prefWidth="299.0" text="Players" textFill="WHITE" AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="70.0">
+                                                <Label fx:id="boardIdLabel" alignment="CENTER" prefHeight="18.0" prefWidth="299.0" textAlignment="CENTER" textFill="WHITE" AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="70.0">
                                                     <font>
                                                         <Font name="Consolas" size="15.0" />
                                                     </font>
@@ -106,6 +106,7 @@
                                                         <Font size="15.0" />
                                                     </font>
                                                 </Button>
+                                    <Button fx:id="startGameButton" mnemonicParsing="false" onMouseClicked="#startGameButton_onClick" text="Start Game!" visible="false" AnchorPane.leftAnchor="100.0" AnchorPane.rightAnchor="100.0" AnchorPane.topAnchor="300.0" />
                                             </children>
                                         </AnchorPane>
                                     </content>

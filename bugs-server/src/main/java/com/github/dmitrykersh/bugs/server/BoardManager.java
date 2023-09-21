@@ -31,6 +31,7 @@ public class BoardManager {
     private final Map<Session, Player> sessionToPlayer = new HashMap<>();
     private final Map<Integer, AbstractBoard> activeBoards = new HashMap<>();
     private final Map<String, String> layouts = new HashMap<>();
+    private final Map<Session, AbstractBoard> watchersMap = new HashMap<>();
     private static int id = 0;
     private String layoutCachedStr = null;
 
@@ -52,7 +53,9 @@ public class BoardManager {
     public BoardInfo getBoardInfo(int id) {
         AbstractBoard b = getBoard(id);
         if (b == null) return null;
-        return b.getInfo();
+        BoardInfo boardInfo = b.getInfo();
+        boardInfo.setId(id);
+        return boardInfo;
     }
 
     // id = 0 indicates error
@@ -124,6 +127,11 @@ public class BoardManager {
             b = p.getBoard();
             List<Session> toNotify = getSessionsForBoard(b);
             p.getBoard().removePlayer(p);
+            for (val entry : watchersMap.entrySet()) {
+                if (entry.getValue() == b) {
+                    toNotify.add(entry.getKey());
+                }
+            }
             return toNotify;
         }
         return new ArrayList<>();
@@ -159,6 +167,15 @@ public class BoardManager {
         return p.tryMakeTurn(tileId);
     }
 
+    public void setWatcher(Session s, int boardId) {
+        AbstractBoard b = activeBoards.get(boardId);
+        if (b == null) return;
+        watchersMap.put(s, b);
+    }
+    public void removeWatcher(Session s) {
+        watchersMap.remove(s);
+    }
+
     public List<Session> getSessionsForBoard(int boardId) {
         return getSessionsForBoard(activeBoards.get(boardId));
     }
@@ -173,6 +190,20 @@ public class BoardManager {
             }
         }
         return sessions;
+    }
+
+    public List<Session> getWatchers(AbstractBoard b) {
+        List<Session> res = new ArrayList<>();
+        if (b == null) return res;
+        for (val entry : watchersMap.entrySet()) {
+            if (entry.getValue() == b) {
+                res.add(entry.getKey());
+            }
+        }
+        return res;
+    }
+    public List<Session> getWatchers(int boardId) {
+        return getWatchers(activeBoards.get(boardId));
     }
 
     private Map<Player, Session> getPlayerToSessionForBoard(AbstractBoard b) {
