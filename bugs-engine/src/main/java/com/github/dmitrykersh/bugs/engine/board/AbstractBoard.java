@@ -90,6 +90,8 @@ public abstract class AbstractBoard {
 
     public abstract Group buildDrawableGrid();
 
+    public abstract BoardDto makeDto();
+
     public List<Player> getPlayers() {
         return new ArrayList<>(players);
     }

@@ -209,6 +209,22 @@ public final class RectangleBoard extends AbstractBoard {
         return grid;
     }
 
+    @Override
+    public BoardDto makeDto() {
+        // todo: cache it
+        List<Tile> tileList = new ArrayList<>();
+        for (val row : tiles)
+            tileList.addAll(row);
+        return BoardDto.builder()
+                .boardType("RECT")
+                .players(getPlayers())
+                .tiles(tileList)
+                .params(Map.of(
+                        "size_x", colsAmount,
+                        "size_y", rowsAmount)
+                ).build();
+    }
+
     private void activateTilesCluster(final @NotNull Tile origin, final @NotNull Player player) {
         origin.activate();
         for (Tile tile : getNearbyTilesForPlayer(origin, player)) {

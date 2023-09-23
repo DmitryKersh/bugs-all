@@ -39,6 +39,7 @@ public class WebSocketEndpoint {
 
         @Override
         public void onInitialization(List<Player> players) {
+            /*
             for (Session s : playerToSession.values()) {
                 try {
                     sendJsonData(s, "game_start", IN_GAME,"players", jsonMapper.writeValueAsString(players));
@@ -46,6 +47,7 @@ public class WebSocketEndpoint {
                     throw new RuntimeException(e);
                 }
             }
+            */
         }
 
         @Override
@@ -227,7 +229,7 @@ public class WebSocketEndpoint {
                         if (playerSessionForBoard != null) {
                             for (val entry : playerSessionForBoard.entrySet()) {
                                 sessionInfoMap.get(entry.getValue()).setState(IN_GAME);
-                                sendJsonData(entry.getValue(), MSG_GAME_STARTED, IN_GAME,MSG_GAME_STARTED_KEY, jsonMapper.writeValueAsString(boardManager.getBoard(boardId)));
+                                sendJsonData(entry.getValue(), MSG_GAME_STARTED, IN_GAME,MSG_GAME_STARTED_KEY, jsonMapper.writeValueAsString(boardManager.getBoard(boardId).makeDto()));
                             }
                             obs.setPlayerToSession(playerSessionForBoard);
                         } else {
