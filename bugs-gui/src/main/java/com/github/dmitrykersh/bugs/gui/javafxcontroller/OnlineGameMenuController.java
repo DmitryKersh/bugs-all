@@ -31,6 +31,7 @@ import java.util.Map;
 import java.util.concurrent.Future;
 import java.util.regex.Pattern;
 
+import static com.github.dmitrykersh.bugs.engine.util.TextureUtils.toRGBCode;
 import static com.github.dmitrykersh.bugs.server.ProtocolConstants.*;
 
 public class OnlineGameMenuController {
@@ -71,11 +72,12 @@ public class OnlineGameMenuController {
     public Button startGameButton;
     @FXML
     public BorderPane innerBorderPane;
+    @FXML
+    public ColorPicker colorPicker;
 
     private final ClientSocket socket = new ClientSocket(this);
     private final WebSocketClient client = new WebSocketClient();
     public int boardId;
-
 
     private Session session;
 
@@ -147,7 +149,7 @@ public class OnlineGameMenuController {
                         ACTION, ACTION_CONNECT_TO_BOARD,
                         BOARD_ID, boardId,
                         PLAYER_NUMBER, playerNumber,
-                        PLAYER_COLOR, "red"
+                        PLAYER_COLOR, toRGBCode(colorPicker.getValue())
                 )));
             } catch (IOException e) {
                 throw new RuntimeException(e);
