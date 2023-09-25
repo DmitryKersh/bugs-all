@@ -5,7 +5,6 @@ import com.github.dmitrykersh.bugs.engine.board.layout.Layout;
 import com.github.dmitrykersh.bugs.engine.board.layout.PlayerTemplate;
 import com.github.dmitrykersh.bugs.engine.board.layout.TileTemplate;
 import com.github.dmitrykersh.bugs.engine.board.observer.BoardObserver;
-import com.github.dmitrykersh.bugs.engine.board.observer.TurnInfo;
 import com.github.dmitrykersh.bugs.engine.board.tile.Tile;
 import com.github.dmitrykersh.bugs.engine.board.tile.TileState;
 import com.github.dmitrykersh.bugs.engine.board.validator.TurnValidator;

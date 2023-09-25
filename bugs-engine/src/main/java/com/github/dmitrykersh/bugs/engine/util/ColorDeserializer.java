@@ -8,7 +8,7 @@ import javafx.scene.paint.Color;
 
 import java.io.IOException;
 
-public class ColorDeserializer extends JsonDeserializer {
+public class ColorDeserializer extends JsonDeserializer<Color> {
     @Override
     public Color deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
         JsonNode node = p.getCodec().readTree(p);

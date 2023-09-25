@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.dmitrykersh.bugs.engine.board.BoardInfo;
 import com.github.dmitrykersh.bugs.engine.board.observer.BoardObserver;
-import com.github.dmitrykersh.bugs.engine.board.observer.TurnInfo;
+import com.github.dmitrykersh.bugs.engine.board.TurnInfo;
 import com.github.dmitrykersh.bugs.engine.player.Player;
 import com.github.dmitrykersh.bugs.engine.player.PlayerSettings;
 import javafx.scene.paint.Color;
@@ -27,7 +27,7 @@ import static com.github.dmitrykersh.bugs.server.ProtocolConstants.*;
 @WebSocket
 public class WebSocketEndpoint {
     // СУКА ЕСЛИ НЕ КОННЕКТИТСЯ, ПОМЕНЯЙ ЭТО vvv
-    private static final String LAYOUT_DIR = "C:\\Users\\TSP\\IdeaProjects\\bugs-all\\bugs-gui\\src\\main\\resources\\layout";
+    private static final String LAYOUT_DIR = "C:\\Users\\dkarp\\IdeaProjects\\bugs-client\\bugs-gui\\src\\main\\resources\\layout";
     private static final BoardManager boardManager = new BoardManager(LAYOUT_DIR);
     private static final Map<Session, SessionInfo> sessionInfoMap = new ConcurrentHashMap<>();
     private static final Map<String, Integer> userToOwnedBoard = new HashMap<>();
@@ -54,7 +54,7 @@ public class WebSocketEndpoint {
         public void onPlayerKicked(Player kickedPlayer) {
             for (Session s : playerToSession.values()) {
                 try {
-                    sendJsonData(s, "kick", IN_GAME,"kicked_player", jsonMapper.writeValueAsString(kickedPlayer));
+                    sendJsonData(s, MSG_PLAYER_KICKED, IN_GAME, MSG_PLAYER_KICKED_KEY, jsonMapper.writeValueAsString(kickedPlayer));
 
                 } catch (IOException e) {
                     throw new RuntimeException(e);
@@ -68,7 +68,7 @@ public class WebSocketEndpoint {
         public void onTurnMade(TurnInfo turnInfo) {
             for (Session s : playerToSession.values()) {
                 try {
-                    sendJsonData(s, "turn", IN_GAME,"turn_info", jsonMapper.writeValueAsString(turnInfo));
+                    sendJsonData(s, MSG_TURN_MADE, IN_GAME, MSG_TURN_MADE_KEY, jsonMapper.writeValueAsString(turnInfo));
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
@@ -79,7 +79,7 @@ public class WebSocketEndpoint {
         public void onGameEnded(Map<Player, Integer> scoreboard) {
             for (Session s : playerToSession.values()) {
                 try {
-                    sendJsonData(s, "game_end", LOGGED_IN,"scoreboard", jsonMapper.writeValueAsString(scoreboard));
+                    sendJsonData(s, MSG_GAME_ENDED, LOGGED_IN, MSG_GAME_ENDED_KEY, jsonMapper.writeValueAsString(scoreboard));
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
@@ -88,13 +88,13 @@ public class WebSocketEndpoint {
     }
 
     @OnWebSocketConnect
-    public void clientConnected(Session session){
+    public void clientConnected(Session session) {
         sessionInfoMap.put(session, new SessionInfo());
         System.out.println("New client connected: " + session.getRemoteAddress().toString());
     }
 
     @OnWebSocketClose
-    public void clientClose(Session session){
+    public void clientClose(Session session) {
         boardManager.disconnect(session);
         userToOwnedBoard.remove(sessionInfoMap.get(session).getUsername());
         sessionInfoMap.remove(session);
@@ -102,7 +102,7 @@ public class WebSocketEndpoint {
     }
 
     @OnWebSocketError
-    public void clientError(Throwable err){
+    public void clientError(Throwable err) {
         System.out.println("Client error: ");
         err.printStackTrace();
     }
@@ -126,7 +126,7 @@ public class WebSocketEndpoint {
                     break;
                 }
                 if (!authenticate(username, password)) {
-                    sendInfo(session, currentState,"Login failed");
+                    sendInfo(session, currentState, "Login failed");
                     break;
                 }
 
@@ -134,14 +134,15 @@ public class WebSocketEndpoint {
                 sessionInfo.setUsername(username);
                 sessionInfo.setNickname(nickname);
                 userToOwnedBoard.put(username, null);
-                sendInfo(session, LOGGED_IN,String.format("Logged in as %s", username));
+                sendInfo(session, LOGGED_IN, String.format("Logged in as %s", username));
             }
             case LOGGED_IN -> {
                 switch (action) {
                     case ACTION_CREATE_BOARD -> {
                         String layoutName = msgRoot.get(LAYOUT_NAME).asText();
                         String gameMode = msgRoot.get(GAME_MODE).asText();
-                        Map<String, Integer> layoutParams = jsonMapper.convertValue(msgRoot.get(LAYOUT_PARAMS), new TypeReference<>() {});
+                        Map<String, Integer> layoutParams = jsonMapper.convertValue(msgRoot.get(LAYOUT_PARAMS), new TypeReference<>() {
+                        });
                         if (userToOwnedBoard.get(sessionInfo.getUsername()) != null) {
                             sendInfo(session, currentState, String.format("board already created by this client (id=%d)", userToOwnedBoard.get(sessionInfo.getUsername())));
                             return;
@@ -151,7 +152,7 @@ public class WebSocketEndpoint {
                         if ((boardId = boardManager.createBoard(layoutName, gameMode, layoutParams)) != 0) {
                             userToOwnedBoard.put(sessionInfo.getUsername(), boardId);
                             sendInfo(session, currentState, String.format("Created board (id=%d)", boardId));
-                            sendJsonData(session, MSG_BOARD_CREATED, currentState,MSG_BOARD_CREATED_ID, String.valueOf(boardId));
+                            sendJsonData(session, MSG_BOARD_CREATED, currentState, MSG_BOARD_CREATED_ID, String.valueOf(boardId));
                         }
                     }
                     case ACTION_CONNECT_TO_BOARD -> {
@@ -160,24 +161,24 @@ public class WebSocketEndpoint {
                         String colorStr = msgRoot.get(PLAYER_COLOR).asText();
 
                         if (!boardManager.connectToBoard(session, boardId, playerNumber, new PlayerSettings(sessionInfo.getNickname(), Color.web(colorStr)))) {
-                            sendInfo(session, currentState,"Error connecting to the board");
+                            sendInfo(session, currentState, "Error connecting to the board");
                             break;
                         }
                         sessionInfo.setState(CONNECTED_TO_BOARD);
                         sessionInfo.setBoardId(boardId);
-                        sendInfo(session, CONNECTED_TO_BOARD,String.format("Connected to board %d", boardId));
+                        sendInfo(session, CONNECTED_TO_BOARD, String.format("Connected to board %d", boardId));
                         String boardInfoStr = jsonMapper.writeValueAsString(boardManager.getBoardInfo(boardId));
                         List<Session> toNotify = boardManager.getSessionsForBoard(boardId);
                         toNotify.addAll(boardManager.getWatchers(boardId));
                         for (Session s : toNotify) {
-                            sendJsonData(s,MSG_BOARD_INFO, currentState,MSG_BOARD_INFO_KEY, boardInfoStr);
+                            sendJsonData(s, MSG_BOARD_INFO, currentState, MSG_BOARD_INFO_KEY, boardInfoStr);
                         }
                     }
                     case ACTION_BOARD_INFO -> {
                         int boardId = msgRoot.get(BOARD_ID).asInt();
                         BoardInfo boardInfo = boardManager.getBoardInfo(boardId);
                         if (boardInfo != null) {
-                            sendJsonData(session,MSG_BOARD_INFO, currentState,MSG_BOARD_INFO_KEY, jsonMapper.writeValueAsString(boardInfo));
+                            sendJsonData(session, MSG_BOARD_INFO, currentState, MSG_BOARD_INFO_KEY, jsonMapper.writeValueAsString(boardInfo));
                             boardManager.setWatcher(session, boardId);
                         } else {
                             sendInfo(session, currentState, String.format("Board %d not found", boardId));
@@ -187,10 +188,10 @@ public class WebSocketEndpoint {
                         int id;
                         List<Session> sessionsToLoggedIn;
                         if ((sessionsToLoggedIn = boardManager.deleteBoard(id = userToOwnedBoard.get(sessionInfo.getUsername()))) != null) {
-                            sendInfo(session, LOGGED_IN,String.format("Deleted board with id %d", id));
+                            sendInfo(session, LOGGED_IN, String.format("Deleted board with id %d", id));
                             for (Session s : sessionsToLoggedIn) {
                                 sessionInfoMap.get(s).setState(LOGGED_IN);
-                                sendInfo(s, LOGGED_IN,"The board you've been connected to was deleted");
+                                sendInfo(s, LOGGED_IN, "The board you've been connected to was deleted");
                             }
 
                             userToOwnedBoard.put(sessionInfo.getUsername(), null);
@@ -215,7 +216,7 @@ public class WebSocketEndpoint {
                         sendInfo(session, LOGGED_IN, "disconnected from board");
                         String boardInfoStr = jsonMapper.writeValueAsString(boardManager.getBoardInfo(sessionInfo.getBoardId()));
                         for (Session s : sessionsToNotify) {
-                            sendJsonData(s,MSG_BOARD_INFO, currentState,MSG_BOARD_INFO_KEY, boardInfoStr);
+                            sendJsonData(s, MSG_BOARD_INFO, currentState, MSG_BOARD_INFO_KEY, boardInfoStr);
                         }
                     }
                     case ACTION_START_GAME -> {
@@ -229,11 +230,11 @@ public class WebSocketEndpoint {
                         if (playerSessionForBoard != null) {
                             for (val entry : playerSessionForBoard.entrySet()) {
                                 sessionInfoMap.get(entry.getValue()).setState(IN_GAME);
-                                sendJsonData(entry.getValue(), MSG_GAME_STARTED, IN_GAME,MSG_GAME_STARTED_KEY, jsonMapper.writeValueAsString(boardManager.getBoard(boardId).makeDto()));
+                                sendJsonData(entry.getValue(), MSG_GAME_STARTED, IN_GAME, MSG_GAME_STARTED_KEY, jsonMapper.writeValueAsString(boardManager.getBoard(boardId).makeDto()));
                             }
                             obs.setPlayerToSession(playerSessionForBoard);
                         } else {
-                            sendInfo(session, currentState,"Cannot start game. Not all players are present");
+                            sendInfo(session, currentState, "Cannot start game. Not all players are present");
                         }
                     }
                     default -> {
@@ -247,9 +248,9 @@ public class WebSocketEndpoint {
                     case ACTION_MAKE_TURN -> {
                         int tile_id = msgRoot.get(TILE_ID).asInt();
                         if (boardManager.tryMakeTurn(session, tile_id)) {
-                            sendInfo(session, currentState,String.format("Turn made to tile %d", tile_id));
+                            sendInfo(session, currentState, String.format("Turn made to tile %d", tile_id));
                         } else {
-                            sendInfo(session, currentState,String.format("Cannot make turn to tile %d", tile_id));
+                            sendInfo(session, currentState, String.format("Cannot make turn to tile %d", tile_id));
                         }
                     }
                     default -> {

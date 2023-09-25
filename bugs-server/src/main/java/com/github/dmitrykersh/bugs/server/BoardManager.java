@@ -104,11 +104,6 @@ public class BoardManager {
         return null;
     }
 
-    public void getBoardSnapshot(int id) {
-        AbstractBoard b = getBoard(id);
-
-    }
-
     public boolean connectToBoard(Session session, int boardId, int playerNumber, PlayerSettings playerSettings) {
         Player player;
         AbstractBoard board = activeBoards.get(boardId);

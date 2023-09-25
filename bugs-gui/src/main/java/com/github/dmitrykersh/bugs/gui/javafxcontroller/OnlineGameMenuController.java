@@ -1,17 +1,22 @@
 package com.github.dmitrykersh.bugs.gui.javafxcontroller;
 
+import com.github.dmitrykersh.bugs.engine.board.tile.DrawableRectangleTile;
 import com.github.dmitrykersh.bugs.gui.SceneCollection;
 import com.github.dmitrykersh.bugs.gui.online.ClientSocket;
+import com.github.dmitrykersh.bugs.gui.viewer.BoardViewer;
+import com.github.dmitrykersh.bugs.server.SessionState;
 import com.sun.javafx.collections.ObservableListWrapper;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.val;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.UpgradeException;
@@ -64,6 +69,8 @@ public class OnlineGameMenuController {
     public Label boardIdLabel;
     @FXML
     public Button startGameButton;
+    @FXML
+    public BorderPane innerBorderPane;
 
     private final ClientSocket socket = new ClientSocket(this);
     private final WebSocketClient client = new WebSocketClient();
@@ -77,6 +84,11 @@ public class OnlineGameMenuController {
 
     public final Map<String, JSONObject> layoutMap = new HashMap<>();
     private final Map<TextField, Label> paramMap = new HashMap<>();
+
+    public BoardViewer boardViewer;
+
+    @Getter
+    private SessionState clientState;
     @Getter
     private String currentPlayerNickname;
 
@@ -147,6 +159,19 @@ public class OnlineGameMenuController {
             try {
                 sendJson(new JSONObject(Map.of(
                         ACTION, ACTION_DISCONNECT
+                )));
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        };
+    }
+    public EventHandler<MouseEvent> onTileClick() {
+        return event -> {
+            DrawableRectangleTile tile = (DrawableRectangleTile) event.getTarget();
+            try {
+                sendJson(new JSONObject(Map.of(
+                        ACTION, ACTION_MAKE_TURN,
+                        TILE_ID, tile.getTile().getId()
                 )));
             } catch (IOException e) {
                 throw new RuntimeException(e);

@@ -1,12 +1,16 @@
-package com.github.dmitrykersh.bugs.engine.board.observer;
+package com.github.dmitrykersh.bugs.engine.board;
 
 import com.github.dmitrykersh.bugs.engine.board.tile.Tile;
 import com.github.dmitrykersh.bugs.engine.player.Player;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class TurnInfo {
     private boolean isAttack;
     private boolean isQueenAttack;

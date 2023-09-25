@@ -1,7 +1,7 @@
 package com.github.dmitrykersh.bugs.gui.observer;
 
 import com.github.dmitrykersh.bugs.engine.board.observer.BoardObserver;
-import com.github.dmitrykersh.bugs.engine.board.observer.TurnInfo;
+import com.github.dmitrykersh.bugs.engine.board.TurnInfo;
 import com.github.dmitrykersh.bugs.engine.player.Player;
 import javafx.scene.control.Label;
 import lombok.AllArgsConstructor;

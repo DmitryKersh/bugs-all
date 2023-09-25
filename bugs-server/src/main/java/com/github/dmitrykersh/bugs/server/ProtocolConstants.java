@@ -46,4 +46,10 @@ public class ProtocolConstants {
     public static final String MSG_BOARD_INFO_KEY = "board_info";
     public static final String MSG_GAME_STARTED = "game_started";
     public static final String MSG_GAME_STARTED_KEY = "start";
+    public static final String MSG_TURN_MADE = "turn_made";
+    public static final String MSG_TURN_MADE_KEY = "turn_info";
+    public static final String MSG_PLAYER_KICKED = "kick";
+    public static final String MSG_PLAYER_KICKED_KEY = "kicked_player";
+    public static final String MSG_GAME_ENDED = "game_ended";
+    public static final String MSG_GAME_ENDED_KEY = "scoreboard";
 }

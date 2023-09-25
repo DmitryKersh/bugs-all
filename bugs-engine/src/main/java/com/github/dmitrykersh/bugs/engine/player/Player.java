@@ -8,6 +8,8 @@ import lombok.NoArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Objects;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonIgnoreProperties({"board", "state"})
@@ -24,7 +26,28 @@ public class Player {
         this.color = color;
         this.nickname = nickname;
         this.maxTurns = maxTurns;
+        this.turnsLeft = maxTurns;
         this.board = board;
+    }
+
+    public Player(final @NotNull Color color, final @NotNull String nickname, final int turnsLeft){
+        this.color = color;
+        this.nickname = nickname;
+        this.maxTurns = turnsLeft;
+        this.turnsLeft = turnsLeft;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Player player = (Player) o;
+        return nickname.equals(player.nickname) && color.equals(player.color);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(nickname, color);
     }
 
     public boolean tryMakeTurn(int tileId) {

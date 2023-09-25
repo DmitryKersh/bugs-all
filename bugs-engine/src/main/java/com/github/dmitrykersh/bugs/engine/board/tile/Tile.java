@@ -1,11 +1,15 @@
 package com.github.dmitrykersh.bugs.engine.board.tile;
 
 import com.github.dmitrykersh.bugs.engine.player.Player;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 
 import static com.github.dmitrykersh.bugs.engine.board.tile.TileState.*;
 
+@AllArgsConstructor
+@NoArgsConstructor
 public class Tile {
     @Getter
     private int id;
