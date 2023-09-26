@@ -12,11 +12,13 @@ import com.github.dmitrykersh.bugs.gui.javafxcontroller.OnlineGameMenuController
 import com.github.dmitrykersh.bugs.gui.viewer.RectangleBoardViewer;
 import com.sun.javafx.collections.ObservableListWrapper;
 import javafx.application.Platform;
+import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import lombok.Setter;
 import lombok.val;
 import org.eclipse.jetty.websocket.api.Session;
@@ -29,6 +31,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import static com.github.dmitrykersh.bugs.engine.util.TextUtils.toOrdinal;
 import static com.github.dmitrykersh.bugs.server.ProtocolConstants.*;
 
 @WebSocket
@@ -138,23 +141,32 @@ public class ClientSocket {
                 Map<Integer, List<Player>> scoreboard = mapper.readValue(jsonMsg.getJSONObject(MSG_GAME_ENDED_KEY).toString(), new TypeReference<>() {});
                 Platform.runLater(()->{
                     GridPane pane = new GridPane();
-                    int row = 0;
+                    pane.setVgap(10);
+                    int row = 1;
                     for (val entry : scoreboard.entrySet()) {
                         StringBuilder sb = new StringBuilder().append(entry.getKey()).append(". ");
 
                         for (Player p : entry.getValue()) {
                             sb.append(p.getNickname()).append("; ");
+                            if (p.getNickname().equals(controller.getCurrentPlayerNickname())) {
+                                Label l = new Label(toOrdinal(entry.getKey()) + " place");
+                                l.setFont(Font.font("Consolas", FontWeight.BOLD, 18));
+                                l.setTextFill(p.getColor());
+                                pane.addRow(0, l);
+                            }
                         }
 
                         Label l = new Label(sb.toString());
-                        l.setFont(Font.font("Consolas"));
+                        l.setFont(Font.font("Consolas", 15));
                         l.setTextFill(Color.WHITE);
                         pane.addRow(row, l);
                         row++;
                     }
                     Button b = new Button("Close");
                     b.setOnMouseClicked(controller.onScoreboardClose());
+                    pane.setAlignment(Pos.CENTER);
                     pane.addRow(row, b);
+                    b.setAlignment(Pos.CENTER);
                     controller.innerBorderPane.setCenter(pane);
                 });
             }
