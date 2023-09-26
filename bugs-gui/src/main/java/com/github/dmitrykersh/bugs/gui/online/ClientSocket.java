@@ -1,5 +1,6 @@
 package com.github.dmitrykersh.bugs.gui.online;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.github.dmitrykersh.bugs.engine.board.BoardDto;
@@ -13,9 +14,11 @@ import com.sun.javafx.collections.ObservableListWrapper;
 import javafx.application.Platform;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import lombok.Setter;
+import lombok.val;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.*;
 import org.json.JSONArray;
@@ -24,6 +27,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static com.github.dmitrykersh.bugs.server.ProtocolConstants.*;
 
@@ -130,6 +134,30 @@ public class ClientSocket {
                     controller.boardViewer.displayTurn(turnInfo);
                 });
             }
+            case MSG_GAME_ENDED -> {
+                Map<Integer, List<Player>> scoreboard = mapper.readValue(jsonMsg.getJSONObject(MSG_GAME_ENDED_KEY).toString(), new TypeReference<>() {});
+                Platform.runLater(()->{
+                    GridPane pane = new GridPane();
+                    int row = 0;
+                    for (val entry : scoreboard.entrySet()) {
+                        StringBuilder sb = new StringBuilder().append(entry.getKey()).append(". ");
+
+                        for (Player p : entry.getValue()) {
+                            sb.append(p.getNickname()).append("; ");
+                        }
+
+                        Label l = new Label(sb.toString());
+                        l.setFont(Font.font("Consolas"));
+                        l.setTextFill(Color.WHITE);
+                        pane.addRow(row, l);
+                        row++;
+                    }
+                    Button b = new Button("Close");
+                    b.setOnMouseClicked(controller.onScoreboardClose());
+                    pane.addRow(row, b);
+                    controller.innerBorderPane.setCenter(pane);
+                });
+            }
         }
     }
 
@@ -147,12 +175,14 @@ public class ClientSocket {
     @OnWebSocketClose
     public void clientClose(int i, String s) {
         System.out.println("Client disconnected: " + session.getRemoteAddress().toString());
+        Platform.runLater(controller::updateUiOnLogout);
     }
 
     @OnWebSocketError
     public void clientError(Throwable err) {
         System.out.println("Client error: ");
         err.printStackTrace();
+        Platform.runLater(controller::updateUiOnLogout);
     }
 
     public void sendMessage(String str) {

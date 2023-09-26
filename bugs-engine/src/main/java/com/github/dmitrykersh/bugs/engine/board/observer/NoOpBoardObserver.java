@@ -24,7 +24,7 @@ public class NoOpBoardObserver implements BoardObserver {
     }
 
     @Override
-    public void onGameEnded(Map<Player, Integer> scoreboard) {
+    public void onGameEnded(Map<Integer, List<Player>> scoreboard) {
 
     }
 }

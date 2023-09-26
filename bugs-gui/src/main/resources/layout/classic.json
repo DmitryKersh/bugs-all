@@ -7,8 +7,8 @@
     "4 player": [5, 5, 5, 5]
   },
   "params": {
-    "size_x": 12,
-    "size_y": 12
+    "size_x": 4,
+    "size_y": 4
   },
   "tiles": [
     {

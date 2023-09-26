@@ -10,6 +10,6 @@ public interface BoardObserver {
     void onInitialization(List<Player> players);
     void onPlayerKicked(Player kickedPlayer);
     void onTurnMade(TurnInfo turnInfo);
-    void onGameEnded(Map<Player, Integer> scoreboard);
+    void onGameEnded(Map<Integer, List<Player>> scoreboard);
 
 }

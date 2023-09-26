@@ -99,10 +99,7 @@ public class OnlineGameMenuController {
             try {
                 session.close();
                 client.stop();
-                isConnected = false;
-                connectButton.setText("Connect");
-                infoLabel.setText("");
-                tabPane.setVisible(false);
+                updateUiOnLogout();
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
@@ -128,6 +125,13 @@ public class OnlineGameMenuController {
             }
         }
 
+    }
+
+    public void updateUiOnLogout() {
+        isConnected = false;
+        connectButton.setText("Connect");
+        infoLabel.setText("");
+        tabPane.setVisible(false);
     }
 
     public void searchGameButton_onClick(MouseEvent event) {
@@ -278,5 +282,11 @@ public class OnlineGameMenuController {
     }
     private void sendJson(JSONObject j) throws IOException {
         session.getRemote().sendString(j.toString());
+    }
+
+    public EventHandler<MouseEvent> onScoreboardClose() {
+        return event -> {
+            innerBorderPane.setCenter(null);
+        };
     }
 }

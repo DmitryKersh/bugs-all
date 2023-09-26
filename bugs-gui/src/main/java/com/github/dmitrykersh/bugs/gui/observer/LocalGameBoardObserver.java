@@ -41,11 +41,13 @@ public class LocalGameBoardObserver implements BoardObserver {
     }
 
     @Override
-    public void onGameEnded(Map<Player, Integer> scoreboard) {
+    public void onGameEnded(Map<Integer, List<Player>> scoreboard) {
         System.out.println("--- SCOREBOARD ---");
         List<String> strings = new LinkedList<>();
         for (val entry : scoreboard.entrySet()) {
-            strings.add(0, entry.getValue() + ". " + entry.getKey().getNickname());
+            for (Player player : entry.getValue()) {
+                strings.add(0, entry.getKey() + ". " + player.getNickname());
+            }
         }
         for (String s : strings) {
             System.out.println(s);

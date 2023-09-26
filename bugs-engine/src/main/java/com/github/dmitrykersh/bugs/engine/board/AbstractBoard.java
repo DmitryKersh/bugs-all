@@ -22,7 +22,7 @@ import static com.github.dmitrykersh.bugs.engine.board.tile.TileState.*;
 
 public abstract class AbstractBoard {
     protected final List<Player> players;
-    protected final Map<Player, Integer> scoreboard;
+    protected final Map<Integer, List<Player>> scoreboard;
     protected final TurnValidator turnValidator;
     protected final Layout layout;
     protected final List<PlayerTemplate> playerTemplates;
@@ -72,10 +72,14 @@ public abstract class AbstractBoard {
     }
     // use set() to not change other player numbers
     public void removePlayer(int playerNumber) {
-        players.set(playerNumber-1, null);
+        if (playerNumber >= 1) {
+            players.set(playerNumber - 1, null);
+        }
     }
     public void removePlayer(Player player) {
-        players.set(players.indexOf(player), null);
+        if (players.contains(player)) {
+            players.set(players.indexOf(player), null);
+        }
     }
 
     public abstract boolean prepareBoard();
@@ -95,7 +99,7 @@ public abstract class AbstractBoard {
         return new ArrayList<>(players);
     }
 
-    public Map<Player, Integer> getScoreboard() {
+    public Map<Integer, List<Player>> getScoreboard() {
         return new HashMap<>(scoreboard);
     }
 
@@ -113,7 +117,11 @@ public abstract class AbstractBoard {
         }
 
         players.remove(player);
-        scoreboard.put(player, players.size() + 1);
+        if (scoreboard.containsKey(players.size() + 1)) {
+            scoreboard.get(players.size() + 1).add(player);
+        } else {
+            scoreboard.put(players.size() + 1, List.of(player));
+        }
     }
 
     protected abstract boolean checkIfStalemate(Player p);
@@ -170,8 +178,9 @@ public abstract class AbstractBoard {
 
 
             if (state != ENDED && checkIfStalemate(getActivePlayer())) {
+                scoreboard.put(1, new ArrayList<>());
                 for (Player drawed : players) {
-                    scoreboard.put(drawed, 1);
+                    scoreboard.get(1).add(drawed);
                 }
                 players.clear();
                 for (val observer : observers) {

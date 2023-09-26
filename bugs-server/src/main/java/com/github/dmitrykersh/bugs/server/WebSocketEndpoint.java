@@ -76,7 +76,7 @@ public class WebSocketEndpoint {
         }
 
         @Override
-        public void onGameEnded(Map<Player, Integer> scoreboard) {
+        public void onGameEnded(Map<Integer, List<Player>> scoreboard) {
             for (Session s : playerToSession.values()) {
                 try {
                     sendJsonData(s, MSG_GAME_ENDED, LOGGED_IN, MSG_GAME_ENDED_KEY, jsonMapper.writeValueAsString(scoreboard));
