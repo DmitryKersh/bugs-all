@@ -88,7 +88,7 @@ public class BoardManager {
     }
 
     // returns sessions for which to change status
-    public List<Session> deleteBoard(int id) {
+    public NotifyInfo deleteBoard(int id) {
         AbstractBoard b = activeBoards.get(id);
 
         if (b.getState() == ENDED || b.getState() == NOT_STARTED) {
@@ -99,7 +99,7 @@ public class BoardManager {
             }
 
             activeBoards.remove(id);
-            return sessions;
+            return NotifyInfo.builder().sessions(sessions).boardId(id).build();
         }
         return null;
     }
@@ -115,11 +115,12 @@ public class BoardManager {
         return false;
     }
 
-    public List<Session> disconnect(Session s) {
+    public NotifyInfo disconnectFromBoard(Session s) {
         Player p = sessionToPlayer.get(s);
         AbstractBoard b;
         if (p != null) {
             b = p.getBoard();
+            int boardId = getId(b);
             List<Session> toNotify = getSessionsForBoard(b);
             p.getBoard().removePlayer(p);
             for (val entry : watchersMap.entrySet()) {
@@ -127,9 +128,25 @@ public class BoardManager {
                     toNotify.add(entry.getKey());
                 }
             }
-            return toNotify;
+            return NotifyInfo.builder().sessions(toNotify).boardId(boardId).build();
         }
-        return new ArrayList<>();
+        return NotifyInfo.builder().boardId(0).sessions(new ArrayList<>()).build();
+    }
+
+    private int getId(AbstractBoard b) {
+        for (val entry : activeBoards.entrySet()) {
+            if (entry.getValue() == b) {
+                return entry.getKey();
+            }
+        }
+        return 0;
+    }
+
+    public NotifyInfo disconnectSession(Session s) {
+        NotifyInfo notifyInfo = disconnectFromBoard(s);
+        sessionToPlayer.remove(s);
+        watchersMap.remove(s);
+        return notifyInfo;
     }
 
     public String getLayoutsAsJsonStr() throws JsonProcessingException {

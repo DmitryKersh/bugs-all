@@ -94,17 +94,29 @@ public class WebSocketEndpoint {
     }
 
     @OnWebSocketClose
-    public void clientClose(Session session) {
-        boardManager.disconnect(session);
-        userToOwnedBoard.remove(sessionInfoMap.get(session).getUsername());
-        sessionInfoMap.remove(session);
-        System.out.println("Client disconnected: " + session.getRemoteAddress().toString());
+    public void clientClose(Session s) throws IOException {
+        disconnectClient(s);
+        System.out.println("Client disconnected: " + s.getRemoteAddress().toString());
     }
 
     @OnWebSocketError
-    public void clientError(Throwable err) {
+    public void clientError(Session s, Throwable err) throws IOException {
+        disconnectClient(s);
         System.out.println("Client error: ");
         err.printStackTrace();
+    }
+
+    private void disconnectClient(Session session) throws IOException {
+        NotifyInfo sessionsToNotify = boardManager.disconnectSession(session);
+        //sendInfo(session, LOGGED_IN, "disconnected from board");
+        if (sessionsToNotify.getBoardId() > 0) {
+            String boardInfoStr = jsonMapper.writeValueAsString(boardManager.getBoardInfo(sessionsToNotify.getBoardId()));
+
+            for (Session s : sessionsToNotify.getSessions()) {
+                sendJsonData(s, MSG_BOARD_INFO, sessionInfoMap.get(s).getState(), MSG_BOARD_INFO_KEY, boardInfoStr);
+            }
+        }
+        sessionInfoMap.remove(session);
     }
 
     @OnWebSocketMessage
@@ -171,7 +183,7 @@ public class WebSocketEndpoint {
                         List<Session> toNotify = boardManager.getSessionsForBoard(boardId);
                         toNotify.addAll(boardManager.getWatchers(boardId));
                         for (Session s : toNotify) {
-                            sendJsonData(s, MSG_BOARD_INFO, currentState, MSG_BOARD_INFO_KEY, boardInfoStr);
+                            sendJsonData(s, MSG_BOARD_INFO, sessionInfoMap.get(s).getState(), MSG_BOARD_INFO_KEY, boardInfoStr);
                         }
                     }
                     case ACTION_BOARD_INFO -> {
@@ -211,7 +223,7 @@ public class WebSocketEndpoint {
             case CONNECTED_TO_BOARD -> {
                 switch (action) {
                     case ACTION_DISCONNECT -> {
-                        List<Session> sessionsToNotify = boardManager.disconnect(session);
+                        List<Session> sessionsToNotify = boardManager.disconnectFromBoard(session);
                         sessionInfo.setState(LOGGED_IN);
                         sendInfo(session, LOGGED_IN, "disconnected from board");
                         String boardInfoStr = jsonMapper.writeValueAsString(boardManager.getBoardInfo(sessionInfo.getBoardId()));

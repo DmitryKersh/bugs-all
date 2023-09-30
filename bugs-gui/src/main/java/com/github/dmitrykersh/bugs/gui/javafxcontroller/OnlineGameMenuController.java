@@ -192,6 +192,8 @@ public class OnlineGameMenuController {
     public void layoutComboBox_onChanged(ActionEvent actionEvent) {
         errorLabel.setText("");
         JSONObject layout = layoutMap.get(layoutComboBox.getValue());
+        if (layout == null) return;
+
         gameModeComboBox.setItems(new ObservableListWrapper<>(layout.getJSONObject("player_configs").keySet().stream().toList()));
         paramGridPane.getChildren().clear(); paramMap.clear();
         int row = 0;
@@ -218,7 +220,7 @@ public class OnlineGameMenuController {
 
     public void createGameButton_onClick(ActionEvent event) throws IOException {
         if (!isCreatedBoard) {
-            if (layoutComboBox.getValue().isBlank() || gameModeComboBox.getValue().isBlank()) {
+            if (layoutComboBox.getValue() == null || layoutComboBox.getValue().isBlank() || gameModeComboBox.getValue() == null || gameModeComboBox.getValue().isBlank()) {
                 errorLabel.setText("Specify layout and game mode");
                 return;
             }
