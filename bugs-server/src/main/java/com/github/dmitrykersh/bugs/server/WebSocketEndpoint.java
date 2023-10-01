@@ -241,9 +241,10 @@ public class WebSocketEndpoint {
                         OnlineBoardObserver obs = new OnlineBoardObserver();
                         val playerSessionForBoard = boardManager.prepareAndStartBoard(boardId, obs);
                         if (playerSessionForBoard != null) {
+                            String boardDtoStr = jsonMapper.writeValueAsString(boardManager.getBoard(boardId).makeDto());
                             for (val entry : playerSessionForBoard.entrySet()) {
                                 sessionInfoMap.get(entry.getValue()).setState(IN_GAME);
-                                sendJsonData(entry.getValue(), MSG_GAME_STARTED, IN_GAME, MSG_GAME_STARTED_KEY, jsonMapper.writeValueAsString(boardManager.getBoard(boardId).makeDto()));
+                                sendJsonData(entry.getValue(), MSG_GAME_STARTED, IN_GAME, MSG_GAME_STARTED_KEY, boardDtoStr);
                             }
                             obs.setPlayerToSession(playerSessionForBoard);
                         } else {

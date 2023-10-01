@@ -205,8 +205,6 @@ public abstract class AbstractBoard {
         return false;
     }
 
-    public abstract String getTilesAsJsonArray() throws JsonProcessingException;
-
     public void addObserver(final @NotNull BoardObserver obs) {
         observers.add(obs);
     }

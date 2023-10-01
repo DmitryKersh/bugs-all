@@ -16,7 +16,6 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import lombok.Getter;
-import lombok.Setter;
 import lombok.val;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.UpgradeException;
@@ -82,7 +81,7 @@ public class OnlineGameMenuController {
     private Session session;
 
     public boolean isConnected = false;
-    public boolean isCreatedBoard = false;
+    public int ownedBoardId = 0;
 
     public final Map<String, JSONObject> layoutMap = new HashMap<>();
     private final Map<TextField, Label> paramMap = new HashMap<>();
@@ -222,7 +221,7 @@ public class OnlineGameMenuController {
     }
 
     public void createGameButton_onClick(ActionEvent event) throws IOException {
-        if (!isCreatedBoard) {
+        if (ownedBoardId == 0) {
             if (layoutComboBox.getValue() == null || layoutComboBox.getValue().isBlank() || gameModeComboBox.getValue() == null || gameModeComboBox.getValue().isBlank()) {
                 errorLabel.setText("Specify layout and game mode");
                 return;
@@ -230,7 +229,7 @@ public class OnlineGameMenuController {
             sendCreateGameRequest();
         } else {
             sendDeleteGameRequest();
-            isCreatedBoard = false;
+            ownedBoardId = 0;
             createGameButton.setText("Create Game");
         }
     }

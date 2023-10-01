@@ -189,14 +189,6 @@ public final class RectangleBoard extends AbstractBoard {
     }
 
     @Override
-    public String getTilesAsJsonArray() throws JsonProcessingException {
-        List<Tile> tileList = new ArrayList<>();
-        for (val row : tiles)
-            tileList.addAll(row);
-        return new ObjectMapper().writer().writeValueAsString(tileList);
-    }
-
-    @Override
     public Group buildDrawableGrid() {
         Group grid = new Group();
         for (int i = 0; i < rowsAmount; i++) {

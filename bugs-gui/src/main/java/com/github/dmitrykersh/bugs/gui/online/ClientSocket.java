@@ -8,6 +8,7 @@ import com.github.dmitrykersh.bugs.engine.board.BoardInfo;
 import com.github.dmitrykersh.bugs.engine.board.TurnInfo;
 import com.github.dmitrykersh.bugs.engine.player.Player;
 import com.github.dmitrykersh.bugs.engine.util.ColorDeserializer;
+import com.github.dmitrykersh.bugs.gui.UiUtils;
 import com.github.dmitrykersh.bugs.gui.javafxcontroller.OnlineGameMenuController;
 import com.github.dmitrykersh.bugs.gui.viewer.RectangleBoardViewer;
 import com.sun.javafx.collections.ObservableListWrapper;
@@ -17,8 +18,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
 import lombok.Setter;
 import lombok.val;
 import org.eclipse.jetty.websocket.api.Session;
@@ -78,8 +77,9 @@ public class ClientSocket {
             case MSG_BOARD_CREATED -> {
                 Platform.runLater(
                         () -> {
-                            controller.createGameButton.setText(String.format("Delete Game %d", jsonMsg.getInt(MSG_BOARD_CREATED_ID)));
-                            controller.isCreatedBoard = true;
+                            int boardId = jsonMsg.getInt(MSG_BOARD_CREATED_ID);
+                            controller.createGameButton.setText(String.format("Delete Game %d", boardId));
+                            controller.ownedBoardId = boardId;
                         }
                 );
             }
@@ -93,10 +93,7 @@ public class ClientSocket {
                             for (int row = 0; row < boardInfo.getPlayers().size(); row++) {
                                 Player p;
                                 if ((p = boardInfo.getPlayers().get(row)) != null) {
-                                    Label label = new Label(p.getNickname());
-                                    label.setFont(Font.font("Consolas"));
-                                    label.setTextFill(p.getColor());
-                                    controller.playersGridPane.add(label, 0, row);
+                                    controller.playersGridPane.add(UiUtils.makeLabel(p.getNickname(), 12, p.getColor()), 0, row);
                                     if (p.getNickname().equals(controller.getCurrentPlayerNickname())) {
                                         Button button = new Button("Quit");
                                         button.setOnMouseClicked(controller.disconnectFromSlot_onClick(row + 1));
@@ -104,15 +101,13 @@ public class ClientSocket {
                                         controller.startGameButton.setVisible(true);
                                     }
                                 } else {
-                                    Label label = new Label("< empty >");
-                                    label.setFont(Font.font("Consolas"));
-                                    label.setTextFill(Color.GREY);
-                                    controller.playersGridPane.add(label, 0, row);
+                                    controller.playersGridPane.add(UiUtils.makeLabel("< empty >", 12), 0, row);
                                     Button button = new Button("Enter");
                                     button.setOnMouseClicked(controller.connectToSlot_onClick(row + 1));
                                     controller.playersGridPane.add(button, 1, row);
                                 }
                             }
+                            controller.startGameButton.setVisible(controller.ownedBoardId == boardInfo.getId());
                         }
                 );
             }
@@ -145,21 +140,19 @@ public class ClientSocket {
                     int row = 1;
                     for (val entry : scoreboard.entrySet()) {
                         StringBuilder sb = new StringBuilder().append(entry.getKey()).append(". ");
-
-                        for (Player p : entry.getValue()) {
-                            sb.append(p.getNickname()).append("; ");
-                            if (p.getNickname().equals(controller.getCurrentPlayerNickname())) {
-                                Label l = new Label(toOrdinal(entry.getKey()) + " place");
-                                l.setFont(Font.font("Consolas", FontWeight.BOLD, 18));
-                                l.setTextFill(p.getColor());
+                        val playerList = entry.getValue();
+                        for (int i = 0; i < playerList.size(); i++) {
+                            sb.append(playerList.get(i).getNickname());
+                            if (i < playerList.size() - 1) {
+                                sb.append(", ");
+                            }
+                            if (playerList.get(i).getNickname().equals(controller.getCurrentPlayerNickname())) {
+                                Label l = UiUtils.makeLabel(toOrdinal(entry.getKey()) + " place", 18, playerList.get(i).getColor());
                                 pane.addRow(0, l);
                             }
                         }
 
-                        Label l = new Label(sb.toString());
-                        l.setFont(Font.font("Consolas", 15));
-                        l.setTextFill(Color.WHITE);
-                        pane.addRow(row, l);
+                        pane.addRow(row, UiUtils.makeLabel(sb.toString(), 15));
                         row++;
                     }
                     Button b = new Button("Close");
@@ -180,6 +173,7 @@ public class ClientSocket {
             controller.isConnected = true;
             controller.connectButton.setText("Disconnect");
             controller.tabPane.setVisible(true);
+            controller.startGameButton.setVisible(false);
         });
 
     }
