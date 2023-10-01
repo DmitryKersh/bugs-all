@@ -124,7 +124,7 @@ public class BoardManager {
             List<Session> toNotify = getSessionsForBoard(b);
             p.getBoard().removePlayer(p);
             for (val entry : watchersMap.entrySet()) {
-                if (entry.getValue() == b) {
+                if (entry.getValue() == b && !toNotify.contains(entry.getKey())) {
                     toNotify.add(entry.getKey());
                 }
             }

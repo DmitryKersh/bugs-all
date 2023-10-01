@@ -27,7 +27,7 @@ import static com.github.dmitrykersh.bugs.server.ProtocolConstants.*;
 @WebSocket
 public class WebSocketEndpoint {
     // СУКА ЕСЛИ НЕ КОННЕКТИТСЯ, ПОМЕНЯЙ ЭТО vvv
-    private static final String LAYOUT_DIR = "C:\\Users\\dkarp\\IdeaProjects\\bugs-client\\bugs-gui\\src\\main\\resources\\layout";
+    private static final String LAYOUT_DIR = "C:\\Users\\TSP\\IdeaProjects\\bugs-all\\bugs-gui\\src\\main\\resources\\layout";
     private static final BoardManager boardManager = new BoardManager(LAYOUT_DIR);
     private static final Map<Session, SessionInfo> sessionInfoMap = new ConcurrentHashMap<>();
     private static final Map<String, Integer> userToOwnedBoard = new HashMap<>();
@@ -107,6 +107,7 @@ public class WebSocketEndpoint {
     }
 
     private void disconnectClient(Session session) throws IOException {
+        userToOwnedBoard.remove(sessionInfoMap.get(session).getUsername());
         NotifyInfo sessionsToNotify = boardManager.disconnectSession(session);
         //sendInfo(session, LOGGED_IN, "disconnected from board");
         if (sessionsToNotify.getBoardId() > 0) {
@@ -198,10 +199,10 @@ public class WebSocketEndpoint {
                     }
                     case ACTION_DELETE_BOARD -> {
                         int id;
-                        List<Session> sessionsToLoggedIn;
-                        if ((sessionsToLoggedIn = boardManager.deleteBoard(id = userToOwnedBoard.get(sessionInfo.getUsername()))) != null) {
+                        NotifyInfo notifyInfo;
+                        if ((notifyInfo = boardManager.deleteBoard(id = userToOwnedBoard.get(sessionInfo.getUsername()))) != null) {
                             sendInfo(session, LOGGED_IN, String.format("Deleted board with id %d", id));
-                            for (Session s : sessionsToLoggedIn) {
+                            for (Session s : notifyInfo.getSessions()) {
                                 sessionInfoMap.get(s).setState(LOGGED_IN);
                                 sendInfo(s, LOGGED_IN, "The board you've been connected to was deleted");
                             }
@@ -223,11 +224,11 @@ public class WebSocketEndpoint {
             case CONNECTED_TO_BOARD -> {
                 switch (action) {
                     case ACTION_DISCONNECT -> {
-                        List<Session> sessionsToNotify = boardManager.disconnectFromBoard(session);
+                        NotifyInfo notifyInfo = boardManager.disconnectFromBoard(session);
                         sessionInfo.setState(LOGGED_IN);
                         sendInfo(session, LOGGED_IN, "disconnected from board");
                         String boardInfoStr = jsonMapper.writeValueAsString(boardManager.getBoardInfo(sessionInfo.getBoardId()));
-                        for (Session s : sessionsToNotify) {
+                        for (Session s : notifyInfo.getSessions()) {
                             sendJsonData(s, MSG_BOARD_INFO, currentState, MSG_BOARD_INFO_KEY, boardInfoStr);
                         }
                     }

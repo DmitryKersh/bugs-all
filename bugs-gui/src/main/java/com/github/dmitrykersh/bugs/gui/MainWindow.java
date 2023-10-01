@@ -2,6 +2,7 @@ package com.github.dmitrykersh.bugs.gui;
 
 import com.github.dmitrykersh.bugs.engine.TextureCollection;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.stage.Stage;
 
 import static javafx.application.Application.launch;
@@ -26,6 +27,10 @@ public class MainWindow extends Application {
             stage.setMinHeight(900);
 
             stage.setScene(SceneCollection.getScene("main-menu"));
+            stage.setOnCloseRequest(windowEvent -> {
+                Platform.exit();
+                System.exit(0);
+            });
 
             stage.show();
         } catch (Exception e) {

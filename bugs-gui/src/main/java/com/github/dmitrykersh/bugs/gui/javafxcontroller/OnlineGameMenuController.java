@@ -132,6 +132,9 @@ public class OnlineGameMenuController {
         connectButton.setText("Connect");
         infoLabel.setText("");
         tabPane.setVisible(false);
+        boardIdTextField.clear();
+        playersGridPane.getChildren().clear();
+        boardIdLabel.setText("");
     }
 
     public void searchGameButton_onClick(MouseEvent event) {
