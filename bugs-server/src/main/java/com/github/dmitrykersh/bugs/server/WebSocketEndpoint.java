@@ -27,7 +27,7 @@ import static com.github.dmitrykersh.bugs.server.ProtocolConstants.*;
 @WebSocket
 public class WebSocketEndpoint {
     // СУКА ЕСЛИ НЕ КОННЕКТИТСЯ, ПОМЕНЯЙ ЭТО vvv
-    private static final String LAYOUT_DIR = "C:\\Users\\TSP\\IdeaProjects\\bugs-all\\bugs-gui\\src\\main\\resources\\layout";
+    private static final String LAYOUT_DIR = "C:\\Users\\dkarp\\IdeaProjects\\bugs-client\\bugs-gui\\src\\main\\resources\\layout";
     private static final BoardManager boardManager = new BoardManager(LAYOUT_DIR);
     private static final Map<Session, SessionInfo> sessionInfoMap = new ConcurrentHashMap<>();
     private static final Map<String, Integer> userToOwnedBoard = new HashMap<>();
@@ -107,7 +107,7 @@ public class WebSocketEndpoint {
     }
 
     private void disconnectClient(Session session) throws IOException {
-        userToOwnedBoard.remove(sessionInfoMap.get(session).getUsername());
+        //userToOwnedBoard.remove(sessionInfoMap.get(session).getUsername());
         NotifyInfo sessionsToNotify = boardManager.disconnectSession(session);
         //sendInfo(session, LOGGED_IN, "disconnected from board");
         if (sessionsToNotify.getBoardId() > 0) {
@@ -134,19 +134,30 @@ public class WebSocketEndpoint {
                 String password = msgRoot.get(PASSWORD).asText();
                 String nickname = msgRoot.get(NICKNAME).asText();
 
-                if (userToOwnedBoard.containsKey(username)) {
-                    sendInfo(session, sessionInfo.getState(), String.format("User %s is already connected", username));
-                    break;
-                }
                 if (!authenticate(username, password)) {
                     sendInfo(session, currentState, "Login failed");
                     break;
                 }
 
+                for (SessionInfo info : sessionInfoMap.values()) {
+                    if (username.equals(info.getUsername())) {
+                        sendInfo(session, sessionInfo.getState(), String.format("User %s is already connected", username));
+                        return;
+                    }
+                }
+
+                if (userToOwnedBoard.containsKey(username)) {
+                    int boardId = userToOwnedBoard.get(username);
+                    sendInfo(session, sessionInfo.getState(), String.format("User %s is already owning board %d", username, boardId));
+                    sendJsonData(session, MSG_LOGIN_DATA, LOGGED_IN, MSG_LOGIN_DATA_KEY, String.format("{\"board_id\" : %d}", boardId));
+                } else {
+                    userToOwnedBoard.put(username, null);
+                }
+
                 sessionInfo.setState(LOGGED_IN);
                 sessionInfo.setUsername(username);
                 sessionInfo.setNickname(nickname);
-                userToOwnedBoard.put(username, null);
+
                 sendInfo(session, LOGGED_IN, String.format("Logged in as %s", username));
             }
             case LOGGED_IN -> {

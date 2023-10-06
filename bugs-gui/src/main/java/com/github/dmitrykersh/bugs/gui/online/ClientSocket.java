@@ -62,6 +62,11 @@ public class ClientSocket {
                         }
                 );
             }
+            case MSG_LOGIN_DATA -> {
+                int boardId = jsonMsg.getJSONObject(MSG_LOGIN_DATA_KEY).getInt("board_id");
+                controller.createGameButton.setText(String.format("Delete Game %d", boardId));
+                controller.ownedBoardId = boardId;
+            }
             case MSG_LAYOUT_INFO -> {
                 List<String> names = new ArrayList<>();
                 JSONArray layouts = jsonMsg.getJSONArray(MSG_LAYOUT_INFO_KEY);

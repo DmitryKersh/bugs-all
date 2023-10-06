@@ -52,4 +52,7 @@ public class ProtocolConstants {
     public static final String MSG_PLAYER_KICKED_KEY = "kicked_player";
     public static final String MSG_GAME_ENDED = "game_ended";
     public static final String MSG_GAME_ENDED_KEY = "scoreboard";
+
+    public static final String MSG_LOGIN_DATA = "login_data";
+    public static final String MSG_LOGIN_DATA_KEY = "data";
 }
