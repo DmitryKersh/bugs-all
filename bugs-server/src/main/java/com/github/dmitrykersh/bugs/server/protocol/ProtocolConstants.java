@@ -1,14 +1,14 @@
 package com.github.dmitrykersh.bugs.server.protocol;
 
-import lombok.AccessLevel;
-import lombok.experimental.FieldDefaults;
 import lombok.experimental.UtilityClass;
 
 @UtilityClass
 public class ProtocolConstants {
-    public static final String ACTION = "action";
-    public static final String INFO = "INFO";
-    public static final String MSG_TYPE = "type";
+    public static final String INFO_MSG_TYPE = "INFO";
+    public static final String ACTION_TAG = "action";
+
+    public static final String MSG_TYPE_TAG = "type";
+    public static final String STATE_TAG = "state";
 
     // layout_info msg
     public static final String LAYOUT = "layout";

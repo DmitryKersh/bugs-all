@@ -11,6 +11,7 @@ import com.github.dmitrykersh.bugs.engine.util.ColorDeserializer;
 import com.github.dmitrykersh.bugs.gui.UiUtils;
 import com.github.dmitrykersh.bugs.gui.javafxcontroller.OnlineGameMenuController;
 import com.github.dmitrykersh.bugs.gui.viewer.RectangleBoardViewer;
+import com.github.dmitrykersh.bugs.server.protocol.SessionState;
 import com.sun.javafx.collections.ObservableListWrapper;
 import javafx.application.Platform;
 import javafx.geometry.Pos;
@@ -53,9 +54,10 @@ public class ClientSocket {
     public void onMessage(Session session, String message) throws IOException {
         System.out.println(message);
         JSONObject jsonMsg = new JSONObject(message);
-        String type = jsonMsg.getString(MSG_TYPE);
+        String type = jsonMsg.getString(MSG_TYPE_TAG);
+        controller.setClientState(SessionState.valueOf(jsonMsg.getString(STATE_TAG)));
         switch (type) {
-            case INFO -> {
+            case INFO_MSG_TYPE -> {
                 Platform.runLater(
                         () -> {
                             controller.updateInfoLabel(message);

@@ -16,6 +16,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.val;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.UpgradeException;
@@ -88,7 +89,7 @@ public class OnlineGameMenuController {
 
     public BoardViewer boardViewer;
 
-    @Getter
+    @Getter @Setter
     private SessionState clientState;
     @Getter
     private String currentPlayerNickname;
@@ -105,7 +106,7 @@ public class OnlineGameMenuController {
         } else {
             try {
                 client.start();
-                URI serverUri = new URI(serverField.getText());
+                URI serverUri = new URI(makeServerUri());
                 client.start();
                 Future<Session> fut = client.connect(socket, serverUri);
                 session = fut.get();
@@ -124,6 +125,10 @@ public class OnlineGameMenuController {
             }
         }
 
+    }
+
+    private String makeServerUri() {
+        return serverField.getText().startsWith("ws://") ? serverField.getText() : "ws://" + serverField.getText();
     }
 
     public void updateUiOnLogout() {
@@ -152,7 +157,7 @@ public class OnlineGameMenuController {
         return event -> {
             try {
                 sendJson(new JSONObject(Map.of(
-                        ACTION, ACTION_CONNECT_TO_BOARD,
+                        ACTION_TAG, ACTION_CONNECT_TO_BOARD,
                         BOARD_ID, boardId,
                         PLAYER_NUMBER, playerNumber,
                         PLAYER_COLOR, toRGBCode(colorPicker.getValue())
@@ -166,7 +171,7 @@ public class OnlineGameMenuController {
         return event -> {
             try {
                 sendJson(new JSONObject(Map.of(
-                        ACTION, ACTION_DISCONNECT
+                        ACTION_TAG, ACTION_DISCONNECT
                 )));
             } catch (IOException e) {
                 throw new RuntimeException(e);
@@ -178,7 +183,7 @@ public class OnlineGameMenuController {
             DrawableRectangleTile tile = (DrawableRectangleTile) event.getTarget();
             try {
                 sendJson(new JSONObject(Map.of(
-                        ACTION, ACTION_MAKE_TURN,
+                        ACTION_TAG, ACTION_MAKE_TURN,
                         TILE_ID, tile.getTile().getId()
                 )));
             } catch (IOException e) {
@@ -239,7 +244,7 @@ public class OnlineGameMenuController {
     }
     private void sendStartGameRequest() throws IOException {
         sendJson(new JSONObject(Map.of(
-                ACTION, ACTION_START_GAME
+                ACTION_TAG, ACTION_START_GAME
         )));
     }
 
@@ -253,7 +258,7 @@ public class OnlineGameMenuController {
 
     private void sendAvailableLayoutsRequest() throws IOException {
         sendJson(new JSONObject(Map.of(
-                ACTION, ACTION_LAYOUT_INFO
+                ACTION_TAG, ACTION_LAYOUT_INFO
         )));
     }
 
@@ -267,7 +272,7 @@ public class OnlineGameMenuController {
             }
         }
         sendJson(new JSONObject(Map.of(
-                ACTION, ACTION_CREATE_BOARD,
+                ACTION_TAG, ACTION_CREATE_BOARD,
                 LAYOUT_NAME, layoutComboBox.getValue(),
                 GAME_MODE, gameModeComboBox.getValue(),
                 LAYOUT_PARAMS, params
@@ -275,12 +280,12 @@ public class OnlineGameMenuController {
     }
     private void sendDeleteGameRequest() throws IOException {
         sendJson(new JSONObject(Map.of(
-                ACTION, ACTION_DELETE_BOARD
+                ACTION_TAG, ACTION_DELETE_BOARD
         )));
     }
     private void sendBoardInfoRequest() throws IOException {
         sendJson(new JSONObject(Map.of(
-                ACTION, ACTION_BOARD_INFO,
+                ACTION_TAG, ACTION_BOARD_INFO,
                 BOARD_ID, Integer.parseInt(boardIdTextField.getText())
         )));
     }
