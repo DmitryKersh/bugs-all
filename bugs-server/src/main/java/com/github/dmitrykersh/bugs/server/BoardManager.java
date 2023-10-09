@@ -11,6 +11,7 @@ import com.github.dmitrykersh.bugs.engine.board.observer.BoardObserver;
 import com.github.dmitrykersh.bugs.engine.board.validator.SimpleTurnValidator;
 import com.github.dmitrykersh.bugs.engine.player.Player;
 import com.github.dmitrykersh.bugs.engine.player.PlayerSettings;
+import com.github.dmitrykersh.bugs.server.pojo.NotifyInfo;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.eclipse.jetty.websocket.api.Session;

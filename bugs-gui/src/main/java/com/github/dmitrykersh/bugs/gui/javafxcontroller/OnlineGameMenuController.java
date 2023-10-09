@@ -4,7 +4,7 @@ import com.github.dmitrykersh.bugs.engine.board.tile.DrawableRectangleTile;
 import com.github.dmitrykersh.bugs.gui.SceneCollection;
 import com.github.dmitrykersh.bugs.gui.online.ClientSocket;
 import com.github.dmitrykersh.bugs.gui.viewer.BoardViewer;
-import com.github.dmitrykersh.bugs.server.SessionState;
+import com.github.dmitrykersh.bugs.server.protocol.SessionState;
 import com.sun.javafx.collections.ObservableListWrapper;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -31,7 +31,7 @@ import java.util.concurrent.Future;
 import java.util.regex.Pattern;
 
 import static com.github.dmitrykersh.bugs.engine.util.TextureUtils.toRGBCode;
-import static com.github.dmitrykersh.bugs.server.ProtocolConstants.*;
+import static com.github.dmitrykersh.bugs.server.protocol.ProtocolConstants.*;
 
 public class OnlineGameMenuController {
     private static final Pattern PARAM_PATTERN = Pattern.compile("^\\d+$");

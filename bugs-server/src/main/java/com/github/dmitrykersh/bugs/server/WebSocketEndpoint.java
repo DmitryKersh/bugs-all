@@ -8,6 +8,9 @@ import com.github.dmitrykersh.bugs.engine.board.observer.BoardObserver;
 import com.github.dmitrykersh.bugs.engine.board.TurnInfo;
 import com.github.dmitrykersh.bugs.engine.player.Player;
 import com.github.dmitrykersh.bugs.engine.player.PlayerSettings;
+import com.github.dmitrykersh.bugs.server.pojo.NotifyInfo;
+import com.github.dmitrykersh.bugs.server.pojo.SessionInfo;
+import com.github.dmitrykersh.bugs.server.protocol.SessionState;
 import javafx.scene.paint.Color;
 import lombok.Setter;
 import lombok.val;
@@ -20,9 +23,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static com.github.dmitrykersh.bugs.server.SessionState.*;
-import static com.github.dmitrykersh.bugs.server.Utils.*;
-import static com.github.dmitrykersh.bugs.server.ProtocolConstants.*;
+import static com.github.dmitrykersh.bugs.server.protocol.SessionState.*;
+import static com.github.dmitrykersh.bugs.server.protocol.ProtocolUtils.*;
+import static com.github.dmitrykersh.bugs.server.protocol.ProtocolConstants.*;
 
 @WebSocket
 public class WebSocketEndpoint {
@@ -107,13 +110,11 @@ public class WebSocketEndpoint {
     }
 
     private void disconnectClient(Session session) throws IOException {
-        //userToOwnedBoard.remove(sessionInfoMap.get(session).getUsername());
-        NotifyInfo sessionsToNotify = boardManager.disconnectSession(session);
-        //sendInfo(session, LOGGED_IN, "disconnected from board");
-        if (sessionsToNotify.getBoardId() > 0) {
-            String boardInfoStr = jsonMapper.writeValueAsString(boardManager.getBoardInfo(sessionsToNotify.getBoardId()));
+        NotifyInfo notifyInfo = boardManager.disconnectSession(session);
+        if (notifyInfo.getBoardId() > 0) {
+            String boardInfoStr = jsonMapper.writeValueAsString(boardManager.getBoardInfo(notifyInfo.getBoardId()));
 
-            for (Session s : sessionsToNotify.getSessions()) {
+            for (Session s : notifyInfo.getSessions()) {
                 sendJsonData(s, MSG_BOARD_INFO, sessionInfoMap.get(s).getState(), MSG_BOARD_INFO_KEY, boardInfoStr);
             }
         }

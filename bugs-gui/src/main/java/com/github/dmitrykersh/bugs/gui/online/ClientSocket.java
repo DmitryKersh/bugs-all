@@ -31,7 +31,7 @@ import java.util.List;
 import java.util.Map;
 
 import static com.github.dmitrykersh.bugs.engine.util.TextUtils.toOrdinal;
-import static com.github.dmitrykersh.bugs.server.ProtocolConstants.*;
+import static com.github.dmitrykersh.bugs.server.protocol.ProtocolConstants.*;
 
 @WebSocket
 public class ClientSocket {
@@ -117,7 +117,6 @@ public class ClientSocket {
                 );
             }
             case MSG_GAME_STARTED -> {
-                //if (controller.getClientState() != CONNECTED_TO_BOARD) return;
                 BoardDto dto = mapper.readValue(jsonMsg.getJSONObject(MSG_GAME_STARTED_KEY).toString(), BoardDto.class);
 
                 switch (dto.getBoardType()) {

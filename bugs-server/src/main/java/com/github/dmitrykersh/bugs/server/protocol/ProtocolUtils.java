@@ -1,4 +1,4 @@
-package com.github.dmitrykersh.bugs.server;
+package com.github.dmitrykersh.bugs.server.protocol;
 
 import lombok.experimental.UtilityClass;
 import org.eclipse.jetty.websocket.api.Session;
@@ -6,7 +6,7 @@ import org.eclipse.jetty.websocket.api.Session;
 import java.io.IOException;
 
 @UtilityClass
-public class Utils {
+public class ProtocolUtils {
     public static void sendInfo(Session s, SessionState state, String msg) throws IOException {
         s.getRemote().sendString(String.format("{ \"type\" : \"INFO\", \"state\" : \"%s\", \"message\" : \"%s\" }", state, msg));
     }

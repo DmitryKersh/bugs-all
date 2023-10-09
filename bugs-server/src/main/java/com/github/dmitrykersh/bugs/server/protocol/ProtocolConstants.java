@@ -1,5 +1,7 @@
-package com.github.dmitrykersh.bugs.server;
+package com.github.dmitrykersh.bugs.server.protocol;
 
+import lombok.AccessLevel;
+import lombok.experimental.FieldDefaults;
 import lombok.experimental.UtilityClass;
 
 @UtilityClass
