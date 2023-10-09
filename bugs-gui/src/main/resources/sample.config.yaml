@@ -1,0 +1,7 @@
+!!com.github.dmitrykersh.bugs.gui.ClientConfig
+defaultServerAddress: "localhost:8889/websocket"
+defaultColor: "#FF0000"
+defaultUsername: "user1"
+defaultNickname: "nick1"
+screenWidth: 1280
+screenHeight: 720

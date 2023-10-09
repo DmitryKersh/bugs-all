@@ -66,8 +66,10 @@ public class ClientSocket {
             }
             case MSG_LOGIN_DATA -> {
                 int boardId = jsonMsg.getJSONObject(MSG_LOGIN_DATA_KEY).getInt("board_id");
-                controller.createGameButton.setText(String.format("Delete Game %d", boardId));
-                controller.ownedBoardId = boardId;
+                Platform.runLater(()->{
+                    controller.createGameButton.setText(String.format("Delete Game %d", boardId));
+                    controller.ownedBoardId = boardId;
+                });
             }
             case MSG_LAYOUT_INFO -> {
                 List<String> names = new ArrayList<>();
@@ -162,7 +164,7 @@ public class ClientSocket {
                         row++;
                     }
                     Button b = new Button("Close");
-                    b.setOnMouseClicked(controller.onScoreboardClose());
+                    b.setOnAction(controller.onScoreboardClose());
                     pane.setAlignment(Pos.CENTER);
                     pane.addRow(row, b);
                     b.setAlignment(Pos.CENTER);

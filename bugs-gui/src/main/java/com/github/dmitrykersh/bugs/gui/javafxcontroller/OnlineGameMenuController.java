@@ -1,6 +1,7 @@
 package com.github.dmitrykersh.bugs.gui.javafxcontroller;
 
 import com.github.dmitrykersh.bugs.engine.board.tile.DrawableRectangleTile;
+import com.github.dmitrykersh.bugs.gui.ClientConfig;
 import com.github.dmitrykersh.bugs.gui.SceneCollection;
 import com.github.dmitrykersh.bugs.gui.online.ClientSocket;
 import com.github.dmitrykersh.bugs.gui.viewer.BoardViewer;
@@ -22,12 +23,17 @@ import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.UpgradeException;
 import org.eclipse.jetty.websocket.client.WebSocketClient;
 import org.json.JSONObject;
+import org.yaml.snakeyaml.Yaml;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.ConnectException;
+import java.net.SocketException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.regex.Pattern;
 
@@ -94,6 +100,20 @@ public class OnlineGameMenuController {
     @Getter
     private String currentPlayerNickname;
 
+    @FXML
+    public void initialize() {
+        Yaml yaml = new Yaml();
+        InputStream inputStream = this.getClass()
+                .getClassLoader()
+                .getResourceAsStream("config.yaml");
+        ClientConfig config = yaml.load(inputStream);
+
+        serverField.setText(config.getDefaultServerAddress());
+        usernameField.setText(config.getDefaultUsername());
+        nicknameField.setText(config.getDefaultNickname());
+        colorPicker.setValue(Color.web(config.getDefaultColor()));
+    }
+
     public void connectButton_onClick(MouseEvent mouseEvent) {
         if (isConnected) {
             try {
@@ -116,10 +136,8 @@ public class OnlineGameMenuController {
                 currentPlayerNickname = nicknameField.getText();
             } catch (URISyntaxException e) {
                 errorLabel.setText("Incorrect URI syntax");
-            } catch (IOException | UpgradeException e) {
-                errorLabel.setText("Cannot connect to server");
-            } catch (InterruptedException ignored) {
-
+            } catch (IOException | UpgradeException | ExecutionException e) {
+                errorLabel.setText("Cannot connect to server: " + e.getMessage());
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
@@ -239,7 +257,7 @@ public class OnlineGameMenuController {
         }
     }
 
-    public void startGameButton_onClick(MouseEvent mouseEvent) throws IOException {
+    public void startGameButton_onClick(ActionEvent e) throws IOException {
         sendStartGameRequest();
     }
     private void sendStartGameRequest() throws IOException {
@@ -293,7 +311,7 @@ public class OnlineGameMenuController {
         session.getRemote().sendString(j.toString());
     }
 
-    public EventHandler<MouseEvent> onScoreboardClose() {
+    public EventHandler<ActionEvent> onScoreboardClose() {
         return event -> {
             innerBorderPane.setCenter(null);
         };

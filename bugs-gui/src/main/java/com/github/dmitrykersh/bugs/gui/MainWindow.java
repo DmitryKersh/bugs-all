@@ -1,9 +1,14 @@
 package com.github.dmitrykersh.bugs.gui;
 
 import com.github.dmitrykersh.bugs.engine.TextureCollection;
+import com.github.dmitrykersh.bugs.server.ServerConfig;
+import com.github.dmitrykersh.bugs.server.WebSocketServer;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.stage.Stage;
+import org.yaml.snakeyaml.Yaml;
+
+import java.io.InputStream;
 
 import static javafx.application.Application.launch;
 
@@ -12,6 +17,13 @@ public class MainWindow extends Application {
     @Override
     public void start(final Stage stage) throws Exception {
         try {
+            Yaml yaml = new Yaml();
+            InputStream inputStream = this.getClass()
+                    .getClassLoader()
+                    .getResourceAsStream("config.yaml");
+            ClientConfig config = yaml.load(inputStream);
+            System.out.println("---------- CLIENT CONFIG ----------\n" + config);
+
             SceneCollection.loadScene("main-menu", "/ui/main-menu.fxml");
             SceneCollection.loadScene("settings-menu", "/ui/settings-menu.fxml");
             SceneCollection.loadScene("local-game-menu", "/ui/local-game-menu.fxml");
@@ -23,8 +35,13 @@ public class MainWindow extends Application {
             TextureCollection.loadImage("empty", "/textures/empty.png");
             TextureCollection.loadImage("unavailable", "/textures/unavailable.png");
 
-            stage.setMinWidth(900);
-            stage.setMinHeight(900);
+            stage.setMinWidth(800);
+            stage.setMinHeight(720);
+
+            stage.setHeight(config.getScreenHeight());
+            stage.setWidth(config.getScreenWidth());
+
+            stage.setMaximized(true);
 
             stage.setScene(SceneCollection.getScene("main-menu"));
             stage.setOnCloseRequest(windowEvent -> {

@@ -101,6 +101,7 @@ public class BoardManager {
     // returns sessions for which to change status
     public NotifyInfo deleteBoard(int id) {
         AbstractBoard b = activeBoards.get(id);
+        if (b == null) return null;
 
         if (b.getState() == ENDED || b.getState() == NOT_STARTED) {
             List<Session> sessions = getSessionsForBoard(b);
