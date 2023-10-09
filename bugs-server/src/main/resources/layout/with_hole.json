@@ -1,0 +1,65 @@
+{
+  "name": "holes",
+  "desc": "holes",
+  "board_type": "RECT",
+  "player_configs": {
+    "4-player": [4, 4, 4, 4],
+    "duel": [5, 5]
+  },
+  "params": {
+    "size_x": 9,
+    "size_y": 12
+  },
+  "tiles": [
+    {
+      "id": "0",
+      "owner": "1",
+      "state": "QUEEN"
+    },
+    {
+      "id": "size_x $- 1",
+      "owner": "4",
+      "state": "QUEEN"
+    },
+    {
+      "id": "size_x $* (size_y $- 1)",
+      "owner": "3",
+      "state": "QUEEN"
+    },
+    {
+      "id": "size_x $* size_y $- 1",
+      "owner": "2",
+      "state": "QUEEN"
+    },
+    {
+      "id": "(size_x $- 1) $/ 2",
+      "owner": "0",
+      "state": "UNAVAILABLE"
+    },
+    {
+      "id": "size_x $+ (size_x $- 1) $/ 2",
+      "owner": "0",
+      "state": "UNAVAILABLE"
+    },
+    {
+      "id": "(size_y $- 2) $* size_x $+ (size_x $- 1) $/ 2",
+      "owner": "0",
+      "state": "UNAVAILABLE"
+    },
+    {
+      "id": "(size_y $- 1) $* size_x $+ (size_x $- 1) $/ 2",
+      "owner": "0",
+      "state": "UNAVAILABLE"
+    },
+    {
+      "id": "(size_y $/ 2) $* size_x $+ (size_x $- 1) $/ 2",
+      "owner": "0",
+      "state": "UNAVAILABLE"
+    },
+    {
+      "id": "(size_y $/ 2 $- 1) $* size_x $+ (size_x $- 1) $/ 2",
+      "owner": "0",
+      "state": "UNAVAILABLE"
+    }
+  ]
+}

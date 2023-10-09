@@ -20,6 +20,9 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -37,14 +40,21 @@ public class BoardManager {
     private String layoutCachedStr = null;
 
     public BoardManager(String layoutDir) {
-        val files = FileUtils.listFiles(new File(layoutDir), null, false);
-        for (val f : files) {
-            try {
-                layouts.put(f.getName(), FileUtils.readFileToString(f, "utf-8"));
-                System.out.printf("Layout %s read\n", f.getName());
-            } catch (IOException e) {
-                e.printStackTrace();
+        try {
+            URL layoutDirUrl = BoardManager.class.getClassLoader().getResource(layoutDir);
+            if (layoutDirUrl == null) return;
+
+            val files = FileUtils.listFiles(Paths.get(layoutDirUrl.toURI()).toFile(), null, false);
+            for (val f : files) {
+                try {
+                    layouts.put(f.getName(), FileUtils.readFileToString(f, "utf-8"));
+                    System.out.printf("Layout %s read\n", f.getName());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
         }
     }
 

@@ -17,8 +17,10 @@ import lombok.Setter;
 import lombok.val;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.*;
+import org.yaml.snakeyaml.Yaml;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,9 +32,15 @@ import static com.github.dmitrykersh.bugs.server.protocol.ProtocolConstants.*;
 
 @WebSocket
 public class WebSocketEndpoint {
-    // СУКА ЕСЛИ НЕ КОННЕКТИТСЯ, ПОМЕНЯЙ ЭТО vvv
-    private static final String LAYOUT_DIR = "C:\\Users\\dkarp\\IdeaProjects\\bugs-client\\bugs-gui\\src\\main\\resources\\layout";
-    private static final BoardManager boardManager = new BoardManager(LAYOUT_DIR);
+    public WebSocketEndpoint() {
+        Yaml yaml = new Yaml();
+        InputStream inputStream = WebSocketServer.class
+                .getClassLoader()
+                .getResourceAsStream("config.yaml");
+        ServerConfig config = yaml.load(inputStream);
+        boardManager = new BoardManager(config.getLayoutDir());
+    }
+    private final BoardManager boardManager;
     private static final Map<Session, SessionInfo> sessionInfoMap = new ConcurrentHashMap<>();
     private static final Map<String, Integer> userToOwnedBoard = new HashMap<>();
     private final ObjectMapper jsonMapper = new ObjectMapper();

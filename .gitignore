@@ -144,3 +144,4 @@ buildNumber.properties
 /.idea/misc.xml
 /.idea/inspectionProfiles/Project_Default.xml
 /.idea/vcs.xml
+/bugs-server/src/main/resources/config.yaml
