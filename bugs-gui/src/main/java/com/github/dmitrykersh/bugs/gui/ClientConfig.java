@@ -17,4 +17,5 @@ public class ClientConfig {
     String defaultNickname;
     int screenWidth;
     int screenHeight;
+    boolean maximized;
 }

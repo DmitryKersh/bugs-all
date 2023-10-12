@@ -37,7 +37,7 @@ public class MainWindow extends Application {
             stage.setHeight(config.getScreenHeight());
             stage.setWidth(config.getScreenWidth());
 
-            //stage.setMaximized(true);
+            stage.setMaximized(config.isMaximized());
 
             stage.setScene(SceneCollection.getScene("main-menu"));
             stage.setOnCloseRequest(windowEvent -> {

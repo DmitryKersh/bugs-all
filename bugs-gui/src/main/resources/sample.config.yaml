@@ -5,3 +5,4 @@ defaultUsername: "user1"
 defaultNickname: "nick1"
 screenWidth: 1280
 screenHeight: 720
+maximized: false
