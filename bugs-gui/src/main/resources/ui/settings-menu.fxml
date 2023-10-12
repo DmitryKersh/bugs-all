@@ -10,14 +10,14 @@
 
 <Scene xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.github.dmitrykersh.bugs.gui.javafxcontroller.SettingsMenuController">
    <root>
-      <AnchorPane prefHeight="800.0" prefWidth="1000.0" style="-fx-background-color: #666666;">
+      <AnchorPane maxHeight="1080.0" maxWidth="1920.0" minHeight="720.0" minWidth="800.0" prefHeight="720.0" style="-fx-background-color: #666666;">
          <children>
             <Label alignment="CENTER" layoutX="437.0" layoutY="14.0" prefHeight="52.0" prefWidth="146.0" text="Settings" textAlignment="CENTER" textFill="WHITE" wrapText="true">
                <font>
                   <Font name="Consolas" size="26.0" />
                </font>
             </Label>
-            <TabPane layoutY="90.0" prefHeight="698.0" prefWidth="996.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="12.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="4.0" AnchorPane.topAnchor="90.0">
+            <TabPane layoutY="90.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="12.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="4.0" AnchorPane.topAnchor="90.0">
               <tabs>
                 <Tab text="Untitled Tab 1">
                   <content>

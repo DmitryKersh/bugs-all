@@ -43,9 +43,5 @@ public class SceneCollection {
         if (w > scene.getWidth()) {
             mainStage.setWidth(w);
         }
-
-        final boolean resizable = mainStage.isResizable();
-        mainStage.setResizable(!resizable);
-        mainStage.setResizable(resizable);
     }
 }

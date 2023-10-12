@@ -19,20 +19,20 @@
 <?import javafx.scene.paint.Color?>
 <?import javafx.scene.text.Font?>
 
-<Scene xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.github.dmitrykersh.bugs.gui.javafxcontroller.OnlineGameMenuController">
+<Scene xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.github.dmitrykersh.bugs.gui.javafxcontroller.OnlineGameMenuController">
     <root>
-        <BorderPane fx:id="mainBorderPane" prefHeight="800.0" prefWidth="1000.0" style="-fx-background-color: #666666;">
+        <BorderPane fx:id="mainBorderPane" maxHeight="1080.0" maxWidth="1920.0" minHeight="720.0" minWidth="800.0" prefHeight="720.0" style="-fx-background-color: #666666;">
             <top>
-                <AnchorPane prefHeight="78.0" prefWidth="1000.0" BorderPane.alignment="CENTER">
+                <AnchorPane maxHeight="50.0" minHeight="50.0" prefHeight="50.0" prefWidth="1080.0" BorderPane.alignment="CENTER">
                     <children>
-                        <Label alignment="CENTER" layoutX="330.0" prefHeight="82.0" prefWidth="340.0" text="Online game" textFill="WHITE" AnchorPane.leftAnchor="100.0" AnchorPane.rightAnchor="100.0">
+                        <Label alignment="CENTER" layoutX="330.0" prefHeight="50.0" prefWidth="340.0" text="Online game" textFill="WHITE" AnchorPane.leftAnchor="100.0" AnchorPane.rightAnchor="100.0" AnchorPane.topAnchor="0.0">
                             <font>
-                                <Font name="Consolas" size="36.0" />
+                                <Font name="Consolas" size="30.0" />
                             </font>
                         </Label>
-                        <Button cancelButton="true" contentDisplay="CENTER" layoutX="14.0" layoutY="14.0" maxHeight="50.0" maxWidth="50.0" minHeight="50.0" minWidth="50.0" mnemonicParsing="false" onAction="#backButton_onClick" prefHeight="50.0" prefWidth="50.0" text="&lt;">
+                        <Button cancelButton="true" contentDisplay="CENTER" layoutX="14.0" layoutY="14.0" maxHeight="30.0" maxWidth="60.0" minHeight="30.0" minWidth="60.0" mnemonicParsing="false" onAction="#backButton_onClick" prefHeight="30.0" prefWidth="60.0" text="Back" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="10.0">
                             <font>
-                                <Font name="Consolas" size="26.0" />
+                                <Font name="Consolas" size="15.0" />
                             </font>
                         </Button>
                     </children>
@@ -73,23 +73,23 @@
                         <TextField fx:id="nicknameField" prefHeight="6.0" prefWidth="244.0" promptText="Nickname" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="120.0" />
                         <Button fx:id="connectButton" layoutX="124.0" layoutY="153.0" mnemonicParsing="false" onMouseClicked="#connectButton_onClick" prefHeight="25.0" prefWidth="103.0" text="Connect" />
                         <PasswordField fx:id="passwordField" layoutX="14.0" layoutY="84.0" promptText="Password" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="85.0" />
-                        <TabPane fx:id="tabPane" layoutY="245.0" prefHeight="385.0" prefWidth="343.0" tabClosingPolicy="UNAVAILABLE" visible="false">
+                        <TabPane fx:id="tabPane" layoutY="245.0" minHeight="350.0" prefHeight="350.0" prefWidth="343.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="245.0" visible="false">
                             <tabs>
                                 <Tab text="Connect to Game">
                                     <content>
-                                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="323.0" prefWidth="343.0">
                                             <children>
-                                                <TextField fx:id="boardIdTextField" prefHeight="31.0" prefWidth="213.0" promptText="Enter Game ID" AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="35.0">
+                                                <TextField fx:id="boardIdTextField" prefHeight="31.0" prefWidth="213.0" promptText="Enter Game ID" AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="14.0">
                                                     <font>
                                                         <Font size="15.0" />
                                                     </font>
                                                 </TextField>
-                                                <Label fx:id="boardIdLabel" alignment="CENTER" prefHeight="18.0" prefWidth="299.0" textAlignment="CENTER" textFill="WHITE" AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="70.0">
+                                                <Label fx:id="boardIdLabel" alignment="CENTER" prefHeight="18.0" prefWidth="299.0" textAlignment="CENTER" textFill="WHITE" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="55.0">
                                                     <font>
                                                         <Font name="Consolas" size="15.0" />
                                                     </font>
                                                 </Label>
-                                                <GridPane fx:id="playersGridPane" alignment="CENTER" prefHeight="156.0" prefWidth="322.0" vgap="5.0" AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="100.0">
+                                                <GridPane fx:id="playersGridPane" alignment="CENTER" prefHeight="156.0" prefWidth="322.0" vgap="5.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="80.0">
                                                     <columnConstraints>
                                                         <ColumnConstraints hgrow="SOMETIMES" maxWidth="203.0" minWidth="10.0" prefWidth="203.0" />
                                                         <ColumnConstraints hgrow="SOMETIMES" maxWidth="181.0" minWidth="10.0" prefWidth="116.0" />
@@ -103,12 +103,15 @@
                                                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                                     </rowConstraints>
                                                 </GridPane>
-                                                <Button fx:id="searchGameButton" layoutX="235.0" layoutY="35.0" mnemonicParsing="false" onMouseClicked="#searchGameButton_onClick" prefHeight="31.0" prefWidth="91.0" text="Search">
+                                                <Button fx:id="searchGameButton" layoutX="235.0" layoutY="35.0" mnemonicParsing="false" onMouseClicked="#searchGameButton_onClick" prefHeight="31.0" prefWidth="91.0" text="Search" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="14.0">
                                                     <font>
-                                                        <Font size="15.0" />
+                                                        <Font name="Consolas" size="15.0" />
                                                     </font>
                                                 </Button>
-                                    <Button fx:id="startGameButton" mnemonicParsing="false" onAction="#startGameButton_onClick" text="Start Game!" visible="false" AnchorPane.leftAnchor="100.0" AnchorPane.rightAnchor="100.0" AnchorPane.topAnchor="300.0" />
+                                    <Button fx:id="startGameButton" mnemonicParsing="false" onAction="#startGameButton_onClick" text="Start Game!" visible="false" AnchorPane.bottomAnchor="15.0" AnchorPane.leftAnchor="100.0" AnchorPane.rightAnchor="100.0">
+                                       <font>
+                                          <Font name="Consolas" size="15.0" />
+                                       </font></Button>
                                             </children>
                                         </AnchorPane>
                                     </content>
@@ -146,7 +149,7 @@
                                 </Tab>
                             </tabs>
                         </TabPane>
-                  <Label fx:id="errorLabel" alignment="TOP_LEFT" prefHeight="99.0" prefWidth="320.0" textFill="RED" wrapText="true" AnchorPane.bottomAnchor="77.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0">
+                  <Label fx:id="errorLabel" alignment="TOP_LEFT" prefHeight="43.0" prefWidth="320.0" textFill="RED" wrapText="true" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0">
                      <font>
                         <Font name="Consolas" size="15.0" />
                      </font>
@@ -156,7 +159,7 @@
                         <Font name="Consolas" size="12.0" />
                      </font>
                   </Label>
-                  <ColorPicker fx:id="colorPicker" layoutX="293.0" layoutY="189.0" prefHeight="45.0" prefWidth="43.0" promptText="sfffsfsfd" AnchorPane.leftAnchor="293.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="189.0">
+                  <ColorPicker fx:id="colorPicker" layoutX="293.0" layoutY="189.0" prefHeight="45.0" prefWidth="106.0" promptText="Select color" AnchorPane.leftAnchor="293.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="189.0">
                      <value>
                         <Color red="0.6476190686225891" green="1.0" />
                      </value>

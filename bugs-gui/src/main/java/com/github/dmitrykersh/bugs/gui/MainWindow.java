@@ -1,16 +1,12 @@
 package com.github.dmitrykersh.bugs.gui;
 
 import com.github.dmitrykersh.bugs.engine.TextureCollection;
-import com.github.dmitrykersh.bugs.server.ServerConfig;
-import com.github.dmitrykersh.bugs.server.WebSocketServer;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.stage.Stage;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.InputStream;
-
-import static javafx.application.Application.launch;
 
 public class MainWindow extends Application {
 
@@ -41,7 +37,7 @@ public class MainWindow extends Application {
             stage.setHeight(config.getScreenHeight());
             stage.setWidth(config.getScreenWidth());
 
-            stage.setMaximized(true);
+            //stage.setMaximized(true);
 
             stage.setScene(SceneCollection.getScene("main-menu"));
             stage.setOnCloseRequest(windowEvent -> {

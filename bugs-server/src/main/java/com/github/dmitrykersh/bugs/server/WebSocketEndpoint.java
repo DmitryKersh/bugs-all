@@ -1,12 +1,11 @@
 package com.github.dmitrykersh.bugs.server;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.dmitrykersh.bugs.engine.board.BoardInfo;
-import com.github.dmitrykersh.bugs.engine.board.observer.BoardObserver;
 import com.github.dmitrykersh.bugs.engine.board.TurnInfo;
+import com.github.dmitrykersh.bugs.engine.board.observer.BoardObserver;
 import com.github.dmitrykersh.bugs.engine.player.Player;
 import com.github.dmitrykersh.bugs.engine.player.PlayerSettings;
 import com.github.dmitrykersh.bugs.server.pojo.NotifyInfo;
@@ -26,9 +25,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static com.github.dmitrykersh.bugs.server.protocol.SessionState.*;
-import static com.github.dmitrykersh.bugs.server.protocol.ProtocolUtils.*;
 import static com.github.dmitrykersh.bugs.server.protocol.ProtocolConstants.*;
+import static com.github.dmitrykersh.bugs.server.protocol.ProtocolUtils.sendInfo;
+import static com.github.dmitrykersh.bugs.server.protocol.ProtocolUtils.sendJsonData;
+import static com.github.dmitrykersh.bugs.server.protocol.SessionState.*;
 
 @WebSocket
 public class WebSocketEndpoint {
@@ -38,9 +38,10 @@ public class WebSocketEndpoint {
                 .getClassLoader()
                 .getResourceAsStream("config.yaml");
         ServerConfig config = yaml.load(inputStream);
-        boardManager = new BoardManager(config.getLayoutDir());
+        if (boardManager == null)
+            boardManager = new BoardManager(config.getLayoutDir());
     }
-    private final BoardManager boardManager;
+    private static BoardManager boardManager;
     private static final Map<Session, SessionInfo> sessionInfoMap = new ConcurrentHashMap<>();
     private static final Map<String, Integer> userToOwnedBoard = new HashMap<>();
     private final ObjectMapper jsonMapper = new ObjectMapper();
@@ -232,6 +233,8 @@ public class WebSocketEndpoint {
     private void handleDeleteBoard(JsonNode msgRoot, Session session, SessionInfo sessionInfo, SessionState currentState) throws IOException {
         int id;
         NotifyInfo notifyInfo;
+        if (! userToOwnedBoard.containsKey(sessionInfo.getUsername())) return;
+
         if ((notifyInfo = boardManager.deleteBoard(id = userToOwnedBoard.get(sessionInfo.getUsername()))) != null) {
             sendInfo(session, LOGGED_IN, String.format("Deleted board with id %d", id));
             for (Session s : notifyInfo.getSessions()) {
