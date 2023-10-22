@@ -20,10 +20,10 @@ public class MainWindow extends Application {
             ClientConfig config = yaml.load(inputStream);
             System.out.println("---------- CLIENT CONFIG ----------\n" + config);
 
-            SceneCollection.loadScene("main-menu", "/ui/main-menu.fxml");
-            SceneCollection.loadScene("settings-menu", "/ui/settings-menu.fxml");
-            SceneCollection.loadScene("local-game-menu", "/ui/local-game-menu.fxml");
-            SceneCollection.loadScene("online-game-menu", "/ui/online-game-menu.fxml");
+            SceneCollection.loadScene("main-menu", "/fxml/main-menu.fxml");
+            SceneCollection.loadScene("settings-menu", "/fxml/settings-menu.fxml");
+            SceneCollection.loadScene("local-game-menu", "/fxml/local-game-menu.fxml");
+            SceneCollection.loadScene("online-game-menu", "/fxml/online-game-menu.fxml");
 
             TextureCollection.loadImage("queen", "/textures/queen.png");
             TextureCollection.loadImage("bug", "/textures/bug.png");

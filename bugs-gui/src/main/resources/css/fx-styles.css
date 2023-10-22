@@ -1,0 +1,47 @@
+.root {
+    -fx-font-family: Consolas;
+}
+
+.border-pane {
+    -fx-background-color: #666666;
+    -fx-min-width: 800;
+    -fx-min-height: 720;
+    -fx-pref-height: 1080;
+    -fx-pref-width: 1920;
+    -fx-max-height: 1080;
+    -fx-max-width: 1920;
+    -fx-content-display: center;
+    -fx-alignment: center;
+}
+
+.label {
+    -fx-text-fill: white;
+}
+
+.label-h1 {
+    -fx-alignment: center;
+    -fx-content-display: center;
+    -fx-text-alignment: center;
+    -fx-font-size: 64px;
+}
+
+.button {
+    -fx-alignment: center;
+    -fx-text-fill: black;
+    -fx-text-alignment: center;
+    -fx-font-size: 14px;
+}
+
+.button-big {
+    -fx-font-size: 20px;
+}
+
+.button-huge {
+    -fx-font-size: 32px;
+    -fx-fill-width: true;
+    -fx-fill-height: true;
+}
+
+.tab-pane {
+    -fx-background-color: #666666;
+}

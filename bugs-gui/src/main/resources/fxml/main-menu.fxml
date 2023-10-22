@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.Scene?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<Scene xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.github.dmitrykersh.bugs.gui.javafxcontroller.MainMenuController" stylesheets="/css/fx-styles.css">
+   <root>
+      <BorderPane styleClass="border-pane">
+         <top>
+            <Label styleClass="label-h1" text="Buggs" BorderPane.alignment="CENTER"/>
+         </top>
+         <center>
+            <VBox alignment="TOP_CENTER" maxHeight="500.0" maxWidth="320.0" prefHeight="500.0" prefWidth="320.0" BorderPane.alignment="CENTER">
+               <children>
+                  <Button styleClass="button-huge" onAction="#localGameButton_onPressed"  text="Local Game"/>
+                  <Button styleClass="button-huge" onAction="#onlineGameButton_onPressed" text="Online Game"/>
+                  <Button styleClass="button-huge" onAction="#settingsButton_onPressed" text="Settings"/>
+                  <Button styleClass="button-huge" onAction="#quitButton_onPressed" text="Quit"/>
+               </children>
+            </VBox>
+         </center>
+      </BorderPane>
+   </root>
+</Scene>
