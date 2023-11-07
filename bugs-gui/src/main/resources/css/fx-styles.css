@@ -40,6 +40,21 @@
     -fx-font-size: 32px;
     -fx-fill-width: true;
     -fx-fill-height: true;
+    -fx-pref-height: 90px;
+    -fx-max-height: 1000px;
+    -fx-max-width: 1000px;
+}
+
+.hbox-main-menu {
+
+}
+
+.vbox-main-menu {
+    -fx-max-height: 500;
+    -fx-max-width: 300;
+    -fx-pref-height: 500;
+    -fx-pref-width: 300;
+    -fx-alignment: CENTER;
 }
 
 .tab-pane {

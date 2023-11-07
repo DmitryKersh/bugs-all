@@ -1,28 +1,45 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
 <?import javafx.scene.Scene?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Font?>
 
-<Scene xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.github.dmitrykersh.bugs.gui.javafxcontroller.MainMenuController" stylesheets="/css/fx-styles.css">
+<Scene stylesheets="/css/fx-styles.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.github.dmitrykersh.bugs.gui.javafxcontroller.MainMenuController">
    <root>
       <BorderPane styleClass="border-pane">
          <top>
-            <Label styleClass="label-h1" text="Buggs" BorderPane.alignment="CENTER"/>
+            <Label styleClass="label-h1" text="Bugs" BorderPane.alignment="CENTER" />
          </top>
          <center>
-            <VBox alignment="TOP_CENTER" maxHeight="500.0" maxWidth="320.0" prefHeight="500.0" prefWidth="320.0" BorderPane.alignment="CENTER">
+            <VBox styleClass="vbox-main-menu" BorderPane.alignment="TOP_CENTER">
                <children>
-                  <Button styleClass="button-huge" onAction="#localGameButton_onPressed"  text="Local Game"/>
-                  <Button styleClass="button-huge" onAction="#onlineGameButton_onPressed" text="Online Game"/>
-                  <Button styleClass="button-huge" onAction="#settingsButton_onPressed" text="Settings"/>
-                  <Button styleClass="button-huge" onAction="#quitButton_onPressed" text="Quit"/>
+                  <HBox styleClass="hbox-main-menu" BorderPane.alignment="TOP_CENTER">
+                     <children>
+                        <Button onAction="#localGameButton_onPressed" styleClass="button-huge" text="Local Game" HBox.hgrow="ALWAYS" />
+                     </children>
+                  </HBox>
+                  <HBox styleClass="hbox-main-menu" BorderPane.alignment="TOP_CENTER">
+                     <children>
+                        <Button onAction="#onlineGameButton_onPressed" styleClass="button-huge" text="Online Game" HBox.hgrow="ALWAYS" />
+
+                     </children>
+                  </HBox>
+                  <HBox styleClass="hbox-main-menu" BorderPane.alignment="TOP_CENTER">
+                     <children>
+                        <Button onAction="#settingsButton_onPressed" styleClass="button-huge" text="Settings" HBox.hgrow="ALWAYS" />
+                     </children>
+                  </HBox>
+                  <HBox styleClass="hbox-main-menu" BorderPane.alignment="TOP_CENTER">
+                     <children>
+                        <Button onAction="#quitButton_onPressed" styleClass="button-huge" text="Quit" HBox.hgrow="ALWAYS" />
+                     </children>
+                  </HBox>
                </children>
             </VBox>
+
          </center>
       </BorderPane>
    </root>
