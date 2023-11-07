@@ -13,24 +13,19 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.text.Font?>
 
-<Scene xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.github.dmitrykersh.bugs.gui.javafxcontroller.LocalGameMenuController">
+<?import javafx.scene.layout.HBox?>
+<Scene stylesheets="/css/fx-styles.css" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.github.dmitrykersh.bugs.gui.javafxcontroller.LocalGameMenuController">
    <root>
-      <BorderPane fx:id="mainBorderPane" maxHeight="1080.0" maxWidth="1920.0" minHeight="600.0" minWidth="800.0" prefHeight="720.0" style="-fx-background-color: #666666;">
+      <BorderPane fx:id="mainBorderPane" styleClass="border-pane">
          <top>
-            <AnchorPane prefHeight="50.0" prefWidth="1000.0" BorderPane.alignment="CENTER">
-               <children>
-                  <Label alignment="CENTER" layoutX="330.0" maxHeight="50.0" minHeight="50.0" prefHeight="50.0" prefWidth="340.0" text="New local game" textFill="WHITE" AnchorPane.leftAnchor="100.0" AnchorPane.rightAnchor="100.0">
-                     <font>
-                        <Font name="Consolas" size="30.0" />
-                     </font>
-                  </Label>
-                   <Button cancelButton="true" contentDisplay="CENTER" layoutX="14.0" layoutY="14.0" maxHeight="30.0" maxWidth="60.0" minHeight="30.0" minWidth="60.0" mnemonicParsing="false" onAction="#backButton_onClick" prefHeight="30.0" prefWidth="60.0" text="Back" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="10.0">
-                       <font>
-                           <Font name="Consolas" size="15.0" />
-                       </font>
-                   </Button>
-               </children>
-            </AnchorPane>
+            <BorderPane styleClass="border-pane-header">
+                <left>
+                    <Button styleClass="button-cancel" onAction="#backButton_onClick" text="Back" />
+                </left>
+                <center>
+                    <Label styleClass="label-h2" text="Local game"/>
+                </center>
+            </BorderPane>
          </top>
          <left>
             <AnchorPane prefHeight="700.0" prefWidth="350.0" style="-fx-background-color: #555555;" BorderPane.alignment="CENTER">

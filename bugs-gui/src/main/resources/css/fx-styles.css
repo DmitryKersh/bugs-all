@@ -2,7 +2,7 @@
     -fx-font-family: Consolas;
 }
 
-.border-pane {
+.border-pane, border-pane-header {
     -fx-background-color: #666666;
     -fx-min-width: 800;
     -fx-min-height: 720;
@@ -14,15 +14,26 @@
     -fx-alignment: center;
 }
 
+.border-pane-header {
+    -fx-min-height: 50;
+    -fx-max-height: 50;
+}
+
 .label {
     -fx-text-fill: white;
 }
 
-.label-h1 {
+.label-header, label-h1, label-h2 {
     -fx-alignment: center;
     -fx-content-display: center;
     -fx-text-alignment: center;
+}
+
+.label-h1 {
     -fx-font-size: 64px;
+}
+.label-h2 {
+    -fx-font-size: 28px;
 }
 
 .button {
@@ -43,6 +54,13 @@
     -fx-pref-height: 90px;
     -fx-max-height: 1000px;
     -fx-max-width: 1000px;
+}
+
+.button-cancel {
+    -fx-min-height: 30px;
+    -fx-max-height: 30px;
+    -fx-min-width: 60px;
+    -fx-max-width: 60px;
 }
 
 .hbox-main-menu {
