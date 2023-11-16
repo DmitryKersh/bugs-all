@@ -2,6 +2,29 @@
     -fx-font-family: Consolas;
 }
 
+.margin-10 {
+    -fx-padding: 10px;
+    -fx-border-insets: 10px;
+    -fx-background-insets: 10px;
+}
+.margin-15v {
+    -fx-padding: 15px;
+    -fx-border-insets: 15px;
+    -fx-background-insets: 15px;
+}
+
+.combo-box {
+    -fx-pref-height: 25;
+    -fx-pref-width: 200;
+}
+
+.scroll-pane {
+    -fx-fit-to-height: true;
+    -fx-fit-to-width: true;
+    -fx-pannable: true;
+    -fx-background-color: #666666;
+}
+
 .border-pane, border-pane-header {
     -fx-background-color: #666666;
     -fx-min-width: 800;
@@ -14,16 +37,42 @@
     -fx-alignment: center;
 }
 
+.grid-pane {
+    -fx-vgap: 2px;
+    -fx-hgap: 10px;
+}
+
+.grid-pane-row {
+    -fx-pref-height: 30;
+}
+
+.side-pane {
+    -fx-background-color: #555555;
+    -fx-pref-width: 350;
+    -fx-max-height: 10000;
+    -fx-padding: 15px;
+    -fx-spacing: 15px;
+}
+
 .border-pane-header {
     -fx-min-height: 50;
     -fx-max-height: 50;
 }
 
+
 .label {
     -fx-text-fill: white;
 }
 
-.label-header, label-h1, label-h2 {
+.label-error {
+    -fx-text-fill: red;
+}
+
+.label-info {
+    -fx-text-fill: cyan;
+}
+
+.label-header, label-h1, label-h2, label-h3 {
     -fx-alignment: center;
     -fx-content-display: center;
     -fx-text-alignment: center;
@@ -34,6 +83,9 @@
 }
 .label-h2 {
     -fx-font-size: 28px;
+}
+.label-h3 {
+    -fx-font-size: 18px;
 }
 
 .button {
@@ -57,10 +109,10 @@
 }
 
 .button-cancel {
-    -fx-min-height: 30px;
-    -fx-max-height: 30px;
-    -fx-min-width: 60px;
-    -fx-max-width: 60px;
+    -fx-min-height: 50px;
+    -fx-max-height: 50px;
+    -fx-min-width: 80px;
+    -fx-max-width: 80px;
 }
 
 .hbox-main-menu {

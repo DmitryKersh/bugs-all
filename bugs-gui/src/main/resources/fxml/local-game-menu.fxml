@@ -14,13 +14,14 @@
 <?import javafx.scene.text.Font?>
 
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
 <Scene stylesheets="/css/fx-styles.css" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.github.dmitrykersh.bugs.gui.javafxcontroller.LocalGameMenuController">
    <root>
       <BorderPane fx:id="mainBorderPane" styleClass="border-pane">
          <top>
             <BorderPane styleClass="border-pane-header">
                 <left>
-                    <Button styleClass="button-cancel" onAction="#backButton_onClick" text="Back" />
+                    <Button styleClass="button-cancel, margin-10" onAction="#backButton_onClick" text="Back" />
                 </left>
                 <center>
                     <Label styleClass="label-h2" text="Local game"/>
@@ -28,82 +29,55 @@
             </BorderPane>
          </top>
          <left>
-            <AnchorPane prefHeight="700.0" prefWidth="350.0" style="-fx-background-color: #555555;" BorderPane.alignment="CENTER">
+            <VBox styleClass="side-pane" BorderPane.alignment="CENTER">
                <children>
-                  <ComboBox fx:id="layoutComboBox" layoutX="14.0" layoutY="62.0" onAction="#layoutComboBox_onChanged" prefHeight="25.0" prefWidth="161.0" promptText="Select Layout" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="15.0">
-
-                  </ComboBox>
-                  <ComboBox fx:id="playerConfigComboBox" layoutX="14.0" layoutY="50.0" onAction="#playerConfigComboBox_onChanged" prefHeight="25.0" prefWidth="171.0" promptText="Select Game Mode" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="50.0" />
-                  <GridPane fx:id="playersGridPane" alignment="CENTER" hgap="10.0" layoutX="14.0" layoutY="243.0" prefHeight="190.0" prefWidth="322.0" vgap="2.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="370.0">
+                   <ComboBox fx:id="layoutComboBox" onAction="#layoutComboBox_onChanged" promptText="Select Layout"/>
+                   <ComboBox fx:id="playerConfigComboBox" onAction="#playerConfigComboBox_onChanged" promptText="Select Game Mode"/>
+                   <GridPane fx:id="playersGridPane" styleClass="grid-pane">
                     <columnConstraints>
-                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="203.0" minWidth="10.0" prefWidth="203.0" />
-                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="181.0" minWidth="10.0" prefWidth="116.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="500.0" minWidth="10.0" prefWidth="203.0" />
+                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="35.0" minWidth="10.0" prefWidth="116.0" />
                     </columnConstraints>
                     <rowConstraints>
-                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="1.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="1.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="1.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="1.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="1.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="1.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                   </GridPane>
-                  <Label fx:id="errorLabel" alignment="TOP_LEFT" layoutX="14.0" layoutY="584.0" prefHeight="46.0" prefWidth="322.0" textFill="RED" wrapText="true" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="584.0">
-                     <font>
-                        <Font name="Consolas" size="15.0" />
-                     </font>
-                  </Label>
-                  <Button alignment="CENTER" layoutX="78.0" layoutY="612.0" mnemonicParsing="false" onAction="#startGame" prefHeight="32.0" prefWidth="194.0" text="Start Game" textAlignment="CENTER" AnchorPane.leftAnchor="78.0" AnchorPane.rightAnchor="78.0" AnchorPane.topAnchor="612.0">
-                     <font>
-                        <Font name="Consolas" size="20.0" />
-                     </font>
-                  </Button>
-                  <Label fx:id="gameModeDescLabel" alignment="TOP_LEFT" layoutX="14.0" layoutY="139.0" prefHeight="101.0" prefWidth="322.0" textFill="#00fffd" wrapText="true" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="139.0">
-                     <font>
-                        <Font name="Consolas" size="12.0" />
-                     </font>
-                  </Label>
-                  <Label fx:id="layoutDescLabel" alignment="TOP_LEFT" layoutX="14.0" layoutY="88.0" prefHeight="51.0" prefWidth="322.0" textFill="#00fffd" wrapText="true" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="88.0">
-                     <font>
-                        <Font name="Consolas" size="15.0" />
-                     </font>
-                  </Label>
-                  <GridPane fx:id="paramGridPane" layoutX="14.0" layoutY="464.0" prefHeight="88.0" prefWidth="322.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="250.0">
+                  <Label fx:id="errorLabel" styleClass="label-error"/>
+                   <Label fx:id="layoutDescLabel" styleClass="label-info"/>
+                  <Label fx:id="gameModeDescLabel" styleClass="label-info"/>
+                  <GridPane fx:id="paramGridPane" styleClass="grid-pane">
                     <columnConstraints>
                       <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="50.0" />
                     </columnConstraints>
                     <rowConstraints>
-                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="1.0" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="1.0" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="1.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                   </GridPane>
+                   <Button styleClass="button-big" onAction="#startGame" text="Start Game"/>
                </children>
-            </AnchorPane>
+            </VBox>
          </left>
          <center>
-            <ScrollPane fx:id="gameScrollPane" fitToHeight="true" fitToWidth="true" pannable="true" prefHeight="755.0" prefWidth="256.0" style="-fx-background-color: #666666;" BorderPane.alignment="CENTER">
+            <ScrollPane fx:id="gameScrollPane" styleClass="scroll-pane" BorderPane.alignment="CENTER">
                <content>
-                  <BorderPane fx:id="innerBorderPane" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #666666;">
-                     <padding>
-                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                     </padding>
+                  <BorderPane fx:id="innerBorderPane" styleClass="border-pane">
                      <top>
-                        <AnchorPane prefHeight="91.0" prefWidth="628.0" BorderPane.alignment="TOP_LEFT">
-                           <children>
-                              <Label fx:id="activePlayerLabel" alignment="TOP_LEFT" prefHeight="37.0" prefWidth="171.0" textAlignment="JUSTIFY" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
-                                 <font>
-                                    <Font name="Consolas" size="20.0" />
-                                 </font>
-                              </Label>
-                              <Label fx:id="playerListLabel" alignment="TOP_LEFT" layoutY="47.0" prefHeight="32.0" prefWidth="501.0" textAlignment="JUSTIFY" textFill="WHITE" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="45.0">
-                                 <font>
-                                    <Font name="Consolas" size="14.0" />
-                                 </font>
-                              </Label>
-                           </children>
-                        </AnchorPane>
+                        <VBox styleClass="border-pane-header" maxHeight="200.0">
+                           <HBox alignment="BASELINE_CENTER">
+                               <Label fx:id="playerListLabel" styleClass="label-h3"/>
+                           </HBox>
+                            <HBox alignment="BASELINE_CENTER">
+                                <Label fx:id="activePlayerLabel" styleClass="label-h3"/>
+                            </HBox>
+                        </VBox>
                      </top>
                   </BorderPane>
                </content>
