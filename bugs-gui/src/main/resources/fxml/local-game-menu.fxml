@@ -61,7 +61,10 @@
                       <RowConstraints minHeight="1.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                   </GridPane>
-                   <Button styleClass="button-big" onAction="#startGame" text="Start Game"/>
+                   <HBox alignment="BASELINE_CENTER">
+                       <Button styleClass="button-big" onAction="#startGame" text="Start Game"/>
+                   </HBox>
+
                </children>
             </VBox>
          </left>

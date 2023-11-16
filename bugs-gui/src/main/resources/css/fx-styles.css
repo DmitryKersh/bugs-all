@@ -51,7 +51,14 @@
     -fx-pref-width: 350;
     -fx-max-height: 10000;
     -fx-padding: 15px;
-    -fx-spacing: 15px;
+    -fx-spacing: 5px;
+}
+.vbox-tab {
+    -fx-background-color: #555555;
+    -fx-pref-width: 350;
+    -fx-max-height: 10000;
+    -fx-padding: 10px;
+    -fx-spacing: 5px;
 }
 
 .border-pane-header {
@@ -127,6 +134,6 @@
     -fx-alignment: CENTER;
 }
 
-.tab-pane {
-    -fx-background-color: #666666;
+.tab-pane .tab-header-area .tab-header-background {
+    -fx-opacity: 0;
 }
