@@ -20,27 +20,18 @@
                 </BorderPane>
             </top>
             <center>
-                <ScrollPane fx:id="gameScrollPane" fitToHeight="true" fitToWidth="true" pannable="true" prefHeight="755.0" prefWidth="256.0" style="-fx-background-color: #666666;" BorderPane.alignment="CENTER">
+                <ScrollPane fx:id="gameScrollPane" styleClass="scroll-pane" BorderPane.alignment="CENTER">
                     <content>
-                        <BorderPane fx:id="innerBorderPane" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #666666;">
-                            <padding>
-                                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                            </padding>
+                        <BorderPane fx:id="innerBorderPane" styleClass="border-pane">
                             <top>
-                                <AnchorPane prefHeight="91.0" prefWidth="628.0" BorderPane.alignment="TOP_LEFT">
-                                    <children>
-                                        <Label fx:id="activePlayerLabel" alignment="TOP_LEFT" prefHeight="37.0" prefWidth="171.0" textAlignment="JUSTIFY" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
-                                            <font>
-                                                <Font name="Consolas" size="20.0" />
-                                            </font>
-                                        </Label>
-                                        <Label fx:id="playerListLabel" alignment="TOP_LEFT" layoutY="47.0" prefHeight="32.0" prefWidth="501.0" textAlignment="JUSTIFY" textFill="WHITE" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="45.0">
-                                            <font>
-                                                <Font name="Consolas" size="14.0" />
-                                            </font>
-                                        </Label>
-                                    </children>
-                                </AnchorPane>
+                                <VBox styleClass="border-pane-header" maxHeight="200.0">
+                                    <HBox alignment="BASELINE_CENTER">
+                                        <Label fx:id="playerListLabel" styleClass="label-h3"/>
+                                    </HBox>
+                                    <HBox alignment="BASELINE_CENTER">
+                                        <Label fx:id="activePlayerLabel" styleClass="label-h3"/>
+                                    </HBox>
+                                </VBox>
                             </top>
                         </BorderPane>
                     </content>
@@ -97,7 +88,7 @@
                                         <VBox styleClass="vbox-tab">
                                             <ComboBox fx:id="layoutComboBox" onAction="#layoutComboBox_onChanged" promptText="Select Layout"/>
                                             <ComboBox fx:id="gameModeComboBox" onAction="#playerConfigComboBox_onChanged" promptText="Select Game Mode"/>
-                                            <Label styleClass="label" text="Layout settings"/>
+                                            <Label styleClass="label-default" text="Layout settings"/>
                                             <GridPane fx:id="paramGridPane" styleClass="grid-pane">
                                                 <columnConstraints>
                                                     <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />

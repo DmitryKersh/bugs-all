@@ -105,6 +105,7 @@ public class ClientSocket {
                                     controller.playersGridPane.add(UiUtils.makeLabel(p.getNickname(), 12, p.getColor()), 0, row);
                                     if (p.getNickname().equals(controller.getCurrentPlayerNickname())) {
                                         Button button = new Button("Quit");
+                                        button.getStyleClass().add("button-small");
                                         button.setOnMouseClicked(controller.disconnectFromSlot_onClick(row + 1));
                                         controller.playersGridPane.add(button, 1, row);
                                         controller.startGameButton.setVisible(true);
@@ -113,6 +114,7 @@ public class ClientSocket {
                                     controller.playersGridPane.add(UiUtils.makeLabel("< empty >", 12), 0, row);
                                     Button button = new Button("Enter");
                                     button.setOnMouseClicked(controller.connectToSlot_onClick(row + 1));
+                                    button.getStyleClass().add("button-small");
                                     controller.playersGridPane.add(button, 1, row);
                                 }
                             }

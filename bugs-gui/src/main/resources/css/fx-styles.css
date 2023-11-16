@@ -23,6 +23,8 @@
     -fx-fit-to-width: true;
     -fx-pannable: true;
     -fx-background-color: #666666;
+    -fx-hbar-policy: NEVER;
+    -fx-vbar-policy: NEVER;
 }
 
 .border-pane, border-pane-header {
@@ -66,8 +68,7 @@
     -fx-max-height: 50;
 }
 
-
-.label {
+.label-default {
     -fx-text-fill: white;
 }
 
@@ -79,22 +80,25 @@
     -fx-text-fill: cyan;
 }
 
+.label-h1 {
+    -fx-font-size: 64px;
+    -fx-text-fill: white;
+}
+.label-h2 {
+    -fx-font-size: 28px;
+    -fx-text-fill: white;
+}
+.label-h3 {
+    -fx-font-size: 18px;
+    -fx-text-fill: white;
+}
+
 .label-header, label-h1, label-h2, label-h3 {
+    -fx-text-fill: white;
     -fx-alignment: center;
     -fx-content-display: center;
     -fx-text-alignment: center;
 }
-
-.label-h1 {
-    -fx-font-size: 64px;
-}
-.label-h2 {
-    -fx-font-size: 28px;
-}
-.label-h3 {
-    -fx-font-size: 18px;
-}
-
 .button {
     -fx-alignment: center;
     -fx-text-fill: black;
@@ -104,6 +108,10 @@
 
 .button-big {
     -fx-font-size: 20px;
+}
+
+.button-small {
+    -fx-font-size: 11px;
 }
 
 .button-huge {
