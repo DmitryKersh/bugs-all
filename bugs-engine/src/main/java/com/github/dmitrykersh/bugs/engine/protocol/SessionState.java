@@ -1,4 +1,4 @@
-package com.github.dmitrykersh.bugs.server.protocol;
+package com.github.dmitrykersh.bugs.engine.protocol;
 
 public enum SessionState {
     NEW_CONNECTION,

@@ -7,7 +7,6 @@ import org.yaml.snakeyaml.Yaml;
 
 import java.io.InputStream;
 import java.time.Duration;
-import java.util.Map;
 
 public class WebSocketServer {
     public static void main( String[] args )
@@ -15,7 +14,7 @@ public class WebSocketServer {
         Yaml yaml = new Yaml();
         InputStream inputStream = WebSocketServer.class
                 .getClassLoader()
-                .getResourceAsStream("config.yaml");
+                .getResourceAsStream("server_config/config.yaml");
         ServerConfig config = yaml.load(inputStream);
         System.out.println("---------- SERVER CONFIG ----------\n" + config);
         var server = new WebSocketServer();

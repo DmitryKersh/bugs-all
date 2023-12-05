@@ -11,7 +11,7 @@ import com.github.dmitrykersh.bugs.engine.util.ColorDeserializer;
 import com.github.dmitrykersh.bugs.gui.UiUtils;
 import com.github.dmitrykersh.bugs.gui.javafxcontroller.OnlineGameMenuController;
 import com.github.dmitrykersh.bugs.gui.viewer.RectangleBoardViewer;
-import com.github.dmitrykersh.bugs.server.protocol.SessionState;
+import com.github.dmitrykersh.bugs.engine.protocol.SessionState;
 import com.sun.javafx.collections.ObservableListWrapper;
 import javafx.application.Platform;
 import javafx.geometry.Pos;
@@ -32,7 +32,7 @@ import java.util.List;
 import java.util.Map;
 
 import static com.github.dmitrykersh.bugs.engine.util.TextUtils.toOrdinal;
-import static com.github.dmitrykersh.bugs.server.protocol.ProtocolConstants.*;
+import static com.github.dmitrykersh.bugs.engine.protocol.ProtocolConstants.*;
 
 @WebSocket
 public class ClientSocket {

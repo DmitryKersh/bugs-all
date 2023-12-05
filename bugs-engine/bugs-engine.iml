@@ -10,12 +10,36 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.projectlombok:lombok:1.18.28" level="project" />
-    <orderEntry type="library" name="Maven: org.jetbrains:annotations:24.0.1" level="project" />
+    <orderEntry type="library" name="Maven: org.jetbrains:annotations:24.1.0" level="project" />
     <orderEntry type="library" name="Maven: commons-io:commons-io:2.11.0" level="project" />
     <orderEntry type="library" name="Maven: org.json:json:20220320" level="project" />
     <orderEntry type="library" name="Maven: com.fasterxml.jackson.core:jackson-databind:2.15.2" level="project" />
     <orderEntry type="library" name="Maven: com.fasterxml.jackson.core:jackson-annotations:2.15.2" level="project" />
     <orderEntry type="library" name="Maven: com.fasterxml.jackson.core:jackson-core:2.15.2" level="project" />
+    <orderEntry type="library" name="Maven: org.eclipse.jetty.websocket:websocket-jetty-server:11.0.15" level="project" />
+    <orderEntry type="library" name="Maven: org.eclipse.jetty.websocket:websocket-jetty-api:11.0.15" level="project" />
+    <orderEntry type="library" name="Maven: org.eclipse.jetty.websocket:websocket-jetty-common:11.0.15" level="project" />
+    <orderEntry type="library" name="Maven: org.eclipse.jetty.websocket:websocket-core-common:11.0.15" level="project" />
+    <orderEntry type="library" name="Maven: org.eclipse.jetty:jetty-io:11.0.15" level="project" />
+    <orderEntry type="library" name="Maven: org.eclipse.jetty:jetty-util:11.0.15" level="project" />
+    <orderEntry type="library" name="Maven: org.eclipse.jetty:jetty-http:11.0.15" level="project" />
+    <orderEntry type="library" name="Maven: org.eclipse.jetty.websocket:websocket-servlet:11.0.15" level="project" />
+    <orderEntry type="library" name="Maven: org.eclipse.jetty.websocket:websocket-core-server:11.0.15" level="project" />
+    <orderEntry type="library" name="Maven: org.eclipse.jetty:jetty-server:11.0.15" level="project" />
+    <orderEntry type="library" name="Maven: org.eclipse.jetty.toolchain:jetty-jakarta-servlet-api:5.0.2" level="project" />
+    <orderEntry type="library" name="Maven: org.eclipse.jetty:jetty-servlet:11.0.15" level="project" />
+    <orderEntry type="library" name="Maven: org.eclipse.jetty:jetty-security:11.0.15" level="project" />
+    <orderEntry type="library" name="Maven: org.eclipse.jetty:jetty-annotations:11.0.15" level="project" />
+    <orderEntry type="library" name="Maven: org.eclipse.jetty:jetty-plus:11.0.15" level="project" />
+    <orderEntry type="library" name="Maven: jakarta.transaction:jakarta.transaction-api:2.0.0" level="project" />
+    <orderEntry type="library" name="Maven: org.eclipse.jetty:jetty-jndi:11.0.15" level="project" />
+    <orderEntry type="library" name="Maven: org.eclipse.jetty:jetty-webapp:11.0.15" level="project" />
+    <orderEntry type="library" name="Maven: org.eclipse.jetty:jetty-xml:11.0.15" level="project" />
+    <orderEntry type="library" name="Maven: jakarta.annotation:jakarta.annotation-api:2.1.1" level="project" />
+    <orderEntry type="library" name="Maven: org.ow2.asm:asm:9.5" level="project" />
+    <orderEntry type="library" name="Maven: org.ow2.asm:asm-commons:9.5" level="project" />
+    <orderEntry type="library" name="Maven: org.ow2.asm:asm-tree:9.5" level="project" />
+    <orderEntry type="library" name="Maven: org.slf4j:slf4j-api:2.0.5" level="project" />
     <orderEntry type="library" name="Maven: org.openjfx:javafx-graphics:19.0.2.1" level="project" />
     <orderEntry type="library" name="Maven: org.openjfx:javafx-graphics:win:19.0.2.1" level="project" />
     <orderEntry type="library" name="Maven: org.openjfx:javafx-base:19.0.2.1" level="project" />

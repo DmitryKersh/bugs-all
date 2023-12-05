@@ -20,12 +20,15 @@ import javafx.scene.text.Font;
 import lombok.val;
 
 import java.io.File;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.*;
 import java.util.regex.Pattern;
 
 public class LocalGameMenuController {
-    private static final int MIN_HUE_DIFF = 25;
-    private static final String LAYOUT_DIR = "bugs-gui/src/main/resources/layout";
+    private static final int MIN_HUE_DIFF = 15;
+    private static final String LAYOUT_DIR = "./layout";
     private static final Pattern NICKNAME_PATTERN = Pattern.compile("^\\w{3,20}$");
     private static final Pattern PARAM_PATTERN = Pattern.compile("^\\d+$");
     private static final String COLOR_ERROR = "Unallowed colors chosen: There are too light, too dark or too similar colors";
@@ -136,11 +139,16 @@ public class LocalGameMenuController {
 
     private List<String> getAvailableLayoutFiles() {
         File[] files = new File(LAYOUT_DIR).listFiles();
-        if (files == null) return null;
+        try {
+            System.out.println(new File(LAYOUT_DIR).getCanonicalPath());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        if (files == null) return new ArrayList<>();
 
         List<String> names = new ArrayList<>();
-        for (int i = 0; i < files.length; i++) {
-            names.add(files[i].getName());
+        for (File file : files) {
+            names.add(file.getName());
         }
         names.add(null);
         return names;

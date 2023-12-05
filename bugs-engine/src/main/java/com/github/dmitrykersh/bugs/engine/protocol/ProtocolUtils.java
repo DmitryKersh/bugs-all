@@ -1,11 +1,11 @@
-package com.github.dmitrykersh.bugs.server.protocol;
+package com.github.dmitrykersh.bugs.engine.protocol;
 
 import lombok.experimental.UtilityClass;
 import org.eclipse.jetty.websocket.api.Session;
 
 import java.io.IOException;
 
-import static com.github.dmitrykersh.bugs.server.protocol.ProtocolConstants.*;
+import static com.github.dmitrykersh.bugs.engine.protocol.ProtocolConstants.*;
 
 @UtilityClass
 public class ProtocolUtils {

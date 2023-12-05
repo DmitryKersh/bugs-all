@@ -16,7 +16,7 @@ public class MainWindow extends Application {
             Yaml yaml = new Yaml();
             InputStream inputStream = this.getClass()
                     .getClassLoader()
-                    .getResourceAsStream("config.yaml");
+                    .getResourceAsStream("config/config.yaml");
             ClientConfig config = yaml.load(inputStream);
             System.out.println("---------- CLIENT CONFIG ----------\n" + config);
 

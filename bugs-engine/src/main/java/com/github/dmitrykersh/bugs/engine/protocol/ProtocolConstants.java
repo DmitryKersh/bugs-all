@@ -1,4 +1,4 @@
-package com.github.dmitrykersh.bugs.server.protocol;
+package com.github.dmitrykersh.bugs.engine.protocol;
 
 import lombok.experimental.UtilityClass;
 

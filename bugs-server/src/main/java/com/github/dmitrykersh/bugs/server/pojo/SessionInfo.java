@@ -1,6 +1,6 @@
 package com.github.dmitrykersh.bugs.server.pojo;
 
-import com.github.dmitrykersh.bugs.server.protocol.SessionState;
+import com.github.dmitrykersh.bugs.engine.protocol.SessionState;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;

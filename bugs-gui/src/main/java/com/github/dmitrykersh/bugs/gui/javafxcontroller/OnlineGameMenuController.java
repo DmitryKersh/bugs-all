@@ -5,7 +5,7 @@ import com.github.dmitrykersh.bugs.gui.ClientConfig;
 import com.github.dmitrykersh.bugs.gui.SceneCollection;
 import com.github.dmitrykersh.bugs.gui.online.ClientSocket;
 import com.github.dmitrykersh.bugs.gui.viewer.BoardViewer;
-import com.github.dmitrykersh.bugs.server.protocol.SessionState;
+import com.github.dmitrykersh.bugs.engine.protocol.SessionState;
 import com.sun.javafx.collections.ObservableListWrapper;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -27,8 +27,6 @@ import org.yaml.snakeyaml.Yaml;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.ConnectException;
-import java.net.SocketException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashMap;
@@ -38,7 +36,7 @@ import java.util.concurrent.Future;
 import java.util.regex.Pattern;
 
 import static com.github.dmitrykersh.bugs.engine.util.TextureUtils.toRGBCode;
-import static com.github.dmitrykersh.bugs.server.protocol.ProtocolConstants.*;
+import static com.github.dmitrykersh.bugs.engine.protocol.ProtocolConstants.*;
 
 public class OnlineGameMenuController {
     private static final Pattern PARAM_PATTERN = Pattern.compile("^\\d+$");
@@ -105,7 +103,7 @@ public class OnlineGameMenuController {
         Yaml yaml = new Yaml();
         InputStream inputStream = this.getClass()
                 .getClassLoader()
-                .getResourceAsStream("config.yaml");
+                .getResourceAsStream("config/config.yaml");
         ClientConfig config = yaml.load(inputStream);
 
         serverField.setText(config.getDefaultServerAddress());

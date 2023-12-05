@@ -10,7 +10,7 @@ import com.github.dmitrykersh.bugs.engine.player.Player;
 import com.github.dmitrykersh.bugs.engine.player.PlayerSettings;
 import com.github.dmitrykersh.bugs.server.pojo.NotifyInfo;
 import com.github.dmitrykersh.bugs.server.pojo.SessionInfo;
-import com.github.dmitrykersh.bugs.server.protocol.SessionState;
+import com.github.dmitrykersh.bugs.engine.protocol.SessionState;
 import javafx.scene.paint.Color;
 import lombok.Setter;
 import lombok.val;
@@ -25,10 +25,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static com.github.dmitrykersh.bugs.server.protocol.ProtocolConstants.*;
-import static com.github.dmitrykersh.bugs.server.protocol.ProtocolUtils.sendInfo;
-import static com.github.dmitrykersh.bugs.server.protocol.ProtocolUtils.sendJsonData;
-import static com.github.dmitrykersh.bugs.server.protocol.SessionState.*;
+import static com.github.dmitrykersh.bugs.engine.protocol.ProtocolConstants.*;
+import static com.github.dmitrykersh.bugs.engine.protocol.ProtocolUtils.sendInfo;
+import static com.github.dmitrykersh.bugs.engine.protocol.ProtocolUtils.sendJsonData;
+import static com.github.dmitrykersh.bugs.engine.protocol.SessionState.*;
 
 @WebSocket
 public class WebSocketEndpoint {
@@ -36,7 +36,7 @@ public class WebSocketEndpoint {
         Yaml yaml = new Yaml();
         InputStream inputStream = WebSocketServer.class
                 .getClassLoader()
-                .getResourceAsStream("config.yaml");
+                .getResourceAsStream("server_config/config.yaml");
         ServerConfig config = yaml.load(inputStream);
         if (boardManager == null)
             boardManager = new BoardManager(config.getLayoutDir());
