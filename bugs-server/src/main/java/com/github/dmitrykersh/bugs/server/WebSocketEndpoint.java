@@ -306,12 +306,15 @@ public class WebSocketEndpoint {
     }
 
     private void handleNewConnection(JsonNode msgRoot, Session session, SessionInfo sessionInfo, SessionState currentState) throws IOException {
+        if (!msgRoot.hasNonNull(USERNAME) || !msgRoot.hasNonNull(PASSWORD) || !msgRoot.hasNonNull(NICKNAME)) {
+            return;
+        }
         String username = msgRoot.get(USERNAME).asText();
         String password = msgRoot.get(PASSWORD).asText();
         String nickname = msgRoot.get(NICKNAME).asText();
 
         if (!authenticate(username, password)) {
-            sendInfo(session, currentState, "Login failed");
+            sendInfo(session, NEW_CONNECTION, "Login failed");
             return;
         }
 
@@ -363,7 +366,9 @@ public class WebSocketEndpoint {
 
             PreparedStatement saltStmt = conn.prepareStatement("select salt from users where username = ? limit 1");
             saltStmt.setString(1, username);
-            val saltRs = saltStmt.executeQuery(); saltRs.next();
+            val saltRs = saltStmt.executeQuery();
+            if (!saltRs.next()) return false;
+
             val salt = saltRs.getString("salt");
 
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
@@ -372,7 +377,9 @@ public class WebSocketEndpoint {
             PreparedStatement authStmt = conn.prepareStatement("select count(*) as record_count from users where username = ? and password_hash = ?");
             authStmt.setString(1, username);
             authStmt.setString(2, saltedHashAsHex);
-            val authRs = authStmt.executeQuery(); authRs.next();
+            val authRs = authStmt.executeQuery();
+            if (!authRs.next()) return false;
+
             return authRs.getInt("record_count") > 0;
         } catch (SQLException | NoSuchAlgorithmException e) {
             e.printStackTrace();

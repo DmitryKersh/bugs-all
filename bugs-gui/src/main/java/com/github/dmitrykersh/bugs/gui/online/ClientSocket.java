@@ -80,7 +80,11 @@ public class ClientSocket {
                     controller.layoutMap.put(layout.getString(NAME), layout);
                 }
                 Platform.runLater(
-                        () -> controller.layoutComboBox.setItems(new ObservableListWrapper<>(names))
+                        () -> {
+                            controller.layoutComboBox.setItems(new ObservableListWrapper<>(names));
+                            controller.tabPane.setVisible(true);
+                            controller.startGameButton.setVisible(false);
+                        }
                 );
             }
             case MSG_BOARD_CREATED -> {
@@ -182,8 +186,6 @@ public class ClientSocket {
         Platform.runLater(() -> {
             controller.isConnected = true;
             controller.connectButton.setText("Disconnect");
-            controller.tabPane.setVisible(true);
-            controller.startGameButton.setVisible(false);
         });
 
     }
