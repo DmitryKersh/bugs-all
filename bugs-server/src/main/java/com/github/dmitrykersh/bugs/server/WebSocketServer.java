@@ -29,6 +29,7 @@ public class WebSocketServer {
         JettyWebSocketServletContainerInitializer.configure(handler, (servletContext, container) -> {
             container.setIdleTimeout(Duration.ofMinutes(config.getIdleTimeoutMin()));
             container.addMapping("/", WebSocketEndpoint.class);
+            servletContext.setSessionTimeout(config.getClientTimeoutMin());
         });
 
         try {

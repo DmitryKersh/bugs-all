@@ -16,4 +16,9 @@ public class ServerConfig {
     String layoutDir;
     int idleTimeoutMin;
     int clientTimeoutMin;
+
+    // db
+    String dbUrl;
+    String dbUser;
+    String dbPassword;
 }

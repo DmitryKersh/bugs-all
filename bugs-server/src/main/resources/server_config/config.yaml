@@ -1,0 +1,9 @@
+!!com.github.dmitrykersh.bugs.server.ServerConfig
+port: 8889
+endpoint: "/websocket"
+layoutDir: "layout"
+idleTimeoutMin: 60
+clientTimeoutMin: 10
+dbUrl: "jdbc:postgresql://localhost:5432/bugs"
+dbUser: "postgres"
+dbPassword: "password"

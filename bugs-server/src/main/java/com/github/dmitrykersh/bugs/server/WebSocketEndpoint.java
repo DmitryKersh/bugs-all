@@ -8,18 +8,24 @@ import com.github.dmitrykersh.bugs.engine.board.TurnInfo;
 import com.github.dmitrykersh.bugs.engine.board.observer.BoardObserver;
 import com.github.dmitrykersh.bugs.engine.player.Player;
 import com.github.dmitrykersh.bugs.engine.player.PlayerSettings;
+import com.github.dmitrykersh.bugs.engine.protocol.SessionState;
 import com.github.dmitrykersh.bugs.server.pojo.NotifyInfo;
 import com.github.dmitrykersh.bugs.server.pojo.SessionInfo;
-import com.github.dmitrykersh.bugs.engine.protocol.SessionState;
 import javafx.scene.paint.Color;
 import lombok.Setter;
 import lombok.val;
+import org.apache.commons.dbcp2.BasicDataSource;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.*;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,11 +46,21 @@ public class WebSocketEndpoint {
         ServerConfig config = yaml.load(inputStream);
         if (boardManager == null)
             boardManager = new BoardManager(config.getLayoutDir());
+
+        ds = new BasicDataSource();
+        ds.setDriverClassName("org.postgresql.Driver");
+        ds.setUrl(config.getDbUrl());
+        ds.setUsername(config.getDbUser());
+        ds.setPassword(config.getDbPassword());
+        ds.setMinIdle(5);
+        ds.setMaxIdle(10);
+        ds.setMaxOpenPreparedStatements(100);
     }
     private static BoardManager boardManager;
     private static final Map<Session, SessionInfo> sessionInfoMap = new ConcurrentHashMap<>();
     private static final Map<String, Integer> userToOwnedBoard = new HashMap<>();
     private final ObjectMapper jsonMapper = new ObjectMapper();
+    private static BasicDataSource ds;
 
     private class OnlineBoardObserver implements BoardObserver {
         @Setter
@@ -342,7 +358,37 @@ public class WebSocketEndpoint {
     }
 
     private boolean authenticate(String username, String password) {
-        //TODO: implement
-        return true;
+        try {
+            val conn = ds.getConnection();
+
+            PreparedStatement saltStmt = conn.prepareStatement("select salt from users where username = ? limit 1");
+            saltStmt.setString(1, username);
+            val saltRs = saltStmt.executeQuery(); saltRs.next();
+            val salt = saltRs.getString("salt");
+
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            String saltedHashAsHex = bytesToHex(digest.digest((password + salt).getBytes(StandardCharsets.UTF_8)));
+
+            PreparedStatement authStmt = conn.prepareStatement("select count(*) as record_count from users where username = ? and password_hash = ?");
+            authStmt.setString(1, username);
+            authStmt.setString(2, saltedHashAsHex);
+            val authRs = authStmt.executeQuery(); authRs.next();
+            return authRs.getInt("record_count") > 0;
+        } catch (SQLException | NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    private static String bytesToHex(byte[] hash) {
+        StringBuilder hexString = new StringBuilder(2 * hash.length);
+        for (int i = 0; i < hash.length; i++) {
+            String hex = Integer.toHexString(0xff & hash[i]);
+            if(hex.length() == 1) {
+                hexString.append('0');
+            }
+            hexString.append(hex);
+        }
+        return hexString.toString();
     }
 }
