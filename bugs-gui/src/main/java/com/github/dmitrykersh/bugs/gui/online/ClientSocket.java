@@ -106,7 +106,7 @@ public class ClientSocket {
                             for (int row = 0; row < boardInfo.getPlayers().size(); row++) {
                                 Player p;
                                 if ((p = boardInfo.getPlayers().get(row)) != null) {
-                                    controller.playersGridPane.add(UiUtils.makeLabel(p.getNickname(), 12, p.getColor()), 0, row);
+                                    controller.playersGridPane.add(UiUtils.makeLabel(String.format("%s (%d)", p.getNickname(), p.getRating()), 12, p.getColor()), 0, row);
                                     if (p.getNickname().equals(controller.getCurrentPlayerNickname())) {
                                         Button button = new Button("Quit");
                                         button.getStyleClass().add("button-small");
@@ -175,6 +175,10 @@ public class ClientSocket {
                     pane.addRow(row, b);
                     b.setAlignment(Pos.CENTER);
                     controller.innerBorderPane.setCenter(pane);
+                    controller.boardIdLabel.setText("");
+                    controller.boardId = 0;
+                    controller.playersGridPane.getChildren().clear();
+                    controller.startGameButton.setVisible(false);
                 });
             }
         }

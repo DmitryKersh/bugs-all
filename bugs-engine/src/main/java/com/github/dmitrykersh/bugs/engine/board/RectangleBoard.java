@@ -72,8 +72,9 @@ public final class RectangleBoard extends AbstractBoard {
         for (int i = 0; i < playerTemplates.size(); i++) {
             players.set(i, new Player(this,
                     playerSettings.size() <= i ? ("p_" + i) : playerSettings.get(i).getNickname(),
+                    playerSettings.get(i).getUsername(),
                     playerTemplates.get(i).getMaxTurns(),
-                    playerSettings.get(i).getColor()));
+                    playerSettings.get(i).getColor(), playerSettings.get(i).getRating()));
         }
 
         tiles = new ArrayList<>(rowsAmount);

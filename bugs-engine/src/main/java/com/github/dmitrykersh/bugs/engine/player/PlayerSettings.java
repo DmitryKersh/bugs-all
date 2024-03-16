@@ -7,7 +7,11 @@ import lombok.Getter;
 @AllArgsConstructor
 public class PlayerSettings {
     @Getter
+    private final String username;
+    @Getter
     private final String nickname;
     @Getter
     private final Color color;
+    @Getter
+    private int rating;
 }

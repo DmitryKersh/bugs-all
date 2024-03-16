@@ -26,6 +26,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -106,11 +107,77 @@ public class WebSocketEndpoint {
 
         @Override
         public void onGameEnded(Map<Integer, List<Player>> scoreboard) {
+            changePlayerRatings(scoreboard);
             for (Session s : playerToSession.values()) {
                 try {
                     sendJsonData(s, MSG_GAME_ENDED, LOGGED_IN, MSG_GAME_ENDED_KEY, jsonMapper.writeValueAsString(scoreboard));
                 } catch (IOException e) {
                     throw new RuntimeException(e);
+                }
+            }
+        }
+
+        private void changePlayerRatings(Map<Integer, List<Player>> scoreboard) {
+            int playerAmount = 0;
+            int totalRating = 0;
+            for (val entry: scoreboard.entrySet()) {
+                playerAmount += entry.getValue().size();
+                for (Player p: entry.getValue()) {
+                    totalRating += p.getRating();
+                }
+            }
+            int avg = totalRating / playerAmount;
+
+            List<Integer> baseGains = new ArrayList<>();
+            switch (playerAmount) {
+                case 2 -> {
+                    baseGains.add(15);
+                    baseGains.add(-15);
+                }
+                case 3 -> {
+                    baseGains.add(20);
+                    baseGains.add(-0);
+                    baseGains.add(-20);
+                }
+                case 4 -> {
+                    baseGains.add(25);
+                    baseGains.add(-5);
+                    baseGains.add(-5);
+                    baseGains.add(-25);
+                }
+                default -> {
+                    if (playerAmount % 2 == 0) {
+                        for (int i = 0; i < playerAmount/2; i++)
+                            baseGains.add(15 * (playerAmount / 2 - i) - 8);
+                        for (int i = playerAmount/2; i < playerAmount; i++)
+                            baseGains.add(15 * (playerAmount / 2 - i) + 8);
+                    } else {
+                        for (int i = 0; i < playerAmount; i++)
+                            baseGains.add(15 * (playerAmount / 2 - i));
+                    }
+                }
+            }
+
+            // if draw then recalculate base_gains for drawed players
+            int drawSize = scoreboard.get(1).size();
+            if (drawSize > 1) {
+                int totalGain = 0;
+                for (int i = 0; i < drawSize; i++) {
+                    totalGain += baseGains.get(i);
+                }
+                // floor rounding here to avoid players gaining more rating at total because of draw
+                int newBaseGain = totalGain / drawSize;
+                for (int i = 0; i < drawSize; i++) {
+                    baseGains.set(i, newBaseGain);
+                }
+            }
+
+            for (val entry: scoreboard.entrySet()) {
+                for (Player p: entry.getValue()) {
+                    int advantage = (p.getRating() - avg) / 25;
+                    int newRating = p.getRating() + baseGains.get(entry.getKey()-1) - advantage;
+                    setRating(p.getUsername(), newRating);
+                    sessionInfoMap.get(playerToSession.get(p)).setRating(newRating);
                 }
             }
         }
@@ -247,11 +314,11 @@ public class WebSocketEndpoint {
     }
 
     private void handleDeleteBoard(JsonNode msgRoot, Session session, SessionInfo sessionInfo, SessionState currentState) throws IOException {
-        int id;
+        Integer id;
         NotifyInfo notifyInfo;
-        if (! userToOwnedBoard.containsKey(sessionInfo.getUsername())) return;
+        if (! userToOwnedBoard.containsKey(sessionInfo.getUsername()) || (id = userToOwnedBoard.get(sessionInfo.getUsername())) == null) return;
 
-        if ((notifyInfo = boardManager.deleteBoard(id = userToOwnedBoard.get(sessionInfo.getUsername()))) != null) {
+        if ((notifyInfo = boardManager.deleteBoard(id)) != null) {
             sendInfo(session, LOGGED_IN, String.format("Deleted board with id %d", id));
             for (Session s : notifyInfo.getSessions()) {
                 sessionInfoMap.get(s).setState(LOGGED_IN);
@@ -280,7 +347,7 @@ public class WebSocketEndpoint {
         int playerNumber = msgRoot.get(PLAYER_NUMBER).asInt();
         String colorStr = msgRoot.get(PLAYER_COLOR).asText();
 
-        if (!boardManager.connectToBoard(session, boardId, playerNumber, new PlayerSettings(sessionInfo.getNickname(), Color.web(colorStr)))) {
+        if (!boardManager.connectToBoard(session, boardId, playerNumber, new PlayerSettings(sessionInfo.getUsername(), sessionInfo.getNickname(), Color.web(colorStr), sessionInfo.getRating()))) {
             sendInfo(session, currentState, "Error connecting to the board");
             return;
         }
@@ -317,6 +384,8 @@ public class WebSocketEndpoint {
             sendInfo(session, NEW_CONNECTION, "Login failed");
             return;
         }
+
+        sessionInfo.setRating(getRating(username));
 
         for (SessionInfo info : sessionInfoMap.values()) {
             if (username.equals(info.getUsername())) {
@@ -379,9 +448,44 @@ public class WebSocketEndpoint {
             authStmt.setString(2, saltedHashAsHex);
             val authRs = authStmt.executeQuery();
             if (!authRs.next()) return false;
-
-            return authRs.getInt("record_count") > 0;
+            boolean res = authRs.getInt("record_count") > 0;
+            conn.close();
+            return res;
         } catch (SQLException | NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    private int getRating(String username) {
+        try {
+            val conn = ds.getConnection();
+
+            PreparedStatement stmt = conn.prepareStatement("select get_classic_elo(?)");
+            stmt.setString(1, username);
+            val rs = stmt.executeQuery();
+
+            if (!rs.next()) return 0;
+            int res = rs.getInt(1);
+            conn.close();
+            return res;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+    private boolean setRating(String username, int new_rating) {
+        try {
+            val conn = ds.getConnection();
+
+            PreparedStatement stmt = conn.prepareStatement("call set_classic_elo(?, ?);");
+            stmt.setString(1, username);
+            stmt.setInt(2, new_rating);
+
+            val rs = stmt.executeUpdate();
+            conn.close();
+            return true;
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return false;

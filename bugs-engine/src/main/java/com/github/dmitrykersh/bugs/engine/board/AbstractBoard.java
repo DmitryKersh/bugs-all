@@ -66,8 +66,10 @@ public abstract class AbstractBoard {
         }
         players.set(playerIndex, p = new Player(this,
                 settings.getNickname(),
+                settings.getUsername(),
                 playerTemplates.get(playerIndex).getMaxTurns(),
-                settings.getColor()));
+                settings.getColor(),
+                settings.getRating()));
         return p;
     }
     // use set() to not change other player numbers

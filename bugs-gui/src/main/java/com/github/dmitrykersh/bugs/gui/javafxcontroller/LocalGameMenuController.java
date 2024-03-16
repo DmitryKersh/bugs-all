@@ -230,7 +230,7 @@ public class LocalGameMenuController {
 
         List<PlayerSettings> playerSettings = new ArrayList<>();
         for (int i = 0; i < selectedNicknames.size(); i++) {
-            playerSettings.add(new PlayerSettings(selectedNicknames.get(i), selectedColors.get(i)));
+            playerSettings.add(new PlayerSettings(selectedNicknames.get(i),selectedNicknames.get(i), selectedColors.get(i), 1000));
         }
 
         AbstractBoard board = null;

@@ -11,6 +11,7 @@ public class SessionInfo {
     SessionState state;
     String username;
     String nickname;
+    int rating;
     int boardId;
 
     public SessionInfo() {
