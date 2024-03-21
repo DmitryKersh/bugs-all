@@ -2,9 +2,9 @@ package com.github.dmitrykersh.bugs.engine.board.observer;
 
 import com.github.dmitrykersh.bugs.engine.board.TurnInfo;
 import com.github.dmitrykersh.bugs.engine.player.Player;
+import com.github.dmitrykersh.bugs.engine.player.PlayerResult;
 
 import java.util.List;
-import java.util.Map;
 
 public class NoOpBoardObserver implements BoardObserver {
 
@@ -24,7 +24,7 @@ public class NoOpBoardObserver implements BoardObserver {
     }
 
     @Override
-    public void onGameEnded(Map<Integer, List<Player>> scoreboard) {
+    public void onGameEnded(List<PlayerResult> scoreboard) {
 
     }
 }

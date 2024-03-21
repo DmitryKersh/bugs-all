@@ -7,6 +7,7 @@ import com.github.dmitrykersh.bugs.engine.board.BoardInfo;
 import com.github.dmitrykersh.bugs.engine.board.TurnInfo;
 import com.github.dmitrykersh.bugs.engine.board.observer.BoardObserver;
 import com.github.dmitrykersh.bugs.engine.player.Player;
+import com.github.dmitrykersh.bugs.engine.player.PlayerResult;
 import com.github.dmitrykersh.bugs.engine.player.PlayerSettings;
 import com.github.dmitrykersh.bugs.engine.protocol.SessionState;
 import com.github.dmitrykersh.bugs.server.pojo.NotifyInfo;
@@ -106,7 +107,7 @@ public class WebSocketEndpoint {
         }
 
         @Override
-        public void onGameEnded(Map<Integer, List<Player>> scoreboard) {
+        public void onGameEnded(List<PlayerResult> scoreboard) {
             changePlayerRatings(scoreboard);
             for (Session s : playerToSession.values()) {
                 try {
@@ -117,14 +118,11 @@ public class WebSocketEndpoint {
             }
         }
 
-        private void changePlayerRatings(Map<Integer, List<Player>> scoreboard) {
-            int playerAmount = 0;
+        private void changePlayerRatings(List<PlayerResult> scoreboard) {
+            int playerAmount = scoreboard.size();
             int totalRating = 0;
-            for (val entry: scoreboard.entrySet()) {
-                playerAmount += entry.getValue().size();
-                for (Player p: entry.getValue()) {
-                    totalRating += p.getRating();
-                }
+            for (val plRes: scoreboard) {
+                totalRating += plRes.getOldRating();
             }
             int avg = totalRating / playerAmount;
 
@@ -159,7 +157,7 @@ public class WebSocketEndpoint {
             }
 
             // if draw then recalculate base_gains for drawed players
-            int drawSize = scoreboard.get(1).size();
+            int drawSize = scoreboard.stream().mapToInt(x -> x.getPlace() == 1 ? 1 : 0).sum();
             if (drawSize > 1) {
                 int totalGain = 0;
                 for (int i = 0; i < drawSize; i++) {
@@ -172,14 +170,26 @@ public class WebSocketEndpoint {
                 }
             }
 
-            for (val entry: scoreboard.entrySet()) {
-                for (Player p: entry.getValue()) {
-                    int advantage = (p.getRating() - avg) / 25;
-                    int newRating = p.getRating() + baseGains.get(entry.getKey()-1) - advantage;
-                    setRating(p.getUsername(), newRating);
-                    sessionInfoMap.get(playerToSession.get(p)).setRating(newRating);
+            for (val plRes: scoreboard) {
+                int advantage = (plRes.getOldRating() - avg) / 25;
+                int newRating = plRes.getOldRating() + baseGains.get(plRes.getPlace()-1) - advantage;
+
+                plRes.setNewRating(newRating);
+                plRes.setRatingChange(newRating - plRes.getOldRating());
+
+                setRating(plRes.getUsername(), newRating);
+                Session s = getSessionByUsername(plRes.getUsername());
+                if (s != null) {
+                    sessionInfoMap.get(s).setRating(newRating);
                 }
             }
+        }
+
+        private Session getSessionByUsername(String username) {
+            for (val entry : playerToSession.entrySet()) {
+                if (entry.getKey().getUsername().equals(username)) return entry.getValue();
+            }
+            return null;
         }
     }
 
@@ -408,7 +418,7 @@ public class WebSocketEndpoint {
         sessionInfo.setUsername(username);
         sessionInfo.setNickname(nickname);
 
-        sendInfo(session, LOGGED_IN, String.format("Logged in as %s", username));
+        sendInfo(session, LOGGED_IN, String.format("Logged in as %s (%d)", username, sessionInfo.getRating()));
     }
 
     private void handleCreateBoard(JsonNode msgRoot, Session session, SessionInfo sessionInfo, SessionState currentState) throws IOException {

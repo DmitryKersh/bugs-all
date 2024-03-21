@@ -1,15 +1,15 @@
 package com.github.dmitrykersh.bugs.gui.observer;
 
-import com.github.dmitrykersh.bugs.engine.board.observer.BoardObserver;
 import com.github.dmitrykersh.bugs.engine.board.TurnInfo;
+import com.github.dmitrykersh.bugs.engine.board.observer.BoardObserver;
 import com.github.dmitrykersh.bugs.engine.player.Player;
+import com.github.dmitrykersh.bugs.engine.player.PlayerResult;
 import javafx.scene.control.Label;
 import lombok.AllArgsConstructor;
 import lombok.val;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 @AllArgsConstructor
 public class LocalGameBoardObserver implements BoardObserver {
@@ -41,13 +41,11 @@ public class LocalGameBoardObserver implements BoardObserver {
     }
 
     @Override
-    public void onGameEnded(Map<Integer, List<Player>> scoreboard) {
+    public void onGameEnded(List<PlayerResult> scoreboard) {
         System.out.println("--- SCOREBOARD ---");
         List<String> strings = new LinkedList<>();
-        for (val entry : scoreboard.entrySet()) {
-            for (Player player : entry.getValue()) {
-                strings.add(0, entry.getKey() + ". " + player.getNickname());
-            }
+        for (val plRes : scoreboard) {
+            strings.add(0, plRes.getPlace() + ". " + plRes.getNickname());
         }
         for (String s : strings) {
             System.out.println(s);

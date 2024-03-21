@@ -1,6 +1,5 @@
 package com.github.dmitrykersh.bugs.engine.board;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.github.dmitrykersh.bugs.engine.board.layout.Layout;
 import com.github.dmitrykersh.bugs.engine.board.layout.PlayerTemplate;
 import com.github.dmitrykersh.bugs.engine.board.layout.TileTemplate;
@@ -9,6 +8,7 @@ import com.github.dmitrykersh.bugs.engine.board.tile.Tile;
 import com.github.dmitrykersh.bugs.engine.board.tile.TileState;
 import com.github.dmitrykersh.bugs.engine.board.validator.TurnValidator;
 import com.github.dmitrykersh.bugs.engine.player.Player;
+import com.github.dmitrykersh.bugs.engine.player.PlayerResult;
 import com.github.dmitrykersh.bugs.engine.player.PlayerSettings;
 import javafx.scene.Group;
 import lombok.Getter;
@@ -18,11 +18,11 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 
 import static com.github.dmitrykersh.bugs.engine.board.BoardState.*;
-import static com.github.dmitrykersh.bugs.engine.board.tile.TileState.*;
+import static com.github.dmitrykersh.bugs.engine.board.tile.TileState.QUEEN;
 
 public abstract class AbstractBoard {
     protected final List<Player> players;
-    protected final Map<Integer, List<Player>> scoreboard;
+    protected final List<PlayerResult> scoreboard;
     protected final TurnValidator turnValidator;
     protected final Layout layout;
     protected final List<PlayerTemplate> playerTemplates;
@@ -34,7 +34,7 @@ public abstract class AbstractBoard {
 
     protected AbstractBoard(final @NotNull Layout layout, final @NotNull String gameModeName, final @NotNull TurnValidator validator) {
         this.turnValidator = validator;
-        this.scoreboard = new LinkedHashMap<>();
+        this.scoreboard = new ArrayList<>();
         this.layout = layout;
         this.observers = new ArrayList<>();
 
@@ -101,8 +101,8 @@ public abstract class AbstractBoard {
         return new ArrayList<>(players);
     }
 
-    public Map<Integer, List<Player>> getScoreboard() {
-        return new HashMap<>(scoreboard);
+    public List<PlayerResult> getScoreboard() {
+        return new ArrayList<>(scoreboard);
     }
 
     public Player getActivePlayer() {
@@ -119,11 +119,9 @@ public abstract class AbstractBoard {
         }
 
         players.remove(player);
-        if (scoreboard.containsKey(players.size() + 1)) {
-            scoreboard.get(players.size() + 1).add(player);
-        } else {
-            scoreboard.put(players.size() + 1, List.of(player));
-        }
+        int place = players.size() + 1;
+
+        scoreboard.add(PlayerResult.of(player, place));
     }
 
     protected abstract boolean checkIfStalemate(Player p);
@@ -157,7 +155,7 @@ public abstract class AbstractBoard {
                         Player kicked = players.get(0);
                         freezeLostPlayer(kicked);
                         state = ENDED;
-
+                        scoreboard.sort(Comparator.comparingInt(PlayerResult::getPlace));
                         for (val observer : observers) {
                             observer.onTurnMade(infoBuilder.build());
                             observer.onGameEnded(scoreboard);
@@ -180,13 +178,14 @@ public abstract class AbstractBoard {
 
 
             if (state != ENDED && checkIfStalemate(getActivePlayer())) {
-                scoreboard.put(1, new ArrayList<>());
                 for (Player drawed : players) {
-                    scoreboard.get(1).add(drawed);
+                    scoreboard.add(PlayerResult.of(drawed, 1));
                 }
                 players.clear();
+                scoreboard.sort(Comparator.comparingInt(PlayerResult::getPlace));
                 for (val observer : observers) {
                     observer.onTurnMade(infoBuilder.toStalemate(true).build());
+
                     observer.onGameEnded(scoreboard);
                 }
 

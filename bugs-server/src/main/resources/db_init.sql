@@ -34,7 +34,9 @@ declare
     end;$$;
 
 -- password: dkarp
-call register_user('example_user', 'd.karpukhin@mail.ru', 'c9ec411c6c35b50e102d958ebf1a908b3907c04368fccd1a4465af7068ae2636', 'sLArzVvmfG');
+call register_user('example_user1', 'd.karpukhin@mail.ru', 'c9ec411c6c35b50e102d958ebf1a908b3907c04368fccd1a4465af7068ae2636', 'sLArzVvmfG');
+call register_user('example_user2', 'd.karpukhin@mail.ru', 'c9ec411c6c35b50e102d958ebf1a908b3907c04368fccd1a4465af7068ae2636', 'sLArzVvmfG');
+call register_user('example_user3', 'd.karpukhin@mail.ru', 'c9ec411c6c35b50e102d958ebf1a908b3907c04368fccd1a4465af7068ae2636', 'sLArzVvmfG');
 
 create or replace procedure set_classic_elo(
     _username varchar,

@@ -7,11 +7,12 @@ import com.github.dmitrykersh.bugs.engine.board.BoardDto;
 import com.github.dmitrykersh.bugs.engine.board.BoardInfo;
 import com.github.dmitrykersh.bugs.engine.board.TurnInfo;
 import com.github.dmitrykersh.bugs.engine.player.Player;
+import com.github.dmitrykersh.bugs.engine.player.PlayerResult;
+import com.github.dmitrykersh.bugs.engine.protocol.SessionState;
 import com.github.dmitrykersh.bugs.engine.util.ColorDeserializer;
 import com.github.dmitrykersh.bugs.gui.UiUtils;
 import com.github.dmitrykersh.bugs.gui.javafxcontroller.OnlineGameMenuController;
 import com.github.dmitrykersh.bugs.gui.viewer.RectangleBoardViewer;
-import com.github.dmitrykersh.bugs.engine.protocol.SessionState;
 import com.sun.javafx.collections.ObservableListWrapper;
 import javafx.application.Platform;
 import javafx.geometry.Pos;
@@ -29,10 +30,9 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
-import static com.github.dmitrykersh.bugs.engine.util.TextUtils.toOrdinal;
 import static com.github.dmitrykersh.bugs.engine.protocol.ProtocolConstants.*;
+import static com.github.dmitrykersh.bugs.engine.util.TextUtils.toOrdinal;
 
 @WebSocket
 public class ClientSocket {
@@ -147,32 +147,42 @@ public class ClientSocket {
                 });
             }
             case MSG_GAME_ENDED -> {
-                Map<Integer, List<Player>> scoreboard = mapper.readValue(jsonMsg.getJSONObject(MSG_GAME_ENDED_KEY).toString(), new TypeReference<>() {});
+                List<PlayerResult> scoreboard = mapper.readValue(jsonMsg.getJSONArray(MSG_GAME_ENDED_KEY).toString(), new TypeReference<>() {});
                 Platform.runLater(()->{
                     GridPane pane = new GridPane();
                     pane.setVgap(10);
-                    int row = 1;
-                    for (val entry : scoreboard.entrySet()) {
-                        StringBuilder sb = new StringBuilder().append(entry.getKey()).append(". ");
-                        val playerList = entry.getValue();
-                        for (int i = 0; i < playerList.size(); i++) {
-                            sb.append(playerList.get(i).getNickname());
-                            if (i < playerList.size() - 1) {
-                                sb.append(", ");
+                    int row = 0;
+                    StringBuilder sb = new StringBuilder();
+                    // at this point we assume that the list is sorted by plRes.place (ascending)
+                    for (val plRes : scoreboard) {
+                        if (row != plRes.getPlace()) {
+                            // write existing string to ui pane
+                            if (row != 0) {
+                                pane.addRow(row, UiUtils.makeLabel(sb.toString(), 15));
                             }
-                            if (playerList.get(i).getNickname().equals(controller.getCurrentPlayerNickname())) {
-                                Label l = UiUtils.makeLabel(toOrdinal(entry.getKey()) + " place", 18, playerList.get(i).getColor());
-                                pane.addRow(0, l);
-                            }
+                            // build new string
+                            row = plRes.getPlace();
+                            sb = new StringBuilder().append(plRes.getPlace()).append(". ");
+                        } else {
+                            // append to existing
+                            sb.append(", ");
                         }
+                        sb.append(plRes.getNickname());
+                        String gainStr = " (" + ((plRes.getRatingChange() > 0) ? "+" + plRes.getRatingChange() : plRes.getRatingChange()) + ")";
+                        sb.append(gainStr);
 
-                        pane.addRow(row, UiUtils.makeLabel(sb.toString(), 15));
-                        row++;
+                        if (plRes.getNickname().equals(controller.getCurrentPlayerNickname())) {
+                            Label l = UiUtils.makeLabel(toOrdinal(plRes.getPlace()) + " place" + gainStr, 18, plRes.getColor());
+                            pane.addRow(0, l);
+                        }
                     }
+                    // add last row
+                    pane.addRow(row, UiUtils.makeLabel(sb.toString(), 15));
+                    // add close button
                     Button b = new Button("Close");
                     b.setOnAction(controller.onScoreboardClose());
                     pane.setAlignment(Pos.CENTER);
-                    pane.addRow(row, b);
+                    pane.addRow(row + 1, b);
                     b.setAlignment(Pos.CENTER);
                     controller.innerBorderPane.setCenter(pane);
                     controller.boardIdLabel.setText("");
